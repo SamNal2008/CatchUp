@@ -1,0 +1,46 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <searchConfiguration name="Primitive type in entities" description="Do not use primitive type for IDs in your entities.&#10;&#10;You can find more details on this Dantotsu :&#10;&lt;a href=&quot;https://www.notion.so/m33/WeBank-Le-type-Long-n-est-pas-le-type-long-819e0da5118d4b7a9117c362572b7af2?pvs=4/&quot;&gt;Lien&lt;/a&gt;" suppressId="PrimitiveAsId" problemDescriptor="Do not use primitive type for IDs in your entity, you can find more information in the description" text="class $Class$ {&#10;  @jakarta.persistence.Id&#10;  $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum &amp;&amp; !__context__.record&quot;" within="" contains="" />
+        <constraint name="FieldType" regexp="long" within="" contains="" />
+        <constraint name="Field" target="true" within="" contains="" />
+        <constraint name="Init" minCount="0" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="Primitive type in entities" text="class $Class$ {&#10;  @jakarta.persistence.Id&#10;  $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum &amp;&amp; !__context__.record&quot;" within="" contains="" />
+        <constraint name="FieldType" regexp="int" within="" contains="" />
+        <constraint name="Field" target="true" within="" contains="" />
+        <constraint name="Init" minCount="0" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="Primitive type in entities" text="class $Class$ {&#10;  @jakarta.persistence.Id&#10;  $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum &amp;&amp; !__context__.record&quot;" within="" contains="" />
+        <constraint name="FieldType" regexp="double" within="" contains="" />
+        <constraint name="Field" target="true" within="" contains="" />
+        <constraint name="Init" minCount="0" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="Test reload context Bean" uuid="9ddf1d32-8390-3099-baf7-101202ae2b1f" description="You should not use @SpyBean or @MockBean.&#10;&#10;These annotation will make your Spring app reload during the tests.&#10;&#10;There is a lot of ways to avoid it : Check this Notion page &lt;a href=&quot;https://www.notion.so/m33/BFB-CA-R-duction-du-temps-de-CI-9fd4ef2924da401390835733c0567d54?pvs=4&quot;&gt;Kaizen CI&lt;/a&gt;" suppressId="ReloadContext" problemDescriptor="Avoid using mock bean or spy bean, read the description to have more information" text="class $Class$ {&#10;  @org.springframework.boot.test.mock.mockito.SpyBean&#10;  $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum &amp;&amp; !__context__.record&quot;" within="" contains="" />
+        <constraint name="FieldType" within="" contains="" />
+        <constraint name="Field" target="true" within="" contains="" />
+        <constraint name="Init" minCount="0" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="Test reload context Bean" uuid="9ddf1d32-8390-3099-baf7-101202ae2b1f" text="class $Class$ {&#10;  @org.springframework.boot.test.mock.mockito.MockBean&#10;  $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum &amp;&amp; !__context__.record&quot;" within="" contains="" />
+        <constraint name="FieldType" within="" contains="" />
+        <constraint name="Field" target="true" within="" contains="" />
+        <constraint name="Init" minCount="0" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="Test reload context Bean" uuid="9ddf1d32-8390-3099-baf7-101202ae2b1f" text="@org.springframework.test.annotation.DirtiesContext&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum &amp;&amp; !__context__.record&quot;" target="true" within="" contains="" />
+      </searchConfiguration>
+    </inspection_tool>
+  </profile>
+</component>

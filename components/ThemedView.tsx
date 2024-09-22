@@ -1,14 +1,39 @@
-import { View, type ViewProps } from 'react-native';
+import {Animated, ScrollView, StyleSheet, View, type ViewProps} from 'react-native';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
+import {useThemeColor} from '@/hooks/useThemeColor';
+import {ThemedText} from "@/components/ThemedText";
+import {AntDesign} from "@expo/vector-icons";
+import {Header} from "@/components/Header";
 
 export type ThemedViewProps = ViewProps & {
-  lightColor?: string;
-  darkColor?: string;
+    lightColor?: string;
+    darkColor?: string;
 };
 
-export function ThemedView({ style, lightColor, darkColor, ...otherProps }: ThemedViewProps) {
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+export function ThemedView({style, lightColor, darkColor, ...otherProps}: ThemedViewProps) {
+    const backgroundColor = useThemeColor({light: lightColor, dark: darkColor}, 'background');
 
-  return <View style={[{ backgroundColor }, style]} {...otherProps} />;
+    return (
+        <ScrollView contentContainerStyle={[{backgroundColor}, styles.default]}>
+            <Header />
+            <View style={styles.content}>
+                {otherProps.children}
+            </View>
+        </ScrollView>
+    );
 }
+
+const styles = StyleSheet.create({
+    default: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        padding: 10
+    },
+    content: {
+        flex: 4,
+        flexWrap: 'wrap',
+        alignItems: 'center',
+    }
+});
