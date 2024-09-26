@@ -1,8 +1,6 @@
-import {Animated, ScrollView, StyleSheet, View, type ViewProps} from 'react-native';
+import {ScrollView, StyleSheet, View, type ViewProps} from 'react-native';
 
 import {useThemeColor} from '@/hooks/useThemeColor';
-import {ThemedText} from "@/components/ThemedText";
-import {AntDesign} from "@expo/vector-icons";
 import {Header} from "@/components/Header";
 
 export type ThemedViewProps = ViewProps & {
