@@ -13,11 +13,12 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
+        tabBarShowLabel: false,
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: '',
+          title: 'Home',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'calendar' : 'calendar-outline'} color={color} />
           ),
@@ -26,7 +27,7 @@ export default function TabLayout() {
         <Tabs.Screen
             name="profile"
             options={{
-                title: '',
+                title: 'My friends',
                 tabBarIcon: ({ color, focused }) => (
                     <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
                 ),
@@ -35,7 +36,7 @@ export default function TabLayout() {
         <Tabs.Screen
             name="settings"
             options={{
-                title: '',
+                title: 'Settings',
                 tabBarIcon: ({ color, focused }) => (
                     <TabBarIcon name={focused ? 'settings' : 'settings-outline'} color={color} />
                 ),

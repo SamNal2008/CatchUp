@@ -8,6 +8,7 @@ interface Contact {
     phoneNumbers?: PhoneNumber[];
 }
 
+// Do not use for now
 export const useContacts = () => {
 
     useEffect(() => {
@@ -18,7 +19,7 @@ export const useContacts = () => {
 
     const saveContact = async (contacts: Contact[]): Promise<void> => {
         await AsyncStorage.setItem('contacts', JSON.stringify(contacts));
-        console.log('Contacts saved', contacts);
+        console.debug('Contacts saved', contacts);
     }
 
     const getContact = async (): Promise<void>  => {

@@ -28,9 +28,12 @@ export default function ContactsModal() {
         setSelectedContacts([...selectedContacts, contact]);
     };
 
+    const openContactModalPicker = async () => {
+        await Contacts.presentContactPickerAsync();
+    }
+
     useEffect(() => {
         (async () => {
-            console.log('toto');
             const {status} = await Contacts.requestPermissionsAsync();
             if (status === 'granted') {
                 const {data} = await Contacts.getContactsAsync({
@@ -48,16 +51,7 @@ export default function ContactsModal() {
         <ScrollView contentContainerStyle={styles.modal}>
             <ThemedText type={'title'}>Choisissez un contact</ThemedText>
             <ThemedText>Pick your catchups</ThemedText>
-            {contacts.map((contact) => {
-                return (
-                    <View key={contact.id} style={styles.contactList}>
-                        <Checkbox value={selectedContacts.indexOf(contact) >= 0}
-                                  onValueChange={() => selectContact(contact)}/>
-                        <ThemedText key={contact.id}>{contact.name}</ThemedText>
-                    </View>
-                );
-            })}
-            <Button label={'Close'} backgroundColor={Colors.light.tint} onPress={closeAndSaveContacts}/>
+            <Button label={'Catch some one'} backgroundColor={Colors.light.tint} onPress={openContactModalPicker}/>
         </ScrollView>
     )
 }

@@ -10,7 +10,6 @@ export type ThemedViewProps = ViewProps & {
 
 export function ThemedView({style, lightColor, darkColor, ...otherProps}: ThemedViewProps) {
     const backgroundColor = useThemeColor({light: lightColor, dark: darkColor}, 'background');
-
     return (
         <ScrollView contentContainerStyle={[{backgroundColor}, styles.default]}>
             <Header />
@@ -27,11 +26,12 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        padding: 10
+        padding: 10,
     },
     content: {
         flex: 4,
         flexWrap: 'wrap',
         alignItems: 'center',
+        width: '100%'
     }
 });
