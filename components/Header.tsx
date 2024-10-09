@@ -26,14 +26,14 @@ export const Header = () => {
     }
 
     return (<View style={styles.header}>
-        <ThemedText type={'defaultSemiBold'}>Catchup</ThemedText>
-        <AntDesign size={28} color={Colors[theme].icon} onPress={openModalToChoseContact} name={'pluscircle'}/>
+        <ThemedText type={'subtitle'}>Catchup</ThemedText>
+        <AntDesign size={36} color={Colors[theme].icon} onPress={openModalToChoseContact} name={'pluscircle'}/>
     </View>);
 }
 
 const styles = StyleSheet.create({
     header: {
-        flex: 1,
+        marginTop: 50,
         alignItems: 'center',
         justifyContent: 'space-between',
         flexDirection: 'row',

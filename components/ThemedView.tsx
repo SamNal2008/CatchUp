@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, View, type ViewProps} from 'react-native';
+import {ScrollView, StyleSheet, View, type ViewProps, Text} from 'react-native';
 
 import {useThemeColor} from '@/hooks/useThemeColor';
 import {Header} from "@/components/Header";
@@ -9,11 +9,11 @@ export type ThemedViewProps = ViewProps & {
 };
 
 export function ThemedView({style, lightColor, darkColor, ...otherProps}: ThemedViewProps) {
-    const backgroundColor = useThemeColor({light: lightColor, dark: darkColor}, 'background');
+    const backgroundColor = useThemeColor('background', {light: lightColor, dark: darkColor});
     return (
         <ScrollView contentContainerStyle={[{backgroundColor}, styles.default]}>
             <Header />
-            <View style={styles.content}>
+            <View style={[styles.content, style]}>
                 {otherProps.children}
             </View>
         </ScrollView>
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     default: {
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
     },
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
         flex: 4,
         flexWrap: 'wrap',
         alignItems: 'center',
+        justifyContent: 'flex-start',
         width: '100%'
     }
 });

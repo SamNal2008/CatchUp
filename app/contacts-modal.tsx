@@ -1,7 +1,6 @@
 import {ThemedText} from "@/components/ThemedText";
-import {ScrollView, StyleSheet, View} from "react-native";
+import {Pressable, ScrollView, StyleSheet, Text} from "react-native";
 import {Colors} from "@/constants/Colors";
-import {Button, Checkbox} from "react-native-ui-lib";
 import React, {useEffect, useState} from "react";
 import * as Contacts from 'expo-contacts';
 import {Fields} from 'expo-contacts';
@@ -51,7 +50,9 @@ export default function ContactsModal() {
         <ScrollView contentContainerStyle={styles.modal}>
             <ThemedText type={'title'}>Choisissez un contact</ThemedText>
             <ThemedText>Pick your catchups</ThemedText>
-            <Button label={'Catch some one'} backgroundColor={Colors.light.tint} onPress={openContactModalPicker}/>
+            <Pressable style={{backgroundColor: Colors.light.tint}} onPress={openContactModalPicker}>
+                <Text>Catch some one</Text>
+            </Pressable>
         </ScrollView>
     )
 }

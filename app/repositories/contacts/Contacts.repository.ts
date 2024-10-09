@@ -12,7 +12,7 @@ export interface ContactsRepository {
   getAll: () => Promise<Array<ContactModel>>;
 }
 
-export class LocalRepository implements ContactsRepository {
+class LocalRepository implements ContactsRepository {
   constructor(private readonly db: SQLite.SQLiteDatabase) {}
 
   public async save(contactToSave: ContactModel): Promise<ContactModel> {

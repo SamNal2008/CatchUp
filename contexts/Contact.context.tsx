@@ -3,6 +3,7 @@ import { ContactsRepository, getContactsRepository } from "@/app/repositories/co
 import { Contact } from "expo-contacts";
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { View, Text } from "react-native";
 
 interface ContactContextProps {
     newContact: Contact | null;
@@ -48,6 +49,7 @@ export const ContactProvider = ({children}: {children: ReactNode}) => {
             fetchFriends();
         } catch (error) {
             console.error('Error saving contact', error);
+            alert('Unable to save contact : ' + contact.firstName + ', are you sure you did not already add this friend ?');
         }
     };
 
