@@ -14,13 +14,26 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "fr.copains.CatchUp"
+      "bundleIdentifier": "fr.copains.CatchUp",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "remote-notification"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "fr.copains.CatchUp"
     },
     "web": {
       "bundler": "metro",
@@ -44,6 +57,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2c8b8f97-c742-4f5b-8d17-8fee99edd947"
+      }
     }
   }
 }

@@ -11,7 +11,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ContactProvider } from "@/contexts/Contact.context";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
-import { DATABASE_NAME } from "./repositories/contacts/Contacts.repository";
+import { DATABASE_NAME } from "../repositories/contacts/Contacts.repository";
 import { CheckInsProvider } from "@/contexts/CheckIns.context";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.

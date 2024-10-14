@@ -7,7 +7,10 @@ import * as SMS from "expo-sms";
 import { Picker } from "@react-native-picker/picker";
 import { Colors } from "@/constants/Colors";
 import * as Linking from 'expo-linking';
-import { ReminderFrequency } from "@/app/repositories/contacts/ReminderFrequency";
+import { ReminderFrequency } from "@/repositories/contacts/ReminderFrequency";
+import { SymbolView } from 'expo-symbols';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { DateUtils } from "@/constants/DateUtils";
 
 type NewFriendSettingsProps = {
   contact: Contact | null;
@@ -15,7 +18,7 @@ type NewFriendSettingsProps = {
   setFrequency: Dispatch<SetStateAction<ReminderFrequency>>
 };
 
-export const NewFriendSettings = ({ contact,frequency, setFrequency}: NewFriendSettingsProps) => {
+export const NewFriendSettings = ({ contact ,frequency, setFrequency}: NewFriendSettingsProps) => {
   const theme = useColorScheme() ?? 'light';
 
   if (!contact) {
@@ -23,8 +26,6 @@ export const NewFriendSettings = ({ contact,frequency, setFrequency}: NewFriendS
   }
 
   const styles = makeStyles(theme);
-
-  const contactBirthday = contact.birthday ? `${contact.birthday?.day}/${contact.birthday.month}/${contact.birthday.year}` : "-";
 
   const reminderFrequencyOptions: ReminderFrequency[] = [
     "weekly",
@@ -77,22 +78,22 @@ export const NewFriendSettings = ({ contact,frequency, setFrequency}: NewFriendS
         <View style={styles.contactInfo}>
           <Image
             style={styles.image}
-            source={{ uri: "https://picsum.photos/200/300" }}
+            source={{ uri: contact.image?.uri }}
           />
           <Text style={styles.name}>{contact.firstName} {contact.lastName}</Text>
         </View>
         <View style={styles.actions}>
           {/* Button with icon */}
           <Pressable style={styles.button} onPress={sendSms}>
-            <Feather style={styles.actionIcon} name="message-circle" />
+            <SymbolView name="message.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
             <Text style={styles.buttonText}>Message</Text>
           </Pressable>
           <Pressable style={styles.button} onPress={callContact}>
-            <FontAwesome style={styles.actionIcon} name="phone" />
+            <SymbolView name="phone.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
             <Text style={styles.buttonText}>Call</Text>
           </Pressable>
           <Pressable style={styles.button} onPress={seeContact}>
-            <Ionicons name="person" style={styles.actionIcon} />
+            <SymbolView name="person.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
             <Text style={styles.buttonText}>Contact</Text>
           </Pressable>
         </View>
@@ -100,31 +101,33 @@ export const NewFriendSettings = ({ contact,frequency, setFrequency}: NewFriendS
           <View style={styles.complementaryInfo}>
             <View style={styles.complementaryInfoTitleContainer}>
               <Ionicons size={20} color={Colors[theme].icon} name="gift" />
-              <Text style={styles.complementaryInfoTitle}>Birthdate :</Text>
+              <Text style={styles.complementaryInfoTitle}>Birthday :</Text>
             </View>
-            <Text style={styles.complementaryInfoTitle}>{contactBirthday}</Text>
+            <DateTimePicker value={contact.birthday ? new Date(DateUtils.getDateFromContactDate(contact.birthday)) : new Date()} onChange={e => console.log(new Date(e.nativeEvent.timestamp))} />
           </View>
           <View style={styles.complementaryInfo}>
             <View style={styles.complementaryInfoTitleContainer}>
               <AntDesign size={20} color={Colors[theme].icon} name="calendar" />
               <Text style={styles.complementaryInfoTitle}>Last check in :</Text>
             </View>
-            <Text style={styles.complementaryInfoTitle}>Never</Text>
+            <DateTimePicker value={new Date()} onChange={e => console.log(new Date(e.nativeEvent.timestamp))} />
           </View>
-        </View>
-        <View style={{flexDirection: 'row', gap: 20, marginTop: 20, marginBottom: -40, justifyContent: 'center', alignItems: 'center', maxHeight: 100}}>
-          <Feather size={20} color={Colors[theme].icon} name="refresh-ccw" />
-          <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
-        <Picker
-          selectedValue={frequency}
-          mode="dropdown"
-          onValueChange={handleFrequencyChange}
-          style={{ width: 150, height: 150, color: Colors[theme].icon, overflow: 'hidden' }} itemStyle={{color: Colors[theme].icon}}
-        >
-            {reminderFrequencyOptions.map((option) => (
-                <Picker.Item key={option} label={option} value={option} />
-            ))}
-        </Picker>
+          <View style={styles.complementaryInfo}>
+            <View style={styles.complementaryInfoTitleContainer}>
+              <Ionicons size={20} color={Colors[theme].icon} name="refresh-outline" />
+              <Text style={styles.complementaryInfoTitle}>Frequency</Text>
+            </View>
+            <Picker
+              selectedValue={frequency}
+              mode="dropdown"
+              onValueChange={handleFrequencyChange}
+              style={{ width: 150, height: 150, color: Colors[theme].icon, overflow: 'hidden' }} itemStyle={{color: Colors[theme].icon}}
+            >
+                {reminderFrequencyOptions.map((option) => (
+                    <Picker.Item key={option} label={option} value={option} />
+                ))}
+            </Picker>
+          </View>
         </View>
       </View>
   );
@@ -141,11 +144,9 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 5,
   },
   name: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 20,
     marginBottom: 20,
     color: Colors[color].text
   },
@@ -157,28 +158,31 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    gap: 20,
+    gap: 40,
   },
   button: {
-    padding: 10,
-    width: 100,
-    height: 70,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "gray",
-    borderRadius: 10,
+    backgroundColor: "#F3F2F8",
+    borderRadius: 16,
     flexDirection: "column",
     opacity: 0.7,
     gap: 5,
+    flexGrow: 1,
+    flexShrink: 0,
+    flexBasis: 0,
   },
   buttonText: {
-    color: "white",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "semibold",
   },
   actionIcon: {
-    fontSize: 28,
-    color: "white",
+    width: 25,
+    height: 25,
+    margin: 5,
+    color: Colors[color].background
   },
   complementaryInfo: {
     width: "100%",

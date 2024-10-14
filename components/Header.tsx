@@ -15,8 +15,13 @@ export const Header = () => {
     const openModalToChoseContact = async () => {
         const {status} = await Contacts.requestPermissionsAsync();
         if (status === 'granted') {
-            const newCatchUp = await Contacts.presentContactPickerAsync();
+            let newCatchUp = await Contacts.presentContactPickerAsync();
             if (newCatchUp) {
+                const res = await Contacts.getContactsAsync({fields: [Contacts.Fields.ID, Contacts.Fields.Image]});
+                newCatchUp = {
+                    ...newCatchUp,
+                    image: res.data.find((contact) => contact.id === newCatchUp?.id)?.image
+                }
                 setNewContact(newCatchUp);
                 return;
             }

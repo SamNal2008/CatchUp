@@ -12,8 +12,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NewFriendSettings } from "@/components/NewFriendSettings";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useContacts } from "@/contexts/Contact.context";
-import { ReminderFrequency } from "../repositories/contacts/ReminderFrequency";
-import { createNewContactEntity } from "../repositories/contacts/ContactEntity";
+import { ReminderFrequency } from "../../repositories/contacts/ReminderFrequency";
+import { createNewContactEntity } from "../../repositories/contacts/ContactEntity";
+import { Colors } from "@/constants/Colors";
 
 export default function HomeScreen() {
   const { newContact, addNewFriend } = useContacts();
@@ -93,8 +94,8 @@ export default function HomeScreen() {
           >
             <BottomSheetView style={styles.contentContainer}>
               <View style={styles.bottomSheetHeader}>
-                <Button title="Close" onPress={closeSheet} />
-                <Button title="Save" onPress={saveNewFriend} />
+                <Button title="Cancel" color={Colors.light.tint} onPress={closeSheet} />
+                <Button title="Save" color={Colors.light.tint} onPress={saveNewFriend} />
               </View>
               <NewFriendSettings
                 frequency={selectedFrequency}

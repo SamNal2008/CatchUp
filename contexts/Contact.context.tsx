@@ -1,9 +1,13 @@
-import { ContactId, ContactModel } from "@/app/repositories/contacts/ContactEntity";
-import { ContactsRepository, getContactsRepository } from "@/app/repositories/contacts/Contacts.repository";
+import { useNotifications } from "@/hooks/useNotificatons";
+import { ContactId, ContactModel } from "@/repositories/contacts/ContactEntity";
+import { getContactsRepository } from "@/repositories/contacts/Contacts.repository";
 import { Contact } from "expo-contacts";
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import *  as TaskManager from 'expo-task-manager';
+
+TaskManager.defineTask('background-notification-task', ({ data, error, executionInfo }) => {
+});
 
 interface ContactContextProps {
     newContact: Contact | null;
@@ -28,6 +32,7 @@ export const ContactProvider = ({children}: {children: ReactNode}) => {
     const [friends, setFriends] = useState<Array<ContactModel>>([]);
     const db = useSQLiteContext();
     const contactsRepository = getContactsRepository(db);
+    const {} = useNotifications();
 
     useEffect(() => {
         fetchFriends();
@@ -45,7 +50,7 @@ export const ContactProvider = ({children}: {children: ReactNode}) => {
 
     const addNewFriend = async (contact: ContactModel) => {
         try {
-            await contactsRepository.save(contact);
+            await contactsRepository.addNewFriend(contact);
             fetchFriends();
         } catch (error) {
             console.error('Error saving contact', error);

@@ -1,11 +1,12 @@
 import * as SQLite from "expo-sqlite";
 import * as Contact from 'expo-contacts';
 import { ContactModel, ContactId, ContactEntity, createNewContactEntity } from "./ContactEntity";
+import { NotificationsService } from "@/services/notifications/Notification.service";
 
 export const DATABASE_NAME = "catch_up.db";
 
 export interface ContactsRepository {
-  save: (contactToSave: ContactModel) => Promise<ContactModel>;
+  addNewFriend: (contactToSave: ContactModel) => Promise<ContactModel>;
   update: (contactToUpdate: ContactModel) => Promise<ContactModel>;
   getById: (contactId: ContactId) => Promise<ContactModel | null>;
   remove: (contactId: ContactId) => Promise<void>;
@@ -15,15 +16,16 @@ export interface ContactsRepository {
 class LocalRepository implements ContactsRepository {
   constructor(private readonly db: SQLite.SQLiteDatabase) {}
 
-  public async save(contactToSave: ContactModel): Promise<ContactModel> {
+  public async addNewFriend(contactToSave: ContactModel): Promise<ContactModel> {
     if (!contactToSave?.id) {
       throw new Error('Unable to save contact without id : ' + JSON.stringify(contactToSave));
     }
     const res = this.db.runSync(`INSERT INTO contacts (contact_id, frequency) VALUES (?, ?)`, [contactToSave.id, contactToSave.frequency]);
-    if (res.changes > 0){
-      return contactToSave;
+    if (res.changes <= 0){
+      throw new Error ('Unable to save contact with ID : ' + contactToSave.id);
     }
-    throw new Error ('Unable to save contact with ID : ' + contactToSave.id);
+    
+    return contactToSave;
   }
 
   public async update(contactToUpdate: ContactModel): Promise<ContactModel> {
@@ -50,7 +52,7 @@ class LocalRepository implements ContactsRepository {
     const result = new Array<ContactModel>();
     const entities: ContactEntity[] = await this.db.getAllAsync<ContactEntity>('SELECT * FROM contacts');
     for (const entity of entities) {
-      const contactInPhone: Contact.Contact | undefined = await Contact.getContactByIdAsync(entity.contact_id);
+      const contactInPhone: Contact.Contact | undefined = await Contact.getContactByIdAsync(entity.contact_id, [Contact.Fields.ID, Contact.Fields.FirstName, Contact.Fields.LastName, Contact.Fields.Image]);
       if (!contactInPhone) {
         console.warn(`Contact with ID : ${entity.contact_id} not found in phone anymore`);
         continue;

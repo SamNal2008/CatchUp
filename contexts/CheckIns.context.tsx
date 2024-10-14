@@ -1,4 +1,4 @@
-import { getCheckInsRepository, CheckInsRepository } from "@/app/repositories/check-ins/CheckIns.repository";
+import { getCheckInsRepository, CheckInsRepository } from "@/repositories/check-ins/CheckIns.repository";
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 

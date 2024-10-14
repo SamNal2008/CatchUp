@@ -3,6 +3,7 @@ import * as Contact from 'expo-contacts';
 import { ContactModel, ContactId, ContactEntity, createNewContactEntity } from "../contacts/ContactEntity";
 import { ReminderFrequency } from "../contacts/ReminderFrequency";
 import { CheckInEntity } from "./CheckInEntity";
+import { DateUtils } from "@/constants/DateUtils";
 
 export const DATABASE_NAME = "catch_up.db";
 
@@ -20,23 +21,7 @@ class LocalCheckInsRepository implements CheckInsRepository {
   }
   
   public hasAlreadyCheckedInWantedFrequency(contactId: ContactId, wantedFrequency: ReminderFrequency): boolean {
-    const thirtyDaysAgo = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000);
-    const oneWeekAgo = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
-    const oneYearAgo = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000);
-    let daysAgoWanted;
-    if (wantedFrequency === 'monthly') {
-      daysAgoWanted = thirtyDaysAgo;
-    }
-    if (wantedFrequency === 'weekly') {
-      daysAgoWanted = oneWeekAgo;
-    }
-    if (wantedFrequency === 'yearly') {
-      daysAgoWanted = oneYearAgo;
-    }
-    if (!daysAgoWanted) {
-      throw new Error('Invalid wanted frequency : ' + wantedFrequency);
-    }
-    console.log(daysAgoWanted);
+    const daysAgoWanted = DateUtils.getDaysAgoFromFrequency(wantedFrequency);
     return this.db.getFirstSync<boolean>('SELECT COUNT(*) > 0 FROM check_ins WHERE contact_id = ? AND check_in_date >= ?',
       [contactId, new Date(new Date().getTime() - daysAgoWanted.getTime()).toISOString()]) ?? false;
   }

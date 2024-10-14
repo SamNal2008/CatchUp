@@ -1,8 +1,8 @@
 import { ThemedView } from "@/components/ThemedView";
 import { useContacts } from "@/contexts/Contact.context";
 import { useCallback, useEffect, useState } from "react";
-import { ContactModel } from "../repositories/contacts/ContactEntity";
-import { View, Text, StyleSheet, Pressable, Alert, AlertType, Button} from "react-native";
+import { ContactModel } from "../../repositories/contacts/ContactEntity";
+import { View, Text, StyleSheet, Pressable, Alert, AlertType, Button, Image} from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -13,9 +13,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderColor: 'black',
-    borderWidth: 1,
     padding: 10,
   },
   section: {
@@ -28,7 +25,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 4,
+    borderRadius: 100,
     elevation: 3,
     backgroundColor: 'black',
   },
@@ -36,7 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray',
   },
   text: {
-    fontSize: 16,
+    fontSize: 12,
     lineHeight: 21,
     fontWeight: 'bold',
     letterSpacing: 0.25,
@@ -45,6 +42,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#8A898E'
   },
   friendNameContainer: {
     flexDirection: 'row',
@@ -54,6 +52,11 @@ const styles = StyleSheet.create({
   friendName: {
     fontSize: 16,
     fontWeight: 'bold'
+  },
+  friendImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
   }
 });
 
@@ -66,8 +69,8 @@ const CheckInButton = ({onPress, disabled} :CheckInButtonProps) => {
   const backgroundColor = useThemeColor('itemAction');
   const color = useThemeColor('itemBackground');
   return (
-    <Pressable disabled={disabled} style={({pressed}) => [styles.button, pressed || disabled ? styles.buttonPressed : {backgroundColor}]} onPress={onPress}>
-      {disabled ? <Text style={styles.text}>Come later</Text> : <Text style={[styles.text, {color}]}>Check In</Text>}
+    <Pressable disabled={disabled} style={({pressed}) => [styles.button, pressed || !disabled ? styles.buttonPressed : {backgroundColor}]} onPress={onPress}>
+      {disabled ? <Text style={[styles.text, {color}]}>Come later</Text> : <Text style={[styles.text, {color}]}>Check In</Text>}
     </Pressable>
   );
 }
@@ -83,7 +86,6 @@ const AdditionalButtons = ({onPress} :CheckInButtonProps) => {
 }
 
 const FriendLine = ({contact}: {contact: ContactModel}) => {
-  const backgroundColor = useThemeColor('itemBackground');
   const borderColor = useThemeColor('borderColor');
   const {deleteFriend} = useContacts();
   const {checkInsRepository} = useCheckIns();
@@ -134,15 +136,17 @@ const FriendLine = ({contact}: {contact: ContactModel}) => {
 
   return (
       <Pressable onPointerLeave={toggleDeleteFriend} onLongPress={toggleDeleteFriend}>
-        <View style={[styles.friendContainer, {backgroundColor, borderColor}]}>
+        <View style={[styles.friendContainer]}>
           <View style={styles.friendNameContainer}>
-            <FontAwesome6 color={borderColor} size="24" name="face-smile-beam"/>
+            {contact.image ?
+              <Image source={contact.image} style={styles.friendImage} /> :
+              <FontAwesome6 color={borderColor} size="24" name="face-smile-beam"/>}
             <View>
               <ThemedText style={styles.friendName}>{contact.firstName}</ThemedText>
               {hasAlreadyCheckedIn ?
-                hasCheckedInToday ? <ThemedText>Checked in today</ThemedText> : <ThemedText>Checked in {toDaysAgo} days ago</ThemedText>
+                hasCheckedInToday ? <ThemedText type="subText">Checked in today</ThemedText> : <ThemedText type="subText">Checked in {toDaysAgo} days ago</ThemedText>
                 :
-                <ThemedText>Never checked in yet !</ThemedText>
+                <ThemedText type="subText">Never checked in yet !</ThemedText>
               }
             </View>
           </View>
@@ -174,10 +178,9 @@ export default function Profile() {
   const { checkInsRepository } = useCheckIns();
 
   const getAllFriends = useCallback(() => {
-    const contacts = friends;
-    setYearlyContacts(contacts.filter(contact => contact.frequency === 'yearly'));
-    setWeeklyContacts(contacts.filter(contact => contact.frequency === 'weekly'));
-    setMonthlyContacts(contacts.filter(contact => contact.frequency === 'monthly'));
+    setYearlyContacts(friends.filter(contact => contact.frequency === 'yearly'));
+    setWeeklyContacts(friends.filter(contact => contact.frequency === 'weekly'));
+    setMonthlyContacts(friends.filter(contact => contact.frequency === 'monthly'));
   }, [friends]);
 
   useEffect(() => {
@@ -220,9 +223,9 @@ export default function Profile() {
         </View>
         : 
         <View style={{flex: 1, gap: 30}}>
-          <Section title='Weekly' contacts={weeklyContacts}/>
-          <Section title="Monthly" contacts={monthlyContacts} />
-          <Section title="Yearly" contacts={yearlyContacts} />
+          <Section title='Every week' contacts={weeklyContacts}/>
+          <Section title="Every month" contacts={monthlyContacts} />
+          <Section title="Every year" contacts={yearlyContacts} />
         </View>
       }
       </View>
