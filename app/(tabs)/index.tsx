@@ -14,7 +14,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useContacts } from "@/contexts/Contact.context";
 import { ReminderFrequency } from "../../repositories/contacts/ReminderFrequency";
 import { createNewContactEntity } from "../../repositories/contacts/ContactEntity";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/constants/design/Colors";
 
 export default function HomeScreen() {
   const { newContact, addNewFriend } = useContacts();

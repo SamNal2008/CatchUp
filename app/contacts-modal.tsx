@@ -1,6 +1,6 @@
 import {ThemedText} from "@/components/ThemedText";
 import {Pressable, ScrollView, StyleSheet, Text} from "react-native";
-import {Colors} from "@/constants/Colors";
+import {Colors} from "@/constants/design/Colors";
 import React, {useEffect, useState} from "react";
 import * as Contacts from 'expo-contacts';
 import {Fields} from 'expo-contacts';

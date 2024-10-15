@@ -5,7 +5,7 @@ import { ItemValue } from "@react-native-picker/picker/typings/Picker";
 import { AntDesign, Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import * as SMS from "expo-sms";
 import { Picker } from "@react-native-picker/picker";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/constants/design/Colors";
 import * as Linking from 'expo-linking';
 import { ReminderFrequency } from "@/repositories/contacts/ReminderFrequency";
 import { SymbolView } from 'expo-symbols';

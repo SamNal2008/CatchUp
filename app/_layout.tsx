@@ -8,7 +8,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { ContactProvider } from "@/contexts/Contact.context";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 import { DATABASE_NAME } from "../repositories/contacts/Contacts.repository";
@@ -18,7 +18,7 @@ import { CheckInsProvider } from "@/contexts/CheckIns.context";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorSchemeOrDefault();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });

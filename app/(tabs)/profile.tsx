@@ -1,12 +1,13 @@
 import { ThemedView } from "@/components/ThemedView";
 import { useContacts } from "@/contexts/Contact.context";
 import { useCallback, useEffect, useState } from "react";
-import { ContactModel } from "../../repositories/contacts/ContactEntity";
-import { View, Text, StyleSheet, Pressable, Alert, AlertType, Button, Image} from "react-native";
+import { ContactModel } from "@/repositories";
+import { View, Text, StyleSheet, Pressable, Alert, Button, Image} from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useCheckIns } from "@/contexts/CheckIns.context";
+import { PrimaryButton } from "@/components";
 
 const styles = StyleSheet.create({
   friendContainer: {
@@ -19,18 +20,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     gap: 10,
     width: '100%',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 100,
-    elevation: 3,
-    backgroundColor: 'black',
-  },
-  buttonPressed: {
-    backgroundColor: 'gray',
   },
   text: {
     fontSize: 12,
@@ -62,24 +51,12 @@ const styles = StyleSheet.create({
 
 type CheckInButtonProps = {
   onPress?: () => void;
-  disabled?: boolean;
-}
-
-const CheckInButton = ({onPress, disabled} :CheckInButtonProps) => {
-  const backgroundColor = useThemeColor('itemAction');
-  const color = useThemeColor('itemBackground');
-  return (
-    <Pressable disabled={disabled} style={({pressed}) => [styles.button, pressed || !disabled ? styles.buttonPressed : {backgroundColor}]} onPress={onPress}>
-      {disabled ? <Text style={[styles.text, {color}]}>Come later</Text> : <Text style={[styles.text, {color}]}>Check In</Text>}
-    </Pressable>
-  );
 }
 
 
 const AdditionalButtons = ({onPress} :CheckInButtonProps) => {
-  const backgroundColor = useThemeColor('background');
   return (
-    <Pressable style={({pressed}) => [styles.button, pressed ? styles.buttonPressed : {backgroundColor}]} onPress={onPress}>
+    <Pressable onPress={onPress}>
       <Text style={styles.text}>❌</Text>
     </Pressable>
   );
@@ -150,7 +127,7 @@ const FriendLine = ({contact}: {contact: ContactModel}) => {
               }
             </View>
           </View>
-          {isOnDeleteMode ? <AdditionalButtons onPress={promptForFriendDeletion}/> : <CheckInButton onPress={checkInOnFriend} disabled={hasCheckedInToday}/>}
+          {isOnDeleteMode ? <AdditionalButtons onPress={promptForFriendDeletion}/> : <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} disabled={hasCheckedInToday}/>}
         </View>
       </Pressable>
   )

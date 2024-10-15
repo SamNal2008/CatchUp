@@ -1,14 +1,15 @@
 import {ThemedText} from "@/components/ThemedText";
 import {AntDesign} from "@expo/vector-icons";
-import {StyleSheet, useColorScheme, View} from "react-native";
+import {StyleSheet, View} from "react-native";
 import * as Contacts from 'expo-contacts';
-import { Colors } from "@/constants/Colors";
+import { Colors } from "@/constants/design/Colors";
 import { useContacts } from "@/contexts/Contact.context";
+import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 
 
 export const Header = () => {
 
-    const theme = useColorScheme() ?? 'light';
+    const theme = useColorSchemeOrDefault();
     const {setNewContact} = useContacts();
 
 
