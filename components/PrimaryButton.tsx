@@ -34,8 +34,19 @@ export const PrimaryButton = ({ title, style, textStyle, disabled, ...rest }: Pr
     const theme: ColorSchemeName = useColorSchemeOrDefault();
     const styles = makeStyles(theme);
     return (
-        <Pressable style={({pressed}) => [styles.button, pressed || disabled ? styles.backgroundGreyedOut : null, style]} {...rest}>
-            <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+        <Pressable style={({pressed}) => [
+            styles.button,
+            pressed || disabled ? styles.backgroundGreyedOut : null,
+            style
+        ]}
+        {...rest}
+        >
+            <Text style={[
+                styles.buttonText,
+                textStyle
+            ]}>
+                {title}
+            </Text>
         </Pressable>
     );
 };

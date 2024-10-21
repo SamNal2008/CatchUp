@@ -15,6 +15,8 @@ import { useContacts } from "@/contexts/Contact.context";
 import { ReminderFrequency } from "../../repositories/contacts/ReminderFrequency";
 import { createNewContactEntity } from "../../repositories/contacts/ContactEntity";
 import { Colors } from "@/constants/design/Colors";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
   const { newContact, addNewFriend } = useContacts();
@@ -29,6 +31,21 @@ export default function HomeScreen() {
   const closeSheet = () => {
     bottomSheetRef.current?.close();
   };
+
+  const isFirstLaunch = async () => {
+    const isFirstLaunch = await AsyncStorage.getItem("FIRST_LAUNCH");
+    if (isFirstLaunch === null) {
+      return true;
+    }
+    await AsyncStorage.setItem("FIRST_LAUNCH", "false");
+    return false;
+  }
+
+  useEffect(() => {
+    isFirstLaunch().then((firstLaunch) => {
+     router.navigate(firstLaunch ? "/welcome-modal" : "/(tabs)");
+    });
+  }, []);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (

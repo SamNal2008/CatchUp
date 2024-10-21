@@ -1,7 +1,6 @@
 import * as SQLite from "expo-sqlite";
 import * as Contact from 'expo-contacts';
 import { ContactModel, ContactId, ContactEntity, createNewContactEntity } from "./ContactEntity";
-import { NotificationsService } from "@/services/notifications/Notification.service";
 
 export const DATABASE_NAME = "catch_up.db";
 
@@ -21,7 +20,7 @@ class LocalRepository implements ContactsRepository {
       throw new Error('Unable to save contact without id : ' + JSON.stringify(contactToSave));
     }
     const res = this.db.runSync(`INSERT INTO contacts (contact_id, frequency) VALUES (?, ?)`, [contactToSave.id, contactToSave.frequency]);
-    if (res.changes <= 0){
+    if (res.changes <= 0) {
       throw new Error ('Unable to save contact with ID : ' + contactToSave.id);
     }
     

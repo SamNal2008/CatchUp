@@ -32,7 +32,7 @@ export const ContactProvider = ({children}: {children: ReactNode}) => {
     const [friends, setFriends] = useState<Array<ContactModel>>([]);
     const db = useSQLiteContext();
     const contactsRepository = getContactsRepository(db);
-    const {} = useNotifications();
+    const {notificationsService} = useNotifications();
 
     useEffect(() => {
         fetchFriends();

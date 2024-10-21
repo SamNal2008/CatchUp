@@ -41,11 +41,10 @@ export default function RootLayout() {
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen
-                name="contacts-modal"
+                name="welcome-modal"
                 options={{
                   headerShown: false,
-                  presentation: "formSheet",
-                  headerTitle: "test",
+                  presentation: "modal",
                 }}
               />
               <Stack.Screen name="+not-found" />

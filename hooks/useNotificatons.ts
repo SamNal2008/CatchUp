@@ -11,12 +11,12 @@ export const useNotifications = (): UseNotifications => {
     useEffect(() => {
         notificationsService.initializeNotificationsSettings();
         notificationsService.requestPermission();
-        notificationsService?.sendNotificationForContact({
-            contactType: 'person',
-            frequency: 'weekly',
-            name: 'John Doe',
-            firstName: 'John',
-        });
+        // notificationsService?.sendNotificationForContact({
+        //     contactType: 'person',
+        //     frequency: 'weekly',
+        //     name: 'John Doe',
+        //     firstName: 'John',
+        // });
     }, []);
 
     return {notificationsService};

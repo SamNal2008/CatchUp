@@ -23,15 +23,7 @@ export function HelloWave() {
 
   return (
     <Animated.View style={animatedStyle}>
-      <ThemedText style={styles.text}>👋</ThemedText>
+      <ThemedText type='icon'>👋</ThemedText>
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 28,
-    lineHeight: 32,
-    marginTop: -6,
-  },
-});
