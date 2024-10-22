@@ -13,6 +13,7 @@ import { ContactProvider } from "@/contexts/Contact.context";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 import { DATABASE_NAME } from "../repositories/contacts/Contacts.repository";
 import { CheckInsProvider } from "@/contexts/CheckIns.context";
+import { BottomSheetProvider } from "@/contexts/BottomSheetProvider.context";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,17 +39,19 @@ export default function RootLayout() {
       <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrateDbIfNeeded}>
         <ContactProvider>
           <CheckInsProvider>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="welcome-modal"
-                options={{
-                  headerShown: false,
-                  presentation: "modal",
-                }}
-              />
-              <Stack.Screen name="+not-found" />
-            </Stack>
+            <BottomSheetProvider>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="welcome-modal"
+                  options={{
+                    headerShown: false,
+                    presentation: "modal",
+                  }}
+                />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </BottomSheetProvider>
           </CheckInsProvider>
         </ContactProvider>
       </SQLiteProvider>

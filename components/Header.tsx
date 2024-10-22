@@ -1,6 +1,6 @@
-import {ThemedText} from "@/components/ThemedText";
-import {AntDesign} from "@expo/vector-icons";
-import {StyleSheet, View} from "react-native";
+import { ThemedText } from "@/components/ThemedText";
+import { AntDesign } from "@expo/vector-icons";
+import { StyleSheet, View } from "react-native";
 import * as Contacts from 'expo-contacts';
 import { Colors } from "@/constants/design/Colors";
 import { useContacts } from "@/contexts/Contact.context";
@@ -10,30 +10,30 @@ import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 export const Header = () => {
 
     const theme = useColorSchemeOrDefault();
-    const {setNewContact} = useContacts();
+    const { setNewContact } = useContacts();
 
 
     const openModalToChoseContact = async () => {
-        const {status} = await Contacts.requestPermissionsAsync();
-        if (status === 'granted') {
-            let newCatchUp = await Contacts.presentContactPickerAsync();
-            if (newCatchUp) {
-                const res = await Contacts.getContactsAsync({fields: [Contacts.Fields.ID, Contacts.Fields.Image]});
-                newCatchUp = {
-                    ...newCatchUp,
-                    image: res.data.find((contact) => contact.id === newCatchUp?.id)?.image
-                }
-                setNewContact(newCatchUp);
-                return;
-            }
-        } else {
+        const { status } = await Contacts.requestPermissionsAsync();
+        if (status !== 'granted') {
             alert('Permission refusée');
+            return;
+        }
+        let newCatchUp = await Contacts.presentContactPickerAsync();
+        if (newCatchUp) {
+            const res = await Contacts.getContactsAsync({ fields: [Contacts.Fields.ID, Contacts.Fields.Image] });
+            newCatchUp = {
+                ...newCatchUp,
+                image: res.data.find((contact) => contact.id === newCatchUp?.id)?.image
+            }
+            console.log(newCatchUp.instantMessageAddresses);
+            setNewContact(newCatchUp);
         }
     }
 
     return (<View style={styles.header}>
         <ThemedText type={'subtitle'}>Catchup</ThemedText>
-        <AntDesign size={36} color={Colors[theme].icon} onPress={openModalToChoseContact} name={'pluscircle'}/>
+        <AntDesign size={36} color={Colors[theme].icon} onPress={openModalToChoseContact} name={'pluscircle'} />
     </View>);
 }
 

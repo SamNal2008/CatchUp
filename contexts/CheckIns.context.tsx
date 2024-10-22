@@ -1,6 +1,6 @@
 import { getCheckInsRepository, CheckInsRepository } from "@/repositories/check-ins/CheckIns.repository";
 import { useSQLiteContext } from "expo-sqlite";
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext } from "react";
 
 interface CheckInsContextProps {
     checkInsRepository: CheckInsRepository;

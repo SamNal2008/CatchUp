@@ -1,17 +1,21 @@
-// import { ContactsRepository, LocalRepository } from "./Contacts.repository";
+import { getContactsRepository } from "./Contacts.repository";
+import * as SQLite from "expo-sqlite";
 
-// describe('Contact repository', () => {
 
-//     let contactsRepository: ContactsRepository;
-//     const db = jest.fn();
+describe('ContactsRepository', () => {
 
-//     beforeEach(() => {
-//         contactsRepository = new LocalRepository(db);
-//     })
+    const dbMock = jest.mock('expo-sqlite');
 
-//     it('should get all contacts from the database for the current user', async () => {
-//         const allContacts = await contactsRepository.getAll();
-//         expect(allContacts.length).toEqual(0);
-//     });
+    const mockDb = jest.fn().mockImplementation(() => ({
+        runSync: jest.fn(),
+        close: jest.fn(),
+        openDatabaseSync: jest.fn(),
+        getAllAsync: jest.fn()
+    })) as unknown as SQLite.SQLiteDatabase;
 
-// });
+    it('should get all contacts from the database for the current user', async () => {
+        const contactsRepository = getContactsRepository(mockDb);
+        const allContacts = await contactsRepository.getAll();
+        expect(allContacts.length).toEqual(0);
+    });
+});

@@ -4,6 +4,7 @@ import React from 'react';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/design/Colors';
 import { useColorSchemeOrDefault } from '@/hooks/useColorScheme';
+import { BottomSheetProvider } from '@/contexts/BottomSheetProvider.context';
 
 export default function TabLayout() {
   const colorScheme = useColorSchemeOrDefault();
@@ -24,24 +25,24 @@ export default function TabLayout() {
           ),
         }}
       />
-        <Tabs.Screen
-            name="profile"
-            options={{
-                title: 'My friends',
-                tabBarIcon: ({ color, focused }) => (
-                    <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
-                ),
-            }}
-        />
-        <Tabs.Screen
-            name="settings"
-            options={{
-                title: 'Settings',
-                tabBarIcon: ({ color, focused }) => (
-                    <TabBarIcon name={focused ? 'settings' : 'settings-outline'} color={color} />
-                ),
-            }}
-        />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'My friends',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'settings' : 'settings-outline'} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

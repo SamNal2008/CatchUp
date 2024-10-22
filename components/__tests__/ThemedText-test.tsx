@@ -1,10 +1,9 @@
-import * as React from 'react';
-import renderer from 'react-test-renderer';
-
 import { ThemedText } from '../ThemedText';
+import { render, screen } from '@testing-library/react-native';
 
-it(`renders correctly`, () => {
-  const tree = renderer.create(<ThemedText>Snapshot test!</ThemedText>).toJSON();
-
-  expect(tree).toMatchSnapshot();
+describe('ThemedText', () => {
+  it(`renders correctly`, () => {
+    render(<ThemedText>Snapshot test!</ThemedText>);
+    expect(screen.getByText('Snapshot test!')).toBeDefined();
+  });
 });
