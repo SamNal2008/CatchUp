@@ -2,12 +2,13 @@ import { ThemedView } from "@/components/ThemedView";
 import { useContacts } from "@/contexts/Contact.context";
 import { useCallback, useEffect, useState } from "react";
 import { ContactModel } from "@/repositories";
-import { View, Text, StyleSheet, Pressable, Alert, Button, Image} from "react-native";
+import { View, Text, StyleSheet, Pressable, Alert, Button, Image } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useCheckIns } from "@/contexts/CheckIns.context";
 import { PrimaryButton } from "@/components";
+import { useNotifications } from "@/hooks/useNotificatons";
 
 const styles = StyleSheet.create({
   friendContainer: {
@@ -54,7 +55,7 @@ type CheckInButtonProps = {
 }
 
 
-const AdditionalButtons = ({onPress} :CheckInButtonProps) => {
+const AdditionalButtons = ({ onPress }: CheckInButtonProps) => {
   return (
     <Pressable onPress={onPress}>
       <Text style={styles.text}>❌</Text>
@@ -62,17 +63,26 @@ const AdditionalButtons = ({onPress} :CheckInButtonProps) => {
   );
 }
 
-const FriendLine = ({contact}: {contact: ContactModel}) => {
+const FriendLine = ({ contact }: { contact: ContactModel }) => {
   const borderColor = useThemeColor('borderColor');
-  const {deleteFriend} = useContacts();
-  const {checkInsRepository} = useCheckIns();
+  const { deleteFriend, friends } = useContacts();
+  const { checkInsRepository } = useCheckIns();
+  const { notificationsService } = useNotifications();
+
+
   const [isOnDeleteMode, setIsOnDeleteMode] = useState<boolean>(false);
   const toggleDeleteFriend = () => {
     setIsOnDeleteMode((prev) => !prev);
-  }
-
+  };
   const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
   const [reload, setReload] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (friends.length > 0) {
+      notificationsService.initializeNotificationsSettings();
+      notificationsService.requestPermission();
+    }
+  }, []);
 
   useEffect(() => {
     setLastCheckedIn(checkInsRepository.getLatestCheckInForContact(contact.id));
@@ -112,24 +122,24 @@ const FriendLine = ({contact}: {contact: ContactModel}) => {
   const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
 
   return (
-      <Pressable onPointerLeave={toggleDeleteFriend} onLongPress={toggleDeleteFriend}>
-        <View style={[styles.friendContainer]}>
-          <View style={styles.friendNameContainer}>
-            {contact.image ?
-              <Image source={contact.image} style={styles.friendImage} /> :
-              <FontAwesome6 color={borderColor} size="24" name="face-smile-beam"/>}
-            <View>
-              <ThemedText style={styles.friendName}>{contact.firstName}</ThemedText>
-              {hasAlreadyCheckedIn ?
-                hasCheckedInToday ? <ThemedText type="subText">Checked in today</ThemedText> : <ThemedText type="subText">Checked in {toDaysAgo} days ago</ThemedText>
-                :
-                <ThemedText type="subText">Never checked in yet !</ThemedText>
-              }
-            </View>
+    <Pressable onPointerLeave={toggleDeleteFriend} onLongPress={toggleDeleteFriend}>
+      <View style={[styles.friendContainer]}>
+        <View style={styles.friendNameContainer}>
+          {contact.image ?
+            <Image source={contact.image} style={styles.friendImage} /> :
+            <FontAwesome6 color={borderColor} size="24" name="face-smile-beam" />}
+          <View>
+            <ThemedText style={styles.friendName}>{contact.firstName}</ThemedText>
+            {hasAlreadyCheckedIn ?
+              hasCheckedInToday ? <ThemedText type="subText">Checked in today</ThemedText> : <ThemedText type="subText">Checked in {toDaysAgo} days ago</ThemedText>
+              :
+              <ThemedText type="subText">Never checked in yet !</ThemedText>
+            }
           </View>
-          {isOnDeleteMode ? <AdditionalButtons onPress={promptForFriendDeletion}/> : <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} disabled={hasCheckedInToday}/>}
         </View>
-      </Pressable>
+        {isOnDeleteMode ? <AdditionalButtons onPress={promptForFriendDeletion} /> : <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} disabled={hasCheckedInToday} />}
+      </View>
+    </Pressable>
   )
 }
 
@@ -138,7 +148,7 @@ type SectionProps = {
   contacts: ContactModel[];
 }
 
-const Section = ({contacts, title}: SectionProps) => {
+const Section = ({ contacts, title }: SectionProps) => {
   return contacts.length > 0 ? (
     <View style={styles.section}>
       <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
@@ -191,20 +201,20 @@ export default function Profile() {
 
   return (
     <ThemedView>
-      <View style={{flex: 1, width: '100%', paddingTop: 30}}>
-        <Button title="Clear databases" onPress={wipeAll}/>
-        {friends.length === 0 ? 
-        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1, gap: 15}}>
-          <ThemedText type={'subtitle'}>C'est vide ici 😭 !</ThemedText>
-          <ThemedText type={'defaultSemiBold'}>Cliquer en haut à gauche pour catch'up ↗️ </ThemedText>
-        </View>
-        : 
-        <View style={{flex: 1, gap: 30}}>
-          <Section title='Every week' contacts={weeklyContacts}/>
-          <Section title="Every month" contacts={monthlyContacts} />
-          <Section title="Every year" contacts={yearlyContacts} />
-        </View>
-      }
+      <View style={{ flex: 1, width: '100%', paddingTop: 30 }}>
+        <Button title="Clear databases" onPress={wipeAll} />
+        {friends.length === 0 ?
+          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, gap: 15 }}>
+            <ThemedText type={'subtitle'}>C'est vide ici 😭 !</ThemedText>
+            <ThemedText type={'defaultSemiBold'}>Cliquer en haut à gauche pour catch'up ↗️ </ThemedText>
+          </View>
+          :
+          <View style={{ flex: 1, gap: 30 }}>
+            <Section title='Every week' contacts={weeklyContacts} />
+            <Section title="Every month" contacts={monthlyContacts} />
+            <Section title="Every year" contacts={yearlyContacts} />
+          </View>
+        }
       </View>
     </ThemedView>
   );

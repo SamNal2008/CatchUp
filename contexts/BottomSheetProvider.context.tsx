@@ -8,6 +8,7 @@ import { useContacts } from "./Contact.context";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { Colors } from "@/constants/design/Colors";
+import { router } from 'expo-router';
 
 interface BottomSheetContextProps {
 
@@ -48,14 +49,9 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const saveNewFriend = async () => {
-    console.debug(
-      "saving new friend : " +
-      JSON.stringify(newContact, null, 2) +
-      " with frequency " +
-      selectedFrequency
-    );
     await addNewFriend(createNewContactEntity(newContact, selectedFrequency));
     bottomSheetRef.current?.close();
+    router.navigate('/(tabs)/profile');
   };
 
   const iconColor = useThemeColor("icon");
