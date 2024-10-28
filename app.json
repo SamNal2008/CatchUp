@@ -21,6 +21,9 @@
           "fetch",
           "remote-notification"
         ]
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
