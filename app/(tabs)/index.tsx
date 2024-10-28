@@ -1,4 +1,4 @@
-import { StyleSheet, View, Button } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useEffect } from "react";
@@ -27,7 +27,7 @@ export default function HomeScreen() {
         <ThemedText type={"subtitle"}>
           Keep your closest within reach
         </ThemedText>
-        <ThemedText type={"default"}>
+        <ThemedText type={"default"} style={{ textAlign: "center" }}>
           Add friends to stay in touch, share memories, and never miss a
           birthday
         </ThemedText>
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 20,
+    padding: 20,
     justifyContent: "center",
     alignItems: "center",
   }

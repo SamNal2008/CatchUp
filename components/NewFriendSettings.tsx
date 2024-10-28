@@ -1,6 +1,6 @@
 import { Contact, presentFormAsync } from "expo-contacts";
-import { Dispatch, SetStateAction, useState } from "react";
-import { StyleSheet, Image, View, Text, useColorScheme, Pressable, TextInput } from "react-native";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { StyleSheet, Image, View, Text, useColorScheme, Pressable, TextInput, ActionSheetIOS, Modal, TouchableOpacity } from "react-native";
 import { ItemValue } from "@react-native-picker/picker/typings/Picker";
 import { AntDesign, Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import * as SMS from "expo-sms";
@@ -18,12 +18,17 @@ type NewFriendSettingsProps = {
   setFrequency: Dispatch<SetStateAction<ReminderFrequency>>
 };
 
-export const NewFriendSettings = ({ contact ,frequency, setFrequency}: NewFriendSettingsProps) => {
+export const NewFriendSettings = ({ contact, frequency, setFrequency }: NewFriendSettingsProps) => {
   const theme = useColorScheme() ?? 'light';
+  const [isPickerVisible, setIsPickerVisible] = useState(false);
 
   if (!contact) {
     return null;
   }
+
+  const togglePicker = () => {
+    setIsPickerVisible(!isPickerVisible);
+  };
 
   const styles = makeStyles(theme);
 
@@ -32,8 +37,10 @@ export const NewFriendSettings = ({ contact ,frequency, setFrequency}: NewFriend
     "monthly",
     "yearly",
   ];
+
   const handleFrequencyChange = (itemValue: ItemValue) => {
     setFrequency(itemValue as ReminderFrequency);
+    togglePicker();
   };
 
   const callContact = async () => {
@@ -74,62 +81,67 @@ export const NewFriendSettings = ({ contact ,frequency, setFrequency}: NewFriend
   };
 
   return (
-      <View style={styles.container}>
-        <View style={styles.contactInfo}>
-          <Image
-            style={styles.image}
-            source={{ uri: contact.image?.uri }}
-          />
-          <Text style={styles.name}>{contact.firstName} {contact.lastName}</Text>
-        </View>
-        <View style={styles.actions}>
-          {/* Button with icon */}
-          <Pressable style={styles.button} onPress={sendSms}>
-            <SymbolView name="message.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
-            <Text style={styles.buttonText}>Message</Text>
-          </Pressable>
-          <Pressable style={styles.button} onPress={callContact}>
-            <SymbolView name="phone.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
-            <Text style={styles.buttonText}>Call</Text>
-          </Pressable>
-          <Pressable style={styles.button} onPress={seeContact}>
-            <SymbolView name="person.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
-            <Text style={styles.buttonText}>Contact</Text>
-          </Pressable>
-        </View>
-        <View style={styles.complementaryInfos}>
-          <View style={styles.complementaryInfo}>
-            <View style={styles.complementaryInfoTitleContainer}>
-              <Ionicons size={20} color={Colors[theme].icon} name="gift" />
-              <Text style={styles.complementaryInfoTitle}>Birthday :</Text>
-            </View>
-            <DateTimePicker value={contact.birthday ? new Date(DateUtils.getDateFromContactDate(contact.birthday)) : new Date()} onChange={e => console.log(new Date(e.nativeEvent.timestamp))} />
+    <View style={styles.container} onTouchStart={() => console.log('click')}>
+      <View style={styles.contactInfo}>
+        <Image
+          style={styles.image}
+          source={{ uri: contact.image?.uri }}
+        />
+        <Text style={styles.name}>{contact.firstName} {contact.lastName}</Text>
+      </View>
+      <View style={styles.actions}>
+        {/* Button with icon */}
+        <Pressable style={styles.button} onPress={sendSms}>
+          <SymbolView name="message.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
+          <Text style={styles.buttonText}>Message</Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={callContact}>
+          <SymbolView name="phone.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
+          <Text style={styles.buttonText}>Call</Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={seeContact}>
+          <SymbolView name="person.fill" style={styles.actionIcon} tintColor={Colors.light.icon} />
+          <Text style={styles.buttonText}>Contact</Text>
+        </Pressable>
+      </View>
+      <View style={styles.complementaryInfos}>
+        <View style={styles.complementaryInfo}>
+          <View style={styles.complementaryInfoTitleContainer}>
+            <Ionicons size={20} color={Colors[theme].icon} name="gift" />
+            <Text style={styles.complementaryInfoTitle}>Birthday :</Text>
           </View>
-          <View style={styles.complementaryInfo}>
-            <View style={styles.complementaryInfoTitleContainer}>
-              <AntDesign size={20} color={Colors[theme].icon} name="calendar" />
-              <Text style={styles.complementaryInfoTitle}>Last check in :</Text>
-            </View>
-            <DateTimePicker value={new Date()} onChange={e => console.log(new Date(e.nativeEvent.timestamp))} />
+          <DateTimePicker value={contact.birthday ? new Date(DateUtils.getDateFromContactDate(contact.birthday)) : new Date()} onChange={e => console.log(new Date(e.nativeEvent.timestamp))} />
+        </View>
+        <View style={styles.complementaryInfo}>
+          <View style={styles.complementaryInfoTitleContainer}>
+            <AntDesign size={20} color={Colors[theme].icon} name="calendar" />
+            <Text style={styles.complementaryInfoTitle}>Last check in :</Text>
           </View>
-          <View style={styles.complementaryInfo}>
-            <View style={styles.complementaryInfoTitleContainer}>
-              <Ionicons size={20} color={Colors[theme].icon} name="refresh-outline" />
-              <Text style={styles.complementaryInfoTitle}>Frequency</Text>
-            </View>
-            <Picker
+          <DateTimePicker value={new Date()} onChange={e => console.log(new Date(e.nativeEvent.timestamp))} />
+        </View>
+        <View style={styles.complementaryInfo}>
+          <View style={styles.complementaryInfoTitleContainer}>
+            <Ionicons size={20} color={Colors[theme].icon} name="refresh-outline" />
+            <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
+          </View>
+          <>
+            {!isPickerVisible ? <TouchableOpacity style={styles.frequencyButton} onPress={togglePicker}>
+              <Text style={styles.frequencyText}>{frequency}</Text>
+            </TouchableOpacity> : null}
+            {isPickerVisible ? <Picker
               selectedValue={frequency}
-              mode="dropdown"
+              mode="dialog"
               onValueChange={handleFrequencyChange}
-              style={{ width: 150, height: 150, color: Colors[theme].icon, overflow: 'hidden' }} itemStyle={{color: Colors[theme].icon}}
+              style={{ width: 150, height: 150, color: Colors[theme].icon, overflow: 'hidden', zIndex: 1000, position: 'fixed' }} itemStyle={{ color: Colors[theme].icon }}
             >
-                {reminderFrequencyOptions.map((option) => (
-                    <Picker.Item key={option} label={option} value={option} />
-                ))}
-            </Picker>
-          </View>
+              {reminderFrequencyOptions.map((option) => (
+                <Picker.Item key={option} label={option} value={option} />
+              ))}
+            </Picker> : null}
+          </>
         </View>
       </View>
+    </View>
   );
 };
 
@@ -158,7 +170,34 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    gap: 40,
+    gap: 30,
+    paddingHorizontal: 20
+  },
+  frequencyButton: {
+    padding: 10,
+    backgroundColor: "#eee",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  frequencyText: { fontSize: 16 },
+  pickerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  picker: {
+    backgroundColor: "white",
+    marginHorizontal: 20,
+    borderRadius: 10,
+    padding: 20,
+  },
+  closeButton: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  closeButtonText: {
+    color: "#007AFF",
+    fontSize: 16,
   },
   button: {
     paddingVertical: 12,
@@ -189,7 +228,7 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingLeft: 20,
+    paddingHorizontal: 20,
   },
   complementaryInfoTitle: {
     fontSize: 20,

@@ -26,14 +26,13 @@ export const Header = () => {
                 ...newCatchUp,
                 image: res.data.find((contact) => contact.id === newCatchUp?.id)?.image
             }
-            console.log(newCatchUp.instantMessageAddresses);
             setNewContact(newCatchUp);
         }
     }
 
     return (<View style={styles.header}>
-        <ThemedText type={'subtitle'}>Catchup</ThemedText>
-        <AntDesign size={36} color={Colors[theme].icon} onPress={openModalToChoseContact} name={'pluscircle'} />
+        <ThemedText type={'subtitle'} style={{ fontSize: 24 }}>Catchup</ThemedText>
+        <AntDesign size={46} suppressHighlighting color={Colors[theme].icon} onPress={openModalToChoseContact} name={'pluscircle'} />
     </View>);
 }
 
@@ -44,6 +43,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         width: '100%',
+        paddingHorizontal: 20,
     },
     contentContainer: {
         flex: 1,

@@ -4,9 +4,10 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheet
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Button, View, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 import { useContacts } from "./Contact.context";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
+import { Colors } from "@/constants/design/Colors";
 
 interface BottomSheetContextProps {
 
@@ -23,6 +24,7 @@ export const useBottomSheet = () => {
 export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const snapPoints = useMemo(() => ["50%", "60%", "80%"], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const theme = useColorSchemeOrDefault();
   const { newContact, addNewFriend } = useContacts();
 
   const closeSheet = () => {
@@ -91,8 +93,8 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
           >
             <BottomSheetView style={styles.contentContainer}>
               <View style={styles.bottomSheetHeader}>
-                <Button title="Cancel" color={Colors.light.tint} onPress={closeSheet} />
-                <Button title="Save" color={Colors.light.tint} onPress={saveNewFriend} />
+                <Button title="Cancel" color={Colors[theme].buttonBackground} onPress={closeSheet} />
+                <Button title="Save" color={Colors[theme].buttonBackground} onPress={saveNewFriend} />
               </View>
               <NewFriendSettings
                 frequency={selectedFrequency}
