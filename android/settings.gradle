@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'CatchUp'
+rootProject.name = 'Catch\'up  Your friendship relationship manager'
 
 dependencyResolutionManagement {
   versionCatalogs {

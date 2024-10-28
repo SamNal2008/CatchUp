@@ -40,7 +40,7 @@ const CatchUpPurposes = () => {
 
 export default function WelcomeModal() {
     const navigateToHomePage = () => {
-        router.navigate("/(tabs)");
+        router.navigate("./(tabs)");
     }
 
     return (

@@ -7,18 +7,22 @@ import { router } from 'expo-router';
 
 export default function HomeScreen() {
   const isFirstLaunch = async () => {
-    const isFirstLaunch = await AsyncStorage.getItem("FIRST_LAUNCH");
-    if (isFirstLaunch === null) {
-      return true;
-    }
+    const firstLaunch = await AsyncStorage.getItem("FIRST_LAUNCH");
     await AsyncStorage.setItem("FIRST_LAUNCH", "false");
-    return false;
+    return firstLaunch === null;
+  }
+
+  const redirectToWelcomeModalIfFirstConnection = async () => {
+    const firstLaunch = await isFirstLaunch();
+    console.log('First launch :' + firstLaunch);
+    if (firstLaunch) {
+      router.navigate('/welcome-modal');
+      return;
+    }
   }
 
   useEffect(() => {
-    isFirstLaunch().then((firstLaunch) => {
-      router.navigate(firstLaunch ? "/welcome-modal" : "/(tabs)");
-    });
+    redirectToWelcomeModalIfFirstConnection();
   }, []);
 
   return (

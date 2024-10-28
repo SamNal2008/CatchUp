@@ -81,7 +81,7 @@ export const NewFriendSettings = ({ contact, frequency, setFrequency }: NewFrien
   };
 
   return (
-    <View style={styles.container} onTouchStart={() => console.log('click')}>
+    <View style={styles.container}>
       <View style={styles.contactInfo}>
         <Image
           style={styles.image}
@@ -124,21 +124,16 @@ export const NewFriendSettings = ({ contact, frequency, setFrequency }: NewFrien
             <Ionicons size={20} color={Colors[theme].icon} name="refresh-outline" />
             <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
           </View>
-          <>
-            {!isPickerVisible ? <TouchableOpacity style={styles.frequencyButton} onPress={togglePicker}>
-              <Text style={styles.frequencyText}>{frequency}</Text>
-            </TouchableOpacity> : null}
-            {isPickerVisible ? <Picker
-              selectedValue={frequency}
-              mode="dialog"
-              onValueChange={handleFrequencyChange}
-              style={{ width: 150, height: 150, color: Colors[theme].icon, overflow: 'hidden', zIndex: 1000, position: 'fixed' }} itemStyle={{ color: Colors[theme].icon }}
-            >
-              {reminderFrequencyOptions.map((option) => (
-                <Picker.Item key={option} label={option} value={option} />
-              ))}
-            </Picker> : null}
-          </>
+          <Picker
+            selectedValue={frequency}
+            mode="dropdown"
+            onValueChange={handleFrequencyChange}
+            style={{ width: 150, height: 150, color: Colors[theme].icon }} itemStyle={{ color: Colors[theme].icon }}
+          >
+            {reminderFrequencyOptions.map((option) => (
+              <Picker.Item key={option} label={option} value={option} />
+            ))}
+          </Picker>
         </View>
       </View>
     </View>

@@ -3,7 +3,7 @@ import { localNotificationService } from "./LocalNotifications.service";
 
 export interface NotificationsService {
   initializeNotificationsSettings(): void;
-  sendNotificationForContact(contact: ContactModel): Promise<void>;
+  registerNotificationForContact(contact: ContactModel): Promise<string>;
   requestPermission(): void;
 }
 

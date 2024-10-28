@@ -62,7 +62,6 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const backgroundColor = useThemeColor("background");
 
   useEffect(() => {
-    console.log("newContact : " + newContact);
     if (newContact) {
       bottomSheetRef.current?.expand();
     } else {

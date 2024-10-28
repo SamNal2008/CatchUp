@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Notorius",
+    "name": "Catch'up : Your friendship relationship manager",
     "slug": "CatchUp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/react-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -57,7 +57,15 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/react-logo.png",
+          "color": "black",
+          "defaultChannel": "default"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
