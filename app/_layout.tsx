@@ -64,11 +64,6 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const dbInfo = await db.getFirstAsync<{ user_version: number }>(
     "PRAGMA user_version"
   );
-  // get all tables
-    const tables = await db.getAllAsync("SELECT name FROM sqlite_master WHERE type='table';");
-    const notifications = await db.getAllAsync("SELECT * FROM notifications;");
-  console.debug(tables);
-  console.debug(notifications);
   if (dbInfo == null) {
     throw new Error("Failed to get database version");
   }

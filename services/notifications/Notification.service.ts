@@ -7,6 +7,7 @@ export interface NotificationsService {
   initializeNotificationsSettings(): void;
   registerNotificationForContact(contact: ContactModel): Promise<string>;
   requestPermission(): void;
+  registerBirthdayNotificationForContact(contact: ContactModel): any;
 }
 
 export const getNotificationsService = (): NotificationsService => localNotificationService;

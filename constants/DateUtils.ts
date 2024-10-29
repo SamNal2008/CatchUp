@@ -50,6 +50,14 @@ const getDateFromContactDate = (contactDate: Contact.Date): Date => {
     return new Date(formattedDate);
 }
 
+const getBirthDateFromBirthday = (contact: Contact.Contact | null): Date | null => {
+    if (!contact?.birthday) {
+        return null;
+    }
+    return getDateFromContactDate(contact.birthday);
+
+}
+
 export const DateUtils = {
     INTERVAL_IN_MS,
     NUMBER_OF_DAYS_IN,
@@ -57,5 +65,6 @@ export const DateUtils = {
     getDaysAgo,
     getDaysAgoFromFrequency,
     getDateToRelaunch,
-    getDateFromContactDate
+    getDateFromContactDate,
+    getBirthDateFromBirthday
 }

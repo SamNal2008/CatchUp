@@ -9,6 +9,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { Colors } from "@/constants/design/Colors";
 import { router } from 'expo-router';
+import {DateUtils} from "@/constants/DateUtils";
 
 interface BottomSheetContextProps {
 
@@ -27,6 +28,9 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const theme = useColorSchemeOrDefault();
   const { newContact, addNewFriend } = useContacts();
+
+  const [contactBirthday, setContactBirthday] = useState<Date>(DateUtils.getBirthDateFromBirthday(newContact) ?? new Date());
+  const [contactLastCheckIn, setContactLastCheckIn] = useState<Date>(new Date());
 
   const closeSheet = () => {
     bottomSheetRef.current?.close();
@@ -49,7 +53,7 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const saveNewFriend = async () => {
-    await addNewFriend(createNewContactEntity(newContact, selectedFrequency));
+    await addNewFriend(createNewContactEntity({contact: newContact, frequency: selectedFrequency, birthDate: contactBirthday, lastCheckin: contactLastCheckIn}));
     bottomSheetRef.current?.close();
     router.navigate('/(tabs)/profile');
   };
@@ -95,6 +99,10 @@ export const BottomSheetProvider = ({ children }: { children: ReactNode }) => {
                 frequency={selectedFrequency}
                 setFrequency={setSelectedFrequency}
                 contact={newContact}
+                birthDay={contactBirthday}
+                lastCheckin={contactLastCheckIn}
+                setBirthday={setContactBirthday}
+                setLastCheckin={setContactLastCheckIn}
               />
             </BottomSheetView>
           </BottomSheet>

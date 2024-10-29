@@ -6,50 +6,71 @@ import {ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency"
 import {NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
 
 const registerNotificationForContact = (contact: ContactModel): Promise<string> => {
-  return Notifications.scheduleNotificationAsync({
-    content: {
-      title: `Pauvre ${contact.firstName} ! 😭`,
-      body: `Ça fait ${ReminderFrequencyUtils.translateFrequencyToFrench(contact.frequency)} que tu n'as pas pris de ses news !`,
-    },
-    trigger: {
-      seconds: ReminderFrequencyUtils.getNextNotificationSecondsInterval(contact.frequency),
-      channelId: 'default'
-    }
-  });
+    return Notifications.scheduleNotificationAsync({
+        content: {
+            title: `Catch’up with ${contact.firstName} !`,
+            body: `You last checked in ${ReminderFrequencyUtils.translateFrequencyToEnglish(contact.frequency)} ago`,
+        },
+        trigger: {
+            seconds: ReminderFrequencyUtils.getNextNotificationSecondsInterval(contact.frequency),
+            channelId: 'default',
+            repeats: true
+        }
+    });
 }
 
 const requestPermission = async (): Promise<void> => {
-  const { granted } = await Notifications.requestPermissionsAsync();
-  if (!granted) {
-    Alert.alert(
-      "Pas de notis, pas d'amis !",
-      "Sans les notifications, Catch'up ne pourra pas vous informer de vos contacts à relancer."
-    );
-  }
+    const {granted} = await Notifications.requestPermissionsAsync();
+    if (!granted) {
+        Alert.alert(
+            "Pas de notis, pas d'amis !",
+            "Sans les notifications, Catch'up ne pourra pas vous informer de vos contacts à relancer."
+        );
+    }
 }
 
 const initializeNotificationsSettings = () => {
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: true,
-    }),
-  });
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: true,
+        }),
+    });
 }
 
 const deleteNotificationAndCreateNewPostponed = async (notificationId: NotificationId, contact: ContactModel): Promise<NotificationModel> => {
-  await Notifications.cancelScheduledNotificationAsync(notificationId);
-  const newNotificationId = await registerNotificationForContact(contact);
-  return {
-    contact: contact,
-    notificationId: newNotificationId
-  };
+    await Notifications.cancelScheduledNotificationAsync(notificationId);
+    const newNotificationId = await registerNotificationForContact(contact);
+    return {
+        contact: contact,
+        notificationId: newNotificationId
+    };
+}
+
+const registerBirthdayNotificationForContact = (contact: ContactModel): any => {
+    if (!contact.birthDate) {
+        return;
+    }
+    return Notifications.scheduleNotificationAsync({
+        content: {
+            title: `It’s ${contact.firstName}’s birthday 🎉`,
+            body: `Send wishes, make their day!`,
+        },
+        trigger: {
+            channelId: 'default',
+            month: contact.birthDate.getMonth() + 1,
+            day: contact.birthDate.getDate(),
+            hour: 22,
+            minute: 49,
+        }
+    });
 }
 
 export const localNotificationService: NotificationsService = {
-  registerNotificationForContact,
-  requestPermission,
-  initializeNotificationsSettings,
-  deleteNotificationAndCreateNewPostponed
+    registerNotificationForContact,
+    requestPermission,
+    initializeNotificationsSettings,
+    deleteNotificationAndCreateNewPostponed,
+    registerBirthdayNotificationForContact,
 };

@@ -1,6 +1,7 @@
 import * as SQLite from "expo-sqlite";
 import * as Contact from 'expo-contacts';
 import { ContactModel, ContactId, ContactEntity, createNewContactEntity } from "./ContactEntity";
+import {DateUtils} from "@/constants/DateUtils";
 
 export const DATABASE_NAME = "catch_up.db";
 
@@ -46,19 +47,19 @@ class LocalRepository implements ContactsRepository {
     if (!contactInPhone) {
       throw new Error(`Contact with ID ${contactId} not found in user phone`);
     }
-    return createNewContactEntity(contactInPhone, entity.frequency);
+    return createNewContactEntity({contact: contactInPhone, frequency: entity.frequency, birthDate: DateUtils.getBirthDateFromBirthday(contactInPhone), lastCheckin: null});
   }
 
   public async getAll(): Promise<Array<ContactModel>> {
     const result = new Array<ContactModel>();
     const entities: ContactEntity[] = await this.db.getAllAsync<ContactEntity>(`SELECT * FROM ${LocalRepository.TABLE_NAME}`);
     for (const entity of entities) {
-      const contactInPhone: Contact.Contact | undefined = await Contact.getContactByIdAsync(entity.contact_id, [Contact.Fields.ID, Contact.Fields.FirstName, Contact.Fields.LastName, Contact.Fields.Image]);
+      const contactInPhone: Contact.Contact | undefined = await Contact.getContactByIdAsync(entity.contact_id, [Contact.Fields.ID, Contact.Fields.FirstName, Contact.Fields.LastName, Contact.Fields.Image, Contact.Fields.Birthday]);
       if (!contactInPhone) {
         console.warn(`Contact with ID : ${entity.contact_id} not found in phone anymore`);
         continue;
       }
-      result.push(createNewContactEntity(contactInPhone, entity.frequency));
+      result.push(createNewContactEntity({contact: contactInPhone, frequency: entity.frequency, birthDate: DateUtils.getBirthDateFromBirthday(contactInPhone), lastCheckin: null}));
     }
     return result;
   }

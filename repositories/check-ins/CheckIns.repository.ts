@@ -1,8 +1,5 @@
 import * as SQLite from "expo-sqlite";
-import * as Contact from 'expo-contacts';
-import { ContactModel, ContactId, ContactEntity, createNewContactEntity } from "../contacts/ContactEntity";
-import { ReminderFrequency } from "../contacts/ReminderFrequency";
-import { CheckInEntity } from "./CheckInEntity";
+import { ContactId, ReminderFrequency, CheckInEntity } from "@/repositories";
 import { DateUtils } from "@/constants/DateUtils";
 
 export const DATABASE_NAME = "catch_up.db";

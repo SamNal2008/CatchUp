@@ -6,6 +6,7 @@ import { useSQLiteContext } from "expo-sqlite";
 type UseNotifications = {
     askForNotificationPermission: () => void;
     registerFriendNotificationReminder: (contact: ContactModel) => void;
+    registerFriendNotificationBirthdayReminder: (contact: ContactModel) => void;
     postPoneReminder: (contact: ContactModel) => void;
     clearAllNotifications: () => void;
 };
@@ -37,6 +38,14 @@ export const useNotifications = (): UseNotifications => {
         }
     }
 
+    const registerFriendNotificationBirthdayReminder = async (contact: ContactModel) => {
+        try {
+            const notificationId = await notificationsService.registerBirthdayNotificationForContact(contact);
+        } catch (e) {
+            console.error(`Unable to register birthday notification for contact ${contact.id}`, e);
+        }
+    }
+
     const postPoneReminder = async (contact: ContactModel) => {
         if (!contact.id) {
             console.error(`Unable to postpone notification for contact without id`);
@@ -59,5 +68,5 @@ export const useNotifications = (): UseNotifications => {
         }
     }
 
-    return { askForNotificationPermission, registerFriendNotificationReminder, postPoneReminder, clearAllNotifications };
+    return { askForNotificationPermission, registerFriendNotificationReminder, postPoneReminder, clearAllNotifications, registerFriendNotificationBirthdayReminder };
 };

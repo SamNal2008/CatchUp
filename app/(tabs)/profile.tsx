@@ -161,6 +161,7 @@ export default function Profile() {
   const [yearlyContacts, setYearlyContacts] = useState<ContactModel[]>([]);
   const [weeklyContacts, setWeeklyContacts] = useState<ContactModel[]>([]);
   const [monthlyContacts, setMonthlyContacts] = useState<ContactModel[]>([]);
+  const [dailyContacts, setDailyContacts] = useState<ContactModel[]>([]);
   const { friends, deleteFriend } = useContacts();
   const { checkInsRepository } = useCheckIns();
   const { postPoneReminder, clearAllNotifications } = useNotifications();
@@ -169,6 +170,7 @@ export default function Profile() {
     setYearlyContacts(friends.filter(contact => contact.frequency === 'yearly'));
     setWeeklyContacts(friends.filter(contact => contact.frequency === 'weekly'));
     setMonthlyContacts(friends.filter(contact => contact.frequency === 'monthly'));
+    setDailyContacts(friends.filter(contact => contact.frequency === 'daily'));
   }, [friends]);
 
   useEffect(() => {
@@ -212,6 +214,7 @@ export default function Profile() {
           </View>
           :
           <View style={{ flex: 1, gap: 30 }}>
+            <Section title="Every day" contacts={dailyContacts} />
             <Section title='Every week' contacts={weeklyContacts} />
             <Section title="Every month" contacts={monthlyContacts} />
             <Section title="Every year" contacts={yearlyContacts} />

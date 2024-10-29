@@ -21,16 +21,20 @@ import {Colors} from "@/constants/design/Colors";
 import * as Linking from 'expo-linking';
 import {ReminderFrequency} from "@/repositories/contacts/ReminderFrequency";
 import {SymbolView} from 'expo-symbols';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
 import {DateUtils} from "@/constants/DateUtils";
 
 type NewFriendSettingsProps = {
     contact: Contact | null;
     frequency: ReminderFrequency;
-    setFrequency: Dispatch<SetStateAction<ReminderFrequency>>
+    setFrequency: Dispatch<SetStateAction<ReminderFrequency>>;
+    birthDay: Date | null;
+    lastCheckin: Date | null;
+    setBirthday: Dispatch<SetStateAction<Date>>;
+    setLastCheckin: Dispatch<SetStateAction<Date>>;
 };
 
-export const NewFriendSettings = ({contact, frequency, setFrequency}: NewFriendSettingsProps) => {
+export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday, birthDay, setLastCheckin, lastCheckin}: NewFriendSettingsProps) => {
     const theme = useColorScheme() ?? 'light';
     const [isPickerVisible, setIsPickerVisible] = useState(false);
 
@@ -101,6 +105,14 @@ export const NewFriendSettings = ({contact, frequency, setFrequency}: NewFriendS
         setIsPickerVisible(false);
     };
 
+    const updateContactBirthday = (event: DateTimePickerEvent) => {
+        setBirthday(new Date(event.nativeEvent.timestamp));
+    }
+
+    const updateContactLastCheckIn = (event: DateTimePickerEvent) => {
+        setLastCheckin(new Date(event.nativeEvent.timestamp));
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.contactInfo}>
@@ -132,15 +144,15 @@ export const NewFriendSettings = ({contact, frequency, setFrequency}: NewFriendS
                         <Text style={styles.complementaryInfoTitle}>Birthday :</Text>
                     </View>
                     <DateTimePicker
-                        value={contact.birthday ? new Date(DateUtils.getDateFromContactDate(contact.birthday)) : new Date()}
-                        onChange={e => console.log(new Date(e.nativeEvent.timestamp))}/>
+                        value={birthDay ? birthDay : new Date()}
+                        onChange={updateContactBirthday}/>
                 </View>
                 <View style={styles.complementaryInfo}>
                     <View style={styles.complementaryInfoTitleContainer}>
                         <AntDesign size={20} color={Colors[theme].icon} name="calendar"/>
                         <Text style={styles.complementaryInfoTitle}>Last check in :</Text>
                     </View>
-                    <DateTimePicker value={new Date()} onChange={e => console.log(new Date(e.nativeEvent.timestamp))}/>
+                    <DateTimePicker value={lastCheckin ?? new Date()} onChange={updateContactLastCheckIn}/>
                 </View>
                 <View style={styles.complementaryInfo}>
                     <View style={styles.complementaryInfoTitleContainer}>

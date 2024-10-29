@@ -6,9 +6,6 @@ import { useSQLiteContext } from "expo-sqlite";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import *  as TaskManager from 'expo-task-manager';
 
-TaskManager.defineTask('background-notification-task', ({ data, error, executionInfo }) => {
-});
-
 interface ContactContextProps {
     newContact: Contact | null;
     friends: Array<ContactModel>;
@@ -28,7 +25,7 @@ export const useContacts = () => {
 }
 
 export const ContactProvider = ({ children }: { children: ReactNode }) => {
-    const { registerFriendNotificationReminder } = useNotifications();
+    const { registerFriendNotificationReminder, registerFriendNotificationBirthdayReminder } = useNotifications();
 
     const [newContact, setNewContact] = useState<Contact | null>(null);
     const [friends, setFriends] = useState<Array<ContactModel>>([]);
@@ -53,6 +50,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
         try {
             await contactsRepository.addNewFriend(contact);
             registerFriendNotificationReminder(contact);
+            registerFriendNotificationBirthdayReminder(contact);
             await fetchFriends();
         } catch (error) {
             console.error('Error saving contact', error);
