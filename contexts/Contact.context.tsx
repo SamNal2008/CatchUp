@@ -16,7 +16,7 @@ interface ContactContextProps {
     fetchFriends: () => Promise<void>;
     addNewFriend: (contact: ContactModel) => Promise<void>;
     deleteFriend: (contactId: ContactId) => Promise<void>;
-};
+}
 
 
 const ContactContext = createContext<ContactContextProps | null>(null);
@@ -27,12 +27,13 @@ export const useContacts = () => {
     return context;
 }
 
-export const ContactProvider = ({children}: {children: ReactNode}) => {
+export const ContactProvider = ({ children }: { children: ReactNode }) => {
+    const { registerFriendNotificationReminder } = useNotifications();
+
     const [newContact, setNewContact] = useState<Contact | null>(null);
     const [friends, setFriends] = useState<Array<ContactModel>>([]);
     const db = useSQLiteContext();
     const contactsRepository = getContactsRepository(db);
-    useNotifications();
 
     useEffect(() => {
         fetchFriends();
@@ -51,7 +52,8 @@ export const ContactProvider = ({children}: {children: ReactNode}) => {
     const addNewFriend = async (contact: ContactModel) => {
         try {
             await contactsRepository.addNewFriend(contact);
-            fetchFriends();
+            registerFriendNotificationReminder(contact);
+            await fetchFriends();
         } catch (error) {
             console.error('Error saving contact', error);
             alert('Unable to save contact : ' + contact.firstName + ', are you sure you did not already add this friend ?');
@@ -59,7 +61,7 @@ export const ContactProvider = ({children}: {children: ReactNode}) => {
     };
 
     return (
-        <ContactContext.Provider value={{newContact, friends, setNewContact, fetchFriends, addNewFriend, deleteFriend}}>
+        <ContactContext.Provider value={{ newContact, friends, setNewContact, fetchFriends, addNewFriend, deleteFriend }}>
             {children}
         </ContactContext.Provider>
     );

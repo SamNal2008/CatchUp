@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "Catch'up : Your friendship relationship manager",
+    "name": "Catch'up",
     "slug": "CatchUp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/react-logo@3x.png",
+    "icon": "./assets/images/catchup-logo.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/react-logo.png",
+      "image": "./assets/images/Splash_screen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

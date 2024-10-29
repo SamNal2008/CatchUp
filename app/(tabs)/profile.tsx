@@ -67,7 +67,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
   const borderColor = useThemeColor('borderColor');
   const { deleteFriend, friends } = useContacts();
   const { checkInsRepository } = useCheckIns();
-  const { notificationsService } = useNotifications();
+  const { postPoneReminder, askForNotificationPermission } = useNotifications();
 
 
   const [isOnDeleteMode, setIsOnDeleteMode] = useState<boolean>(false);
@@ -79,8 +79,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
 
   useEffect(() => {
     if (friends.length > 0) {
-      notificationsService.initializeNotificationsSettings();
-      notificationsService.requestPermission();
+      askForNotificationPermission();
     }
   }, []);
 
@@ -114,6 +113,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
       return;
     }
     checkInsRepository.checkInOnContact(contact.id);
+    postPoneReminder(contact);
     setReload(prev => !prev);
   }
 
@@ -163,6 +163,7 @@ export default function Profile() {
   const [monthlyContacts, setMonthlyContacts] = useState<ContactModel[]>([]);
   const { friends, deleteFriend } = useContacts();
   const { checkInsRepository } = useCheckIns();
+  const { postPoneReminder, clearAllNotifications } = useNotifications();
 
   const getAllFriends = useCallback(() => {
     setYearlyContacts(friends.filter(contact => contact.frequency === 'yearly'));
@@ -176,10 +177,11 @@ export default function Profile() {
 
   const wipeAllDatabases = () => {
     checkInsRepository.deleteAllCheckIns();
+    clearAllNotifications();
     friends
       .map(friend => friend.id)
       .filter(friendId => friendId !== null && friendId !== undefined)
-      .forEach(friendId => deleteFriend(friendId));
+      .forEach(friendId => deleteFriend(friendId!));
   }
 
   const wipeAll = () => {

@@ -16,7 +16,7 @@ const translateFrequencyToFrench = (frequency: ReminderFrequency): string => {
 const getNextNotificationSecondsInterval = (frequency: ReminderFrequency): number => {
 
     const toSeconds = (dayNumber: number) => {
-        return dayNumber * 60 * 60 * 24;
+        return dayNumber;
     };
 
     switch (frequency) {

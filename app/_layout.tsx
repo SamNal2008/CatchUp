@@ -60,11 +60,15 @@ export default function RootLayout() {
 }
 
 async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  const DATABASE_VERSION = 2;
+  const DATABASE_VERSION = 3;
   const dbInfo = await db.getFirstAsync<{ user_version: number }>(
     "PRAGMA user_version"
   );
-  console.debug(dbInfo);
+  // get all tables
+    const tables = await db.getAllAsync("SELECT name FROM sqlite_master WHERE type='table';");
+    const notifications = await db.getAllAsync("SELECT * FROM notifications;");
+  console.debug(tables);
+  console.debug(notifications);
   if (dbInfo == null) {
     throw new Error("Failed to get database version");
   }
@@ -89,7 +93,17 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
       `);
     currentDbVersion = 2;
   }
-  // if (currentDbVersion === 2) {
+
+  if (currentDbVersion === 2) {
+    console.log('creating notifications table');
+    await db.execAsync(`
+      PRAGMA journal_mode = 'wal';
+     CREATE TABLE if not exists notifications (contact_id TEXT, notification_id TEXT, frequency TEXT , PRIMARY KEY (contact_id, notification_id));
+      `);
+    currentDbVersion = 3;
+ }
+
+  // if (currentDbVersion === 3) {
   //   add more migration
   // }
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
