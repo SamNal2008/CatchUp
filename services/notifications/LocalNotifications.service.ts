@@ -2,20 +2,9 @@ import {ContactModel} from "@/repositories/contacts/ContactEntity";
 import {NotificationsService} from "./Notification.service";
 import * as Notifications from 'expo-notifications';
 import {Alert} from "react-native";
-import {ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency";
+import {getRandomBetween, ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency";
 import {NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
 
-type RandomHourInterval = {
-    min: number;
-    max: number;
-}
-
-export const getRandomBetween = (randomHourInterval: RandomHourInterval[]): number => {
-    const randomInterval = randomHourInterval[Math.floor(Math.random() * randomHourInterval.length)];
-    return Math.floor(Math.random() * (randomInterval.max - randomInterval.min + 1)) + randomInterval.min;
-}
-
-// getRandomBetween([{min: 8, max: 10}, {min: 12, max: 14}, {min: 18, max: 20}]),
 const registerNotificationForContact = (contact: ContactModel): Promise<string> => {
     return Notifications.scheduleNotificationAsync({
         content: {

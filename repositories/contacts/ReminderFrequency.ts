@@ -1,5 +1,15 @@
-import {getRandomBetween} from "@/services/notifications/LocalNotifications.service";
 import {NotificationTriggerInput} from "expo-notifications/src/Notifications.types";
+
+
+type RandomHourInterval = {
+    min: number;
+    max: number;
+}
+
+export const getRandomBetween = (randomHourInterval: RandomHourInterval[]): number => {
+    const randomInterval = randomHourInterval[Math.floor(Math.random() * randomHourInterval.length)];
+    return Math.floor(Math.random() * (randomInterval.max - randomInterval.min + 1)) + randomInterval.min;
+}
 
 export type ReminderFrequency = "weekly" | "monthly" | "yearly" | "daily";
 

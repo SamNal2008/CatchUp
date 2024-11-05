@@ -1,10 +1,5 @@
-import {getRandomBetween} from "@/services/notifications/LocalNotifications.service";
 import expect from "expect";
-import {ReminderFrequencyUtils} from "@/repositories";
-import {
-    NotificationTriggerInput,
-    SchedulableNotificationTriggerInput
-} from "expo-notifications/src/Notifications.types";
+import {getRandomBetween} from "@/repositories/contacts/ReminderFrequency";
 
 describe('Random', () => {
     it('should return random hours between 8 and 10', () => {
