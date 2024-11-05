@@ -5,17 +5,24 @@ import {Alert} from "react-native";
 import {ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency";
 import {NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
 
+type RandomHourInterval = {
+    min: number;
+    max: number;
+}
+
+export const getRandomBetween = (randomHourInterval: RandomHourInterval[]): number => {
+    const randomInterval = randomHourInterval[Math.floor(Math.random() * randomHourInterval.length)];
+    return Math.floor(Math.random() * (randomInterval.max - randomInterval.min + 1)) + randomInterval.min;
+}
+
+// getRandomBetween([{min: 8, max: 10}, {min: 12, max: 14}, {min: 18, max: 20}]),
 const registerNotificationForContact = (contact: ContactModel): Promise<string> => {
     return Notifications.scheduleNotificationAsync({
         content: {
             title: `Catch’up with ${contact.firstName} !`,
             body: `You last checked in ${ReminderFrequencyUtils.translateFrequencyToEnglish(contact.frequency)} ago`,
         },
-        trigger: {
-            seconds: ReminderFrequencyUtils.getNextNotificationSecondsInterval(contact.frequency),
-            channelId: 'default',
-            repeats: true
-        }
+        trigger: ReminderFrequencyUtils.getNextNotificationTrigger(contact.frequency),
     });
 }
 
@@ -61,10 +68,14 @@ const registerBirthdayNotificationForContact = (contact: ContactModel): any => {
             channelId: 'default',
             month: contact.birthDate.getMonth() + 1,
             day: contact.birthDate.getDate(),
-            hour: 22,
-            minute: 49,
+            hour: getRandomBetween([{min: 9, max: 10}]),
+            minute: getRandomBetween([{min: 0, max: 59}]),
         }
     });
+}
+
+const clearAllNotifications = () => {
+    Notifications.cancelAllScheduledNotificationsAsync();
 }
 
 export const localNotificationService: NotificationsService = {
@@ -73,4 +84,5 @@ export const localNotificationService: NotificationsService = {
     initializeNotificationsSettings,
     deleteNotificationAndCreateNewPostponed,
     registerBirthdayNotificationForContact,
+    clearAllNotifications
 };

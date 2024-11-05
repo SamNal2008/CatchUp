@@ -1,4 +1,5 @@
-import * as Notification from 'expo-notifications';
+import {getRandomBetween} from "@/services/notifications/LocalNotifications.service";
+import {NotificationTriggerInput} from "expo-notifications/src/Notifications.types";
 
 export type ReminderFrequency = "weekly" | "monthly" | "yearly" | "daily";
 
@@ -15,27 +16,46 @@ const translateFrequencyToEnglish = (frequency: ReminderFrequency): string => {
     }
 }
 
-const getNextNotificationSecondsInterval = (frequency: ReminderFrequency): number => {
+const getWeekOfMonthOfToday = (): number => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const dayOfWeek = start.getDay();
+    const today = now.getDate();
+    return Math.ceil((today + dayOfWeek) / 7);
+}
 
-    const TO_SECONDS = 60 * 60 * 24;
-
-    const toSeconds = (dayNumber: number) => {
-        return dayNumber * TO_SECONDS;
-    };
-
+const getNextNotificationTrigger = (frequency: ReminderFrequency): NotificationTriggerInput => {
+    const randomHour = getRandomBetween([{min: 8, max: 10}, {min: 12, max: 14}, {min: 18, max: 20}]);
+    const randomMinute = getRandomBetween([{min: 0, max: 59}]);
+    const baseTriggerInput = {
+        hour: randomHour,
+        minute: randomMinute,
+        repeats: true,
+        channelId: 'default'
+    }
     switch (frequency) {
         case 'daily':
-            return toSeconds(1)
-        case 'monthly':
-            return toSeconds(30);
+            return baseTriggerInput;
         case 'weekly':
-            return toSeconds(7);
+            return {
+                weekday: new Date().getDay(),
+                ...baseTriggerInput
+            };
+        case 'monthly':
+            return {
+                weekOfMonth: getWeekOfMonthOfToday(),
+                ...baseTriggerInput
+            }
         case 'yearly':
-            return toSeconds(365);
+            return {
+                month: new Date().getMonth() + 1,
+                day: new Date().getDate(),
+                ...baseTriggerInput
+            }
     }
 };
 
 export const ReminderFrequencyUtils = {
     translateFrequencyToEnglish,
-    getNextNotificationSecondsInterval
+    getNextNotificationTrigger
 }

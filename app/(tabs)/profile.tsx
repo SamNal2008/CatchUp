@@ -2,13 +2,17 @@ import { ThemedView } from "@/components/ThemedView";
 import { useContacts } from "@/contexts/Contact.context";
 import { useCallback, useEffect, useState } from "react";
 import { ContactModel } from "@/repositories";
-import { View, Text, StyleSheet, Pressable, Alert, Button, Image } from "react-native";
+import { View, StyleSheet, Pressable, Alert, Button, Image } from "react-native";
+import { PrimaryButton } from "@/components/PrimaryButton";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useCheckIns } from "@/contexts/CheckIns.context";
-import { PrimaryButton } from "@/components";
 import { useNotifications } from "@/hooks/useNotificatons";
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import {SymbolView} from "expo-symbols";
+import {Colors} from "@/constants/design";
+import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 
 const styles = StyleSheet.create({
   friendContainer: {
@@ -22,12 +26,11 @@ const styles = StyleSheet.create({
     gap: 10,
     width: '100%',
   },
-  text: {
-    fontSize: 12,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
+  additionalButton: {
+    padding: 10,
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   sectionTitle: {
     fontSize: 16,
@@ -56,10 +59,13 @@ type CheckInButtonProps = {
 
 
 const AdditionalButtons = ({ onPress }: CheckInButtonProps) => {
+  const theme = useColorSchemeOrDefault();
   return (
-    <Pressable onPress={onPress}>
-      <Text style={styles.text}>❌</Text>
-    </Pressable>
+    <View style={[{maxWidth: '20%', alignSelf: 'center', alignItems: 'center', width: '100%', justifyContent: 'center', flexDirection: 'row'}, styles.additionalButton]}>
+      <Pressable onPress={onPress}>
+        <SymbolView name="trash.fill" tintColor={Colors[theme].background}/>
+      </Pressable>
+    </View>
   );
 }
 
@@ -122,7 +128,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
   const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
 
   return (
-    <Pressable onPointerLeave={toggleDeleteFriend} onLongPress={toggleDeleteFriend}>
+      <Swipeable renderRightActions={() => <AdditionalButtons onPress={() => deleteFriend(contact.id!)}/>}>
       <View style={[styles.friendContainer]}>
         <View style={styles.friendNameContainer}>
           {contact.image ?
@@ -131,15 +137,17 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
           <View>
             <ThemedText style={styles.friendName}>{contact.firstName}</ThemedText>
             {hasAlreadyCheckedIn ?
-              hasCheckedInToday ? <ThemedText type="subText">Checked in today</ThemedText> : <ThemedText type="subText">Checked in {toDaysAgo} days ago</ThemedText>
-              :
+              hasCheckedInToday ?
+                  <ThemedText type="subText">Checked in today</ThemedText> :
+                  <ThemedText type="subText">Checked in {toDaysAgo} days ago</ThemedText>
+                :
               <ThemedText type="subText">Never checked in yet !</ThemedText>
             }
           </View>
         </View>
-        {isOnDeleteMode ? <AdditionalButtons onPress={promptForFriendDeletion} /> : <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} disabled={hasCheckedInToday} />}
+        <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} disabled={hasCheckedInToday} />
       </View>
-    </Pressable>
+    </Swipeable>
   )
 }
 

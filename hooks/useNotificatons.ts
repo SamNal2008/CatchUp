@@ -18,6 +18,7 @@ export const useNotifications = (): UseNotifications => {
 
     const clearAllNotifications = () => {
         notificationRepository.clearAllNotifications();
+        notificationsService.clearAllNotifications();
     }
 
     const askForNotificationPermission = () => {
