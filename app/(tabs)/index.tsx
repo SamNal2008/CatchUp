@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import {Button, StyleSheet, Text, View} from "react-native";
 import { ThemedText } from "@/components/atoms/ThemedText";
 import { ThemedView } from "@/components/atoms/ThemedView";
 import { useEffect } from "react";
@@ -6,8 +6,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from 'expo-router';
 import Toast from "react-native-root-toast";
 import {Palette} from "@/constants/design";
+import {useMyBottomSheet} from "@/contexts/BottomSheetProvider.context";
 
 export default function HomeScreen() {
+  const {showBottomSheet} = useMyBottomSheet();
   const isFirstLaunch = async () => {
     const firstLaunch = await AsyncStorage.getItem("FIRST_LAUNCH");
     await AsyncStorage.setItem("FIRST_LAUNCH", "false");
@@ -37,6 +39,11 @@ export default function HomeScreen() {
           Add friends to stay in touch, share memories, and never miss a
           birthday
         </ThemedText>
+        <Button title={"click"} onPress={() => {
+          console.log('click')
+          showBottomSheet(<Text>Toto</Text>);
+          console.log('toto')
+        }}/>
       </View>
     </ThemedView>
   );

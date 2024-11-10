@@ -13,10 +13,11 @@ import {ContactProvider} from "@/contexts/Contact.context";
 import {SQLiteDatabase, SQLiteProvider} from "expo-sqlite";
 import {DATABASE_NAME} from "../repositories/contacts/Contacts.repository";
 import {CheckInsProvider} from "@/contexts/CheckIns.context";
-import {BottomSheetProvider} from "@/contexts/BottomSheetProvider.context";
+import {MyBottomSheetProvider} from "@/contexts/BottomSheetProvider.context";
 import {RootSiblingParent} from "react-native-root-siblings";
 import Toast from 'react-native-root-toast';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -40,27 +41,29 @@ export default function RootLayout() {
     return (
         <GestureHandlerRootView style={{flex: 1}}>
             <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-                <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrateDbIfNeeded}>
-                    <RootSiblingParent>
-                        <CheckInsProvider>
-                            <ContactProvider>
-                                <BottomSheetProvider>
-                                    <Stack>
-                                        <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                                        <Stack.Screen
-                                            name="welcome-modal"
-                                            options={{
-                                                headerShown: false,
-                                                presentation: "modal",
-                                            }}
-                                        />
-                                        <Stack.Screen name="+not-found"/>
-                                    </Stack>
-                                </BottomSheetProvider>
-                            </ContactProvider>
-                        </CheckInsProvider>
-                    </RootSiblingParent>
-                </SQLiteProvider>
+                <BottomSheetModalProvider>
+                        <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrateDbIfNeeded}>
+                            <RootSiblingParent>
+                                <CheckInsProvider>
+                                    <ContactProvider>
+                                        <MyBottomSheetProvider>
+                                            <Stack>
+                                                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                                                <Stack.Screen
+                                                    name="welcome-modal"
+                                                    options={{
+                                                        headerShown: false,
+                                                        presentation: "modal",
+                                                    }}
+                                                />
+                                                <Stack.Screen name="+not-found"/>
+                                            </Stack>
+                                        </MyBottomSheetProvider>
+                                    </ContactProvider>
+                                </CheckInsProvider>
+                            </RootSiblingParent>
+                        </SQLiteProvider>
+                </BottomSheetModalProvider>
             </ThemeProvider>
         </GestureHandlerRootView>
     );

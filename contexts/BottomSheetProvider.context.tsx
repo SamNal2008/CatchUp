@@ -16,19 +16,20 @@ import {Colors} from "@/constants/design/Colors";
 import {router} from 'expo-router';
 import {DateUtils} from "@/constants/DateUtils";
 
-interface BottomSheetContextProps {
-
+type BottomSheetContextProps = {
+    showBottomSheet: (content: ReactNode) => void;
 };
 
 const BottomSheetContext = createContext<BottomSheetContextProps | null>(null);
 
-export const useBottomSheet = () => {
+export const useMyBottomSheet = () => {
     const context = useContext(BottomSheetContext);
     if (!context) throw new Error('Context should be defined');
     return context;
 }
 
-export const BottomSheetProvider = ({children}: { children: ReactNode }) => {
+export const MyBottomSheetProvider = ({children}: { children: ReactNode }) => {
+    const [contentToDisplay, setContentToDisplay] = useState<ReactNode | null>(null);
     const snapPoints = useMemo(() => ["50%", "60%", "80%"], []);
     const bottomSheetRef = useRef<BottomSheet>(null);
     const theme = useColorSchemeOrDefault();
@@ -42,6 +43,12 @@ export const BottomSheetProvider = ({children}: { children: ReactNode }) => {
     };
 
     const [selectedFrequency, setSelectedFrequency] = useState<ReminderFrequency>("weekly");
+
+    const showBottomSheet = (content: ReactNode) => {
+        console.log('showing bottom sheet');
+        setContentToDisplay(content);
+        bottomSheetRef.current?.expand();
+    };
 
     const renderBackdrop = useCallback(
         (props: BottomSheetBackdropProps) => (
@@ -80,43 +87,29 @@ export const BottomSheetProvider = ({children}: { children: ReactNode }) => {
     }, [newContact]);
 
     return (
-        <BottomSheetModalProvider>
-            <BottomSheetContext.Provider value={null}>
-                {children}
-                <BottomSheet
-                    ref={bottomSheetRef}
-                    backdropComponent={renderBackdrop}
-                    snapPoints={snapPoints}
-                    enablePanDownToClose={true}
-                    style={[
-                        {
-                            backgroundColor,
-                            borderTopLeftRadius: 20,
-                            borderTopRightRadius: 20,
-                        },
-                    ]}
-                    handleIndicatorStyle={{backgroundColor: iconColor}}
-                    backgroundStyle={{backgroundColor}}
-                    index={-1}
-                >
-                    <BottomSheetView style={styles.contentContainer}>
-                        <View style={styles.bottomSheetHeader}>
-                            <Button title="Cancel" color={Colors[theme].buttonBackground} onPress={closeSheet}/>
-                            <Button title="Save" color={Colors[theme].buttonBackground} onPress={saveNewFriend}/>
-                        </View>
-                        <NewFriendSettings
-                            frequency={selectedFrequency}
-                            setFrequency={setSelectedFrequency}
-                            contact={newContact}
-                            birthDay={contactBirthday}
-                            lastCheckin={contactLastCheckIn}
-                            setBirthday={setContactBirthday}
-                            setLastCheckin={setContactLastCheckIn}
-                        />
-                    </BottomSheetView>
-                </BottomSheet>
-            </BottomSheetContext.Provider>
-        </BottomSheetModalProvider>
+        <BottomSheetContext.Provider value={{showBottomSheet}}>
+            {children}
+            <BottomSheet
+                ref={bottomSheetRef}
+                backdropComponent={renderBackdrop}
+                snapPoints={snapPoints}
+                enablePanDownToClose={true}
+                style={[
+                    {
+                        backgroundColor,
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                    },
+                ]}
+                handleIndicatorStyle={{backgroundColor: iconColor}}
+                backgroundStyle={{backgroundColor}}
+                index={-1}
+            >
+                <BottomSheetView style={styles.contentContainer}>
+                    {contentToDisplay}
+                </BottomSheetView>
+            </BottomSheet>
+        </BottomSheetContext.Provider>
     );
 };
 
