@@ -12,7 +12,6 @@ export function ThemedView({ style, lightColor, darkColor, ...otherProps }: Them
     const backgroundColor = useThemeColor('background', { light: lightColor, dark: darkColor });
     return (
         <ScrollView contentContainerStyle={[{ backgroundColor }, styles.default]}>
-            <Header />
             <View style={[styles.content, style]}>
                 {otherProps.children}
             </View>

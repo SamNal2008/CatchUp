@@ -4,7 +4,7 @@ import React from 'react';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/design/Colors';
 import { useColorSchemeOrDefault } from '@/hooks/useColorScheme';
-import { BottomSheetProvider } from '@/contexts/BottomSheetProvider.context';
+import {Header} from "@/components/Header";
 
 export default function TabLayout() {
   const colorScheme = useColorSchemeOrDefault();
@@ -13,8 +13,12 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
-        headerShown: false,
+        headerShown: true,
         tabBarShowLabel: false,
+        tabBarStyle: {
+            backgroundColor: Colors[colorScheme].background,
+        },
+        header: () => <Header />,
       }}>
       <Tabs.Screen
         name="index"

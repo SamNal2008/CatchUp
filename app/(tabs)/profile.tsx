@@ -13,6 +13,8 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {SymbolView} from "expo-symbols";
 import {Colors} from "@/constants/design";
 import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
+import {useSQLiteContext} from "expo-sqlite";
+import * as Notifications from 'expo-notifications';
 
 const styles = StyleSheet.create({
   friendContainer: {
@@ -173,6 +175,7 @@ export default function Profile() {
   const { friends, deleteFriend } = useContacts();
   const { checkInsRepository } = useCheckIns();
   const { postPoneReminder, clearAllNotifications } = useNotifications();
+  const db = useSQLiteContext();
 
   const getAllFriends = useCallback(() => {
     setYearlyContacts(friends.filter(contact => contact.frequency === 'yearly'));
@@ -211,10 +214,18 @@ export default function Profile() {
     ]);
   }
 
+  const selectAllData = () => {
+    console.log("Contacts: " + db.getAllSync('SELECT * FROM contacts'));
+    console.log("Notifications : "+ db.getAllSync('SELECT * FROM notifications'));
+    console.log("Checkins : " + db.getAllSync('SELECT * FROM check_ins'));
+    Notifications.getAllScheduledNotificationsAsync().then(console.log);
+  }
+
   return (
     <ThemedView>
       <View style={{ flex: 1, width: '100%', paddingTop: 30 }}>
         <Button title="Clear databases" onPress={wipeAll} />
+        <Button title={"Select all data in database"} onPress={selectAllData} />
         {friends.length === 0 ?
           <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, gap: 15 }}>
             <ThemedText type={'subtitle'}>C'est vide ici 😭 !</ThemedText>

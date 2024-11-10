@@ -9,22 +9,26 @@ export interface CheckInsRepository {
   getLatestCheckInForContact: (contactId?: ContactId) => Date | null;
   hasAlreadyCheckedInWantedFrequency: (contactId: ContactId, wantedFrequency: ReminderFrequency) => boolean;
   deleteAllCheckIns: () => void;
+  deleteAllCheckInWithContactId: (contactId: ContactId) => void;
 }
 
 class LocalCheckInsRepository implements CheckInsRepository {
+
+  static readonly TABLE_NAME = 'check_ins';
+
   constructor(private readonly db: SQLite.SQLiteDatabase) {}
   public deleteAllCheckIns(): void {
-    this.db.runSync('DELETE FROM check_ins');
+    this.db.runSync(`DELETE FROM ${LocalCheckInsRepository.TABLE_NAME}`);
   }
   
   public hasAlreadyCheckedInWantedFrequency(contactId: ContactId, wantedFrequency: ReminderFrequency): boolean {
     const daysAgoWanted = DateUtils.getDaysAgoFromFrequency(wantedFrequency);
-    return this.db.getFirstSync<boolean>('SELECT COUNT(*) > 0 FROM check_ins WHERE contact_id = ? AND check_in_date >= ?',
+    return this.db.getFirstSync<boolean>(`SELECT COUNT(*) > 0 FROM ${LocalCheckInsRepository.TABLE_NAME} WHERE contact_id = ? AND check_in_date >= ?`,
       [contactId, new Date(new Date().getTime() - daysAgoWanted.getTime()).toISOString()]) ?? false;
   }
 
   public checkInOnContact(contactToCheckInId: ContactId): void {
-    const res = this.db.runSync(`INSERT INTO check_ins (contact_id, check_in_date) VALUES (?, ?)`, [contactToCheckInId, new Date().toISOString()]);
+    const res = this.db.runSync(`INSERT INTO ${LocalCheckInsRepository.TABLE_NAME} (contact_id, check_in_date) VALUES (?, ?)`, [contactToCheckInId, new Date().toISOString()]);
     if (res.changes > 0){
       return;
     }
@@ -35,11 +39,19 @@ class LocalCheckInsRepository implements CheckInsRepository {
     if (!contactId) {
       return null;
     }
-    const res = this.db.getFirstSync<CheckInEntity>('SELECT check_in_date FROM check_ins WHERE contact_id = ? ORDER BY check_in_date DESC LIMIT 1', [contactId])?.check_in_date ?? null;
+    const res = this.db.getFirstSync<CheckInEntity>(`SELECT check_in_date FROM ${LocalCheckInsRepository.TABLE_NAME} WHERE contact_id = ? ORDER BY check_in_date DESC LIMIT 1`, [contactId])?.check_in_date ?? null;
     if (!res) {
       return null;
     }
     return new Date(res);
+  }
+
+  public deleteAllCheckInWithContactId(contactId: ContactId): void {
+    try {
+      this.db.runSync(`DELETE FROM ${LocalCheckInsRepository.TABLE_NAME} WHERE contact_id = ?`, [contactId]);
+    } catch (e) {
+      console.warn(`Could not delete all check in for contact id : ${contactId}`, e);
+    }
   }
 }
 

@@ -16,27 +16,27 @@ export const Palette = {
 export const Colors = {
   light: {
     text: Palette.BLACK,
-    background: Palette.WHITE,
+    background: Palette.GREY_100,
     tint: Palette.BLACK,
-    icon: Palette.BLACK,
+    icon: Palette.GREY_300,
     tabIconDefault: Palette.GREY_200,
     tabIconSelected: Palette.GREY_200,
     borderColor: Palette.BLACK,
     buttonBackground: Palette.BLACK,
     buttonText: Palette.WHITE,
-    buttonBackgroundDisabled: Palette.GREY_300
+    buttonBackgroundDisabled: Palette.GREY_300,
   },
   dark: {
     text: Palette.BLACK,
-    background: Palette.WHITE,
-    tint: Palette.WHITE,
-    icon: Palette.BLACK,
+    background: Palette.GREY_100,
+    tint: Palette.BLACK,
+    icon: Palette.GREY_300,
     tabIconDefault: Palette.GREY_200,
     tabIconSelected: Palette.GREY_200,
     borderColor: Palette.BLACK,
     buttonBackground: Palette.BLACK,
     buttonText: Palette.WHITE,
-    buttonBackgroundDisabled: Palette.GREY_300
+    buttonBackgroundDisabled: Palette.GREY_300,
   },
 } as const;
 

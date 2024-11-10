@@ -1,4 +1,4 @@
-import { ContactModel } from "@/repositories";
+import {ContactId, ContactModel} from "@/repositories";
 import { getNotificationRepository } from "@/repositories/notifications/Notification.repository";
 import { getNotificationsService, NotificationsService } from "@/services/notifications/Notification.service";
 import { useSQLiteContext } from "expo-sqlite";
@@ -9,6 +9,7 @@ type UseNotifications = {
     registerFriendNotificationBirthdayReminder: (contact: ContactModel) => void;
     postPoneReminder: (contact: ContactModel) => void;
     clearAllNotifications: () => void;
+    deleteFriendNotification: (contactId: ContactId) => Promise<void>;
 };
 
 export const useNotifications = (): UseNotifications => {
@@ -69,5 +70,15 @@ export const useNotifications = (): UseNotifications => {
         }
     }
 
-    return { askForNotificationPermission, registerFriendNotificationReminder, postPoneReminder, clearAllNotifications, registerFriendNotificationBirthdayReminder };
+    const deleteFriendNotification = async (contactId: ContactId) => {
+        const notification = notificationRepository.getReminder(contactId);
+        if (!notification) {
+            console.warn('Notification not found for friend with contact id : ' + contactId);
+            return;
+        }
+        notificationRepository.deleteReminder(notification.notification_id);
+        await notificationsService.deleteNotificationWithId(notification.notification_id);
+    }
+
+    return { askForNotificationPermission, registerFriendNotificationReminder, postPoneReminder, clearAllNotifications, registerFriendNotificationBirthdayReminder, deleteFriendNotification };
 };

@@ -30,7 +30,7 @@ const getWeekOfMonthOfToday = (): number => {
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
     const dayOfWeek = start.getDay();
-    const today = now.getDate();
+    const today = now.getDate() + 1;
     return Math.ceil((today + dayOfWeek) / 7);
 }
 
@@ -48,7 +48,7 @@ const getNextNotificationTrigger = (frequency: ReminderFrequency): NotificationT
             return baseTriggerInput;
         case 'weekly':
             return {
-                weekday: new Date().getDay(),
+                weekday: new Date().getDay() + 1,
                 ...baseTriggerInput
             };
         case 'monthly':

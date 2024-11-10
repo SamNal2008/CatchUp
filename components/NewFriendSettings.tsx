@@ -23,6 +23,7 @@ import {ReminderFrequency} from "@/repositories/contacts/ReminderFrequency";
 import {SymbolView} from 'expo-symbols';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
 import {DateUtils} from "@/constants/DateUtils";
+import {InitialImage} from "@/components/InitialImage";
 
 type NewFriendSettingsProps = {
     contact: Contact | null;
@@ -116,10 +117,10 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
     return (
         <View style={styles.container}>
             <View style={styles.contactInfo}>
-                <Image
+                {contact.image?.uri ? <Image
                     style={styles.image}
                     source={{uri: contact.image?.uri}}
-                />
+                /> : <InitialImage firstName={contact.firstName} lastName={contact.lastName} size={100}/>}
                 <Text style={styles.name}>{contact.firstName} {contact.lastName}</Text>
             </View>
             <View style={styles.actions}>
@@ -227,17 +228,18 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
+        gap: 20,
     },
     name: {
         fontSize: 20,
         marginBottom: 20,
-        color: Colors[color].text
+        color: Colors[color].text,
+        fontWeight: 'bold'
     },
     image: {
         width: 100,
         height: 100,
         borderRadius: 100,
-        marginBottom: 20,
     },
     actions: {
         flexDirection: "row",
@@ -279,13 +281,13 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
     },
     buttonText: {
         fontSize: 16,
-        fontWeight: "semibold",
+        fontWeight: "bold",
     },
     actionIcon: {
         width: 25,
         height: 25,
         margin: 5,
-        color: Colors[color].background
+        color: Colors[color].background,
     },
     complementaryInfo: {
         width: "100%",

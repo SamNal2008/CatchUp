@@ -9,6 +9,7 @@ export interface NotificationsService {
   requestPermission(): void;
   registerBirthdayNotificationForContact(contact: ContactModel): any;
   clearAllNotifications(): void;
+  deleteNotificationWithId(notificationId: NotificationId): Promise<void>;
 }
 
 export const getNotificationsService = (): NotificationsService => localNotificationService;

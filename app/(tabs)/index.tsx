@@ -4,6 +4,8 @@ import { ThemedView } from "@/components/ThemedView";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from 'expo-router';
+import Toast from "react-native-root-toast";
+import {Palette} from "@/constants/design";
 
 export default function HomeScreen() {
   const isFirstLaunch = async () => {

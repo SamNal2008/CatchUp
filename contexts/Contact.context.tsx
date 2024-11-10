@@ -5,6 +5,7 @@ import { Contact } from "expo-contacts";
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import *  as TaskManager from 'expo-task-manager';
+import {useCheckIns} from "@/contexts/CheckIns.context";
 
 interface ContactContextProps {
     newContact: Contact | null;
@@ -25,8 +26,8 @@ export const useContacts = () => {
 }
 
 export const ContactProvider = ({ children }: { children: ReactNode }) => {
-    const { registerFriendNotificationReminder, registerFriendNotificationBirthdayReminder } = useNotifications();
-
+    const { registerFriendNotificationReminder, registerFriendNotificationBirthdayReminder, deleteFriendNotification } = useNotifications();
+    const {deleteCheckinForFriend} = useCheckIns();
     const [newContact, setNewContact] = useState<Contact | null>(null);
     const [friends, setFriends] = useState<Array<ContactModel>>([]);
     const db = useSQLiteContext();
@@ -37,8 +38,9 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const deleteFriend = async (contactId: ContactId) => {
+        await deleteFriendNotification(contactId);
         await contactsRepository.remove(contactId);
-        fetchFriends();
+        await fetchFriends();
     }
 
     const fetchFriends = async () => {
