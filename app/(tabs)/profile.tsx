@@ -1,11 +1,11 @@
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "@/components/atoms/ThemedView";
 import { useContacts } from "@/contexts/Contact.context";
 import React, { useCallback, useEffect, useState } from "react";
 import { ContactModel } from "@/repositories";
 import { View, StyleSheet, Pressable, Alert, Button, Image } from "react-native";
-import { PrimaryButton } from "@/components/PrimaryButton";
+import { PrimaryButton } from "@/components/atoms/PrimaryButton";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/atoms/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useCheckIns } from "@/contexts/CheckIns.context";
 import { useNotifications } from "@/hooks/useNotificatons";
@@ -15,7 +15,7 @@ import {Colors} from "@/constants/design";
 import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import {useSQLiteContext} from "expo-sqlite";
 import * as Notifications from 'expo-notifications';
-import {CheckInToast} from "@/components/CheckInToast";
+import {CheckInToast} from "@/components/organisms/CheckInToast";
 
 const styles = StyleSheet.create({
   friendContainer: {

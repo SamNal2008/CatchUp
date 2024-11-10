@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/atoms/ThemedText";
+import { ThemedView } from "@/components/atoms/ThemedView";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from 'expo-router';

@@ -1,4 +1,4 @@
-import { ThemedText } from '../ThemedText';
+import { ThemedText } from '../atoms/ThemedText';
 import { render, screen } from '@testing-library/react-native';
 
 describe('ThemedText', () => {

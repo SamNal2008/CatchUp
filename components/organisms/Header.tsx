@@ -1,4 +1,4 @@
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/atoms/ThemedText";
 import { AntDesign } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 import * as Contacts from 'expo-contacts';

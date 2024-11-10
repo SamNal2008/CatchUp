@@ -3,9 +3,9 @@ import React, {useEffect} from "react";
 import {useColorSchemeOrDefault, ColorSchemeName} from "@/hooks/useColorScheme";
 import Toast from "react-native-root-toast";
 import {Colors, Palette} from "@/constants/design";
-import {ThemedText} from "@/components/ThemedText";
-import {PrimaryButton} from "@/components/PrimaryButton";
-import {SecondaryButton} from "@/components/SecondaryButton";
+import {ThemedText} from "@/components/atoms/ThemedText";
+import {PrimaryButton} from "@/components/atoms/PrimaryButton";
+import {SecondaryButton} from "@/components/atoms/SecondaryButton";
 import {ContactModel} from "@/repositories";
 
 export type CheckInToastProps = {
@@ -38,7 +38,7 @@ export const CheckInToast = ({isVisible, checkedInContact}: CheckInToastProps) =
                         {checkedInContact.firstName} {checkedInContact.lastName} NALBANDIAN
                     </ThemedText>
                 </View>
-                <View style={{flexDirection: 'row', gap: 5}}>
+                <View style={{flexDirection: 'row', gap: 5, flex: 1}}>
                     <SecondaryButton title={"Undo"} onPress={cancelCheckin} />
                     <PrimaryButton title={"+ Note"} onPress={addNote}/>
                 </View>
@@ -66,9 +66,4 @@ const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%'
     },
-    title: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: Palette.BLACK
-    }
 });

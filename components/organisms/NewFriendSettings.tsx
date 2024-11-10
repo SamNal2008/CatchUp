@@ -23,7 +23,7 @@ import {ReminderFrequency} from "@/repositories/contacts/ReminderFrequency";
 import {SymbolView} from 'expo-symbols';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
 import {DateUtils} from "@/constants/DateUtils";
-import {InitialImage} from "@/components/InitialImage";
+import {InitialImage} from "@/components/molecules/InitialImage";
 
 type NewFriendSettingsProps = {
     contact: Contact | null;

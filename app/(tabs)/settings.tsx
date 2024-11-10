@@ -1,5 +1,5 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/atoms/ThemedText";
+import { ThemedView } from "@/components/atoms/ThemedView";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Pressable, StyleSheet, View, useColorScheme } from "react-native";
 

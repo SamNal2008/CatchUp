@@ -1,4 +1,4 @@
-import { NewFriendSettings } from "@/components/NewFriendSettings";
+import { NewFriendSettings } from "@/components/organisms/NewFriendSettings";
 import { createNewContactEntity, ReminderFrequency } from "@/repositories";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModalProvider, BottomSheetView } from "@gorhom/bottom-sheet";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";

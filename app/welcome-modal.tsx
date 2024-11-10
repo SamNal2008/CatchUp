@@ -1,4 +1,4 @@
-import {ThemedText} from "@/components/ThemedText";
+import {ThemedText} from "@/components/atoms/ThemedText";
 import {ScrollView, StyleSheet, View} from "react-native";
 import {Colors, Palette} from "@/constants/design/Colors";
 import { PrimaryButton } from "@/components";

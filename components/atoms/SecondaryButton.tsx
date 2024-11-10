@@ -1,4 +1,4 @@
-import {ButtonProps, PrimaryButton} from "@/components/PrimaryButton";
+import {ButtonProps, PrimaryButton} from "@/components/atoms/PrimaryButton";
 import {Palette} from "@/constants/design";
 import React from "react";
 import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
