@@ -25,6 +25,7 @@ export const Colors = {
     buttonBackground: Palette.BLACK,
     buttonText: Palette.WHITE,
     buttonBackgroundDisabled: Palette.GREY_300,
+    toastBackground: Palette.WHITE,
   },
   dark: {
     text: Palette.BLACK,
@@ -37,6 +38,7 @@ export const Colors = {
     buttonBackground: Palette.BLACK,
     buttonText: Palette.WHITE,
     buttonBackgroundDisabled: Palette.GREY_300,
+    toastBackground: Palette.WHITE,
   },
 } as const;
 

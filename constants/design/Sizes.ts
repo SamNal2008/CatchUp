@@ -41,6 +41,7 @@ export const FontWeight = {
     semibold: 'semibold',
     bold: 'bold',
     heavy: 'heavy',
+    sevenHundred: '700',
 } as const;
 
 export const LetterSpacing = {

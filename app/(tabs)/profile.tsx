@@ -1,6 +1,6 @@
 import { ThemedView } from "@/components/ThemedView";
 import { useContacts } from "@/contexts/Contact.context";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ContactModel } from "@/repositories";
 import { View, StyleSheet, Pressable, Alert, Button, Image } from "react-native";
 import { PrimaryButton } from "@/components/PrimaryButton";
@@ -15,6 +15,7 @@ import {Colors} from "@/constants/design";
 import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import {useSQLiteContext} from "expo-sqlite";
 import * as Notifications from 'expo-notifications';
+import {CheckInToast} from "@/components/CheckInToast";
 
 const styles = StyleSheet.create({
   friendContainer: {
@@ -77,13 +78,14 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
   const { checkInsRepository } = useCheckIns();
   const { postPoneReminder, askForNotificationPermission } = useNotifications();
 
-
   const [isOnDeleteMode, setIsOnDeleteMode] = useState<boolean>(false);
   const toggleDeleteFriend = () => {
     setIsOnDeleteMode((prev) => !prev);
   };
+
   const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
   const [reload, setReload] = useState<boolean>(false);
+  const [hasCheckin, setHasCheckin] = useState<boolean>(false);
 
   useEffect(() => {
     if (friends.length > 0) {
@@ -120,9 +122,10 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
       alert('Unable to check in on friend without id');
       return;
     }
-    checkInsRepository.checkInOnContact(contact.id);
+    setHasCheckin(true);
+    /*checkInsRepository.checkInOnContact(contact.id);
     postPoneReminder(contact);
-    setReload(prev => !prev);
+    setReload(prev => !prev);*/
   }
 
   const hasAlreadyCheckedIn = lastCheckedIn !== null;
@@ -147,7 +150,8 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
             }
           </View>
         </View>
-        <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} disabled={hasCheckedInToday} />
+        <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} />
+        <CheckInToast isVisible={hasCheckin} checkedInContact={contact}/>
       </View>
     </Swipeable>
   )
@@ -218,7 +222,7 @@ export default function Profile() {
     console.log("Contacts: " + db.getAllSync('SELECT * FROM contacts'));
     console.log("Notifications : "+ db.getAllSync('SELECT * FROM notifications'));
     console.log("Checkins : " + db.getAllSync('SELECT * FROM check_ins'));
-    Notifications.getAllScheduledNotificationsAsync().then(console.log);
+    console.log('Notifications service : ' + Notifications.getAllScheduledNotificationsAsync().then(console.log));
   }
 
   return (

@@ -3,7 +3,7 @@ import { Colors } from "@/constants/design/Colors";
 import { ColorSchemeName, useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { StyleSheet, Pressable, Text, StyleProp, ViewStyle, PressableProps, TextStyle } from "react-native";
 
-type PrimaryButtonProps = {
+export type ButtonProps = {
     title: string;
     style?: StyleProp<ViewStyle>;
     textStyle?: StyleProp<TextStyle>;
@@ -22,15 +22,15 @@ const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
         backgroundColor: Colors[theme].buttonBackgroundDisabled,
     },
     buttonText: {
-        fontSize: Typography.small,
+        fontSize: Typography.medium,
         lineHeight: LineHeight.medium,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.sevenHundred,
         letterSpacing: LetterSpacing.small,
         color: Colors[theme].buttonText
     },
 });
 
-export const PrimaryButton = ({ title, style, textStyle, disabled, ...rest }: PrimaryButtonProps) => {
+export const PrimaryButton = ({ title, style, textStyle, disabled, ...rest }: ButtonProps) => {
     const theme: ColorSchemeName = useColorSchemeOrDefault();
     const styles = makeStyles(theme);
     return (
@@ -40,6 +40,7 @@ export const PrimaryButton = ({ title, style, textStyle, disabled, ...rest }: Pr
             style
         ]}
         {...rest}
+            disabled={disabled}
         >
             <Text style={[
                 styles.buttonText,
