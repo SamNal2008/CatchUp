@@ -7,8 +7,6 @@ import {
     Text,
     useColorScheme,
     Pressable,
-    TextInput,
-    ActionSheetIOS,
     Modal,
     TouchableOpacity,
     Platform

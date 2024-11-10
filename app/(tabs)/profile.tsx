@@ -123,14 +123,14 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
       return;
     }
     setHasCheckin(true);
-    /*checkInsRepository.checkInOnContact(contact.id);
-    postPoneReminder(contact);
-    setReload(prev => !prev);*/
+    // setReload(prev => !prev);
   }
 
   const hasAlreadyCheckedIn = lastCheckedIn !== null;
   const toDaysAgo = hasAlreadyCheckedIn ? Math.round((new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24)) : null;
   const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
+
+  const hideToast = () => setHasCheckin(false);
 
   return (
       <Swipeable renderRightActions={() => <AdditionalButtons onPress={() => deleteFriend(contact.id!)}/>}>
@@ -151,7 +151,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
           </View>
         </View>
         <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} />
-        <CheckInToast isVisible={hasCheckin} checkedInContact={contact}/>
+        {hasCheckin && <CheckInToast hideToast={hideToast} checkedInContact={contact}/>}
       </View>
     </Swipeable>
   )

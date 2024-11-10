@@ -3,9 +3,11 @@ import BottomSheet, {
     BottomSheetBackdropProps,
     BottomSheetView
 } from "@gorhom/bottom-sheet";
-import React, {createContext, ReactNode, useCallback, useContext, useMemo, useRef, useState} from "react";
-import {StyleSheet, View} from "react-native";
+import React, {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import {Button, StyleSheet, View} from "react-native";
 import {useThemeColor} from "@/hooks/useThemeColor";
+import {Colors} from "@/constants/design";
+import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 
 type BottomSheetContextProps = {
     showBottomSheet: (header: ReactNode, content: ReactNode) => void;
@@ -21,6 +23,7 @@ export const useMyBottomSheet = () => {
 }
 
 export const MyBottomSheetProvider = ({children}: { children: ReactNode }) => {
+    console.log('rendering bottom sheet provider');
     const [contentToDisplay, setContentToDisplay] = useState<ReactNode | null>(null);
     const [header, setHeader] = useState<ReactNode | null>(null);
     const snapPoints = useMemo(() => ["50%", "60%", "80%"], []);
@@ -33,7 +36,6 @@ export const MyBottomSheetProvider = ({children}: { children: ReactNode }) => {
 
 
     const showBottomSheet = (header: ReactNode, content: ReactNode) => {
-        console.log('showing bottom sheet');
         setHeader(header);
         setContentToDisplay(content);
         bottomSheetRef.current?.expand();
@@ -55,6 +57,7 @@ export const MyBottomSheetProvider = ({children}: { children: ReactNode }) => {
 
     const iconColor = useThemeColor("icon");
     const backgroundColor = useThemeColor("background");
+    const theme = useColorSchemeOrDefault();
 
     return (
         <BottomSheetContext.Provider value={{showBottomSheet, closeSheet}}>
@@ -90,7 +93,7 @@ export const MyBottomSheetProvider = ({children}: { children: ReactNode }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        gap: 20,
+        gap: 10,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -98,8 +101,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         width: "100%",
-        height: 100,
-        padding: 10,
+        paddingHorizontal: 10
     },
     contentContainer: {
         flex: 1,
