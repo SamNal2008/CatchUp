@@ -1,23 +1,15 @@
-import {NewFriendSettings} from "@/components/organisms/NewFriendSettings";
-import {createNewContactEntity, ReminderFrequency} from "@/repositories";
 import BottomSheet, {
     BottomSheetBackdrop,
     BottomSheetBackdropProps,
-    BottomSheetModalProvider,
     BottomSheetView
 } from "@gorhom/bottom-sheet";
-import {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
-import {Button, View, StyleSheet} from "react-native";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {useContacts} from "./Contact.context";
+import React, {createContext, ReactNode, useCallback, useContext, useMemo, useRef, useState} from "react";
+import {StyleSheet, View} from "react-native";
 import {useThemeColor} from "@/hooks/useThemeColor";
-import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
-import {Colors} from "@/constants/design/Colors";
-import {router} from 'expo-router';
-import {DateUtils} from "@/constants/DateUtils";
 
 type BottomSheetContextProps = {
-    showBottomSheet: (content: ReactNode) => void;
+    showBottomSheet: (header: ReactNode, content: ReactNode) => void;
+    closeSheet: () => void;
 };
 
 const BottomSheetContext = createContext<BottomSheetContextProps | null>(null);
@@ -30,22 +22,19 @@ export const useMyBottomSheet = () => {
 
 export const MyBottomSheetProvider = ({children}: { children: ReactNode }) => {
     const [contentToDisplay, setContentToDisplay] = useState<ReactNode | null>(null);
+    const [header, setHeader] = useState<ReactNode | null>(null);
     const snapPoints = useMemo(() => ["50%", "60%", "80%"], []);
     const bottomSheetRef = useRef<BottomSheet>(null);
-    const theme = useColorSchemeOrDefault();
-    const {newContact, addNewFriend} = useContacts();
 
-    const [contactBirthday, setContactBirthday] = useState<Date>(DateUtils.getBirthDateFromBirthday(newContact) ?? new Date());
-    const [contactLastCheckIn, setContactLastCheckIn] = useState<Date>(new Date());
 
     const closeSheet = () => {
         bottomSheetRef.current?.close();
     };
 
-    const [selectedFrequency, setSelectedFrequency] = useState<ReminderFrequency>("weekly");
 
-    const showBottomSheet = (content: ReactNode) => {
+    const showBottomSheet = (header: ReactNode, content: ReactNode) => {
         console.log('showing bottom sheet');
+        setHeader(header);
         setContentToDisplay(content);
         bottomSheetRef.current?.expand();
     };
@@ -64,30 +53,11 @@ export const MyBottomSheetProvider = ({children}: { children: ReactNode }) => {
         []
     );
 
-    const saveNewFriend = async () => {
-        await addNewFriend(createNewContactEntity({
-            contact: newContact,
-            frequency: selectedFrequency,
-            birthDate: contactBirthday,
-            lastCheckin: contactLastCheckIn
-        }));
-        bottomSheetRef.current?.close();
-        router.navigate('/(tabs)/profile');
-    };
-
     const iconColor = useThemeColor("icon");
     const backgroundColor = useThemeColor("background");
 
-    useEffect(() => {
-        if (newContact) {
-            bottomSheetRef.current?.expand();
-        } else {
-            bottomSheetRef.current?.close();
-        }
-    }, [newContact]);
-
     return (
-        <BottomSheetContext.Provider value={{showBottomSheet}}>
+        <BottomSheetContext.Provider value={{showBottomSheet, closeSheet}}>
             {children}
             <BottomSheet
                 ref={bottomSheetRef}
@@ -106,6 +76,9 @@ export const MyBottomSheetProvider = ({children}: { children: ReactNode }) => {
                 index={-1}
             >
                 <BottomSheetView style={styles.contentContainer}>
+                    <View style={styles.bottomSheetHeader}>
+                        {header}
+                    </View>
                     {contentToDisplay}
                 </BottomSheetView>
             </BottomSheet>

@@ -39,11 +39,6 @@ export default function HomeScreen() {
           Add friends to stay in touch, share memories, and never miss a
           birthday
         </ThemedText>
-        <Button title={"click"} onPress={() => {
-          console.log('click')
-          showBottomSheet(<Text>Toto</Text>);
-          console.log('toto')
-        }}/>
       </View>
     </ThemedView>
   );

@@ -18,6 +18,7 @@ import {RootSiblingParent} from "react-native-root-siblings";
 import Toast from 'react-native-root-toast';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {BottomSheetModalProvider} from "@gorhom/bottom-sheet";
+import {NewFriendContextProvider} from "@/contexts/NewFriendProvider.context";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -42,11 +43,12 @@ export default function RootLayout() {
         <GestureHandlerRootView style={{flex: 1}}>
             <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
                 <BottomSheetModalProvider>
-                        <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrateDbIfNeeded}>
-                            <RootSiblingParent>
-                                <CheckInsProvider>
-                                    <ContactProvider>
-                                        <MyBottomSheetProvider>
+                    <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrateDbIfNeeded}>
+                        <RootSiblingParent>
+                            <CheckInsProvider>
+                                <ContactProvider>
+                                    <MyBottomSheetProvider>
+                                        <NewFriendContextProvider>
                                             <Stack>
                                                 <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
                                                 <Stack.Screen
@@ -58,11 +60,12 @@ export default function RootLayout() {
                                                 />
                                                 <Stack.Screen name="+not-found"/>
                                             </Stack>
-                                        </MyBottomSheetProvider>
-                                    </ContactProvider>
-                                </CheckInsProvider>
-                            </RootSiblingParent>
-                        </SQLiteProvider>
+                                        </NewFriendContextProvider>
+                                    </MyBottomSheetProvider>
+                                </ContactProvider>
+                            </CheckInsProvider>
+                        </RootSiblingParent>
+                    </SQLiteProvider>
                 </BottomSheetModalProvider>
             </ThemeProvider>
         </GestureHandlerRootView>
