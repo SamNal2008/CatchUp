@@ -9,6 +9,7 @@ import {ContactModel} from "@/repositories";
 import {useMyBottomSheet} from "@/contexts/BottomSheetProvider.context";
 import DateTimePicker, {DateTimePickerEvent} from "@react-native-community/datetimepicker";
 import {create} from 'zustand'
+import {useEffect, useState} from "react";
 
 type Note = {
     content: string,
@@ -72,11 +73,15 @@ type NewNoteTextInput = {
 }
 
 const NewNoteTextInput = ({setNoteContent, noteContent}: NewNoteTextInput) => {
+    const [content, setContent] = useState('');
+    useEffect(() => {
+        setNoteContent(content);
+    }, [content]);
     return (
         <View style={{flex: 1, padding: 10}}>
             <TextInput
-                value={noteContent}
-                onChangeText={setNoteContent}
+                value={content}
+                onChangeText={setContent}
                 style={{backgroundColor: Palette.GREY_200, padding: 20, color: 'black'}}
                 numberOfLines={10}
                 multiline
@@ -87,12 +92,13 @@ const NewNoteTextInput = ({setNoteContent, noteContent}: NewNoteTextInput) => {
 
 export const CheckInToast = ({checkedInContact, hideToast}: CheckInToastProps) => {
     const theme: ColorSchemeName = useColorSchemeOrDefault();
-    const {showBottomSheet} = useMyBottomSheet();
+    const {showBottomSheet, closeSheet} = useMyBottomSheet();
     const styles = makeStyles(theme);
     const {note, setNoteContent, setCheckinDate} = useNoteStore();
 
     const saveNewNote = () => {
-        console.log(`Saving new note for date ${note.date} and with content : ${note}`);
+        console.log(`Saving new note for date ${note.date} and with content : ${note.content}`);
+        closeSheet();
         /*checkInsRepository.checkInOnContact(contact.id);
         postPoneReminder(contact);*/
     };
