@@ -13,6 +13,15 @@ export const Palette = {
   RED: '#FF0000',
 } as const;
 
+export const PaletteDarkMode = {
+  BLACK: '#E0E0E0',
+  WHITE: '#121212',
+  GREY_100: '#2C2C2E',
+  GREY_200: '#3A3A3C',
+  GREY_300: '#A1A1A6',
+  RED: '#FF0000'
+} as const;
+
 export const Colors = {
   light: {
     text: Palette.BLACK,
@@ -28,17 +37,17 @@ export const Colors = {
     toastBackground: Palette.WHITE,
   },
   dark: {
-    text: Palette.BLACK,
-    background: Palette.GREY_100,
-    tint: Palette.BLACK,
-    icon: Palette.GREY_300,
-    tabIconDefault: Palette.GREY_200,
-    tabIconSelected: Palette.GREY_200,
-    borderColor: Palette.BLACK,
-    buttonBackground: Palette.BLACK,
-    buttonText: Palette.WHITE,
-    buttonBackgroundDisabled: Palette.GREY_300,
-    toastBackground: Palette.WHITE,
+    text: PaletteDarkMode.BLACK,
+    background: PaletteDarkMode.GREY_100,
+    tint: PaletteDarkMode.BLACK,
+    icon: PaletteDarkMode.GREY_300,
+    tabIconDefault: PaletteDarkMode.GREY_200,
+    tabIconSelected: PaletteDarkMode.GREY_200,
+    borderColor: PaletteDarkMode.BLACK,
+    buttonBackground: PaletteDarkMode.BLACK,
+    buttonText: PaletteDarkMode.WHITE,
+    buttonBackgroundDisabled: PaletteDarkMode.GREY_300,
+    toastBackground: PaletteDarkMode.WHITE,
   },
 } as const;
 
