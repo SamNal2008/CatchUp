@@ -16,6 +16,7 @@ import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import {useSQLiteContext} from "expo-sqlite";
 import * as Notifications from 'expo-notifications';
 import {CheckInToast} from "@/components/organisms/CheckInToast";
+import {useContactToCheckin, useOpenModal, useSetContactToCheckin, useSetNoteContent} from "@/store/CheckinNote.store";
 
 const styles = StyleSheet.create({
   friendContainer: {
@@ -75,7 +76,7 @@ const AdditionalButtons = ({ onPress }: CheckInButtonProps) => {
 const FriendLine = ({ contact }: { contact: ContactModel }) => {
   const borderColor = useThemeColor('borderColor');
   const { deleteFriend, friends } = useContacts();
-  const { checkInsRepository } = useCheckIns();
+  const { getLatestCheckInForContact } = useCheckIns();
   const { postPoneReminder, askForNotificationPermission } = useNotifications();
 
   const [isOnDeleteMode, setIsOnDeleteMode] = useState<boolean>(false);
@@ -85,7 +86,10 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
 
   const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
   const [reload, setReload] = useState<boolean>(false);
-  const [hasCheckin, setHasCheckin] = useState<boolean>(false);
+  const setContactToCheckin = useSetContactToCheckin();
+  const contactToCheckin = useContactToCheckin();
+
+  const isCheckingOnContact = contactToCheckin?.id === contact.id;
 
   useEffect(() => {
     if (friends.length > 0) {
@@ -94,12 +98,11 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
   }, []);
 
   useEffect(() => {
-    setLastCheckedIn(checkInsRepository.getLatestCheckInForContact(contact.id));
+    if (!contact.id) {
+      return;
+    }
+    setLastCheckedIn(getLatestCheckInForContact(contact.id));
   }, [contact.id, reload]);
-
-  const promptForFriendDeletion = () => {
-    Alert.prompt('Are you sure you want to delete this friend ?', `To confirm enter : ${contact.firstName}`, confirmDelete);
-  }
 
   const confirmDelete = (promptResponse: string) => {
     if (promptResponse.toLowerCase() === contact.firstName?.toLowerCase()) {
@@ -122,15 +125,12 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
       alert('Unable to check in on friend without id');
       return;
     }
-    setHasCheckin(true);
-    // setReload(prev => !prev);
+    setContactToCheckin(contact);
   }
 
-  const hasAlreadyCheckedIn = lastCheckedIn !== null;
+  const hasAlreadyCheckedIn = lastCheckedIn !== null && false;
   const toDaysAgo = hasAlreadyCheckedIn ? Math.round((new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24)) : null;
   const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
-
-  const hideToast = () => setHasCheckin(false);
 
   return (
       <Swipeable renderRightActions={() => <AdditionalButtons onPress={() => deleteFriend(contact.id!)}/>}>
@@ -151,7 +151,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
           </View>
         </View>
         <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} />
-        {hasCheckin && <CheckInToast hideToast={hideToast} checkedInContact={contact}/>}
+        <CheckInToast checkedInContact={contact} isVisible={isCheckingOnContact}/>
       </View>
     </Swipeable>
   )
@@ -177,8 +177,8 @@ export default function Profile() {
   const [monthlyContacts, setMonthlyContacts] = useState<ContactModel[]>([]);
   const [dailyContacts, setDailyContacts] = useState<ContactModel[]>([]);
   const { friends, deleteFriend } = useContacts();
-  const { checkInsRepository } = useCheckIns();
-  const { postPoneReminder, clearAllNotifications } = useNotifications();
+  const { clearAllCheckIns } = useCheckIns();
+  const { clearAllNotifications } = useNotifications();
   const db = useSQLiteContext();
 
   const getAllFriends = useCallback(() => {
@@ -193,7 +193,7 @@ export default function Profile() {
   }, [friends]);
 
   const wipeAllDatabases = () => {
-    checkInsRepository.deleteAllCheckIns();
+    clearAllCheckIns();
     clearAllNotifications();
     friends
       .map(friend => friend.id)

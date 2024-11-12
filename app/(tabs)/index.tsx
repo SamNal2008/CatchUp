@@ -1,18 +1,17 @@
-import {Button, Image, StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, TextInput, View} from "react-native";
 import { ThemedText } from "@/components/atoms/ThemedText";
 import { ThemedView } from "@/components/atoms/ThemedView";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from 'expo-router';
-import Toast from "react-native-root-toast";
 import {Palette} from "@/constants/design";
-import {useMyBottomSheet} from "@/contexts/BottomSheetProvider.context";
+import {useModalRef} from "@/components/navigation/BottomSheet";
 import {CheckInModel} from "@/repositories/check-ins/CheckInEntity";
+import {create} from "zustand/index";
 
 type CheckInSummaryProps = {
   checkIn: CheckInModel
 }
-
 
 const getWeekDayName = (day: number) => {
   switch (day) {
@@ -59,7 +58,6 @@ const CheckInSummary = ({checkIn}: CheckInSummaryProps) => {
 }
 
 export default function HomeScreen() {
-  const {showBottomSheet} = useMyBottomSheet();
   const isFirstLaunch = async () => {
     const firstLaunch = await AsyncStorage.getItem("FIRST_LAUNCH");
     await AsyncStorage.setItem("FIRST_LAUNCH", "false");

@@ -1,12 +1,13 @@
 import * as SQLite from "expo-sqlite";
 import { ContactId, ReminderFrequency, CheckInEntity } from "@/repositories";
 import { DateUtils } from "@/constants/DateUtils";
+import {CheckInModel} from "@/repositories/check-ins/CheckInEntity";
 
 export const DATABASE_NAME = "catch_up.db";
 
 export interface CheckInsRepository {
   checkInOnContact: (contactToCheckInId: ContactId) => void;
-  getLatestCheckInForContact: (contactId?: ContactId) => Date | null;
+  getLatestCheckInForContact: (contactId?: ContactId) => CheckInEntity | null;
   hasAlreadyCheckedInWantedFrequency: (contactId: ContactId, wantedFrequency: ReminderFrequency) => boolean;
   deleteAllCheckIns: () => void;
   deleteAllCheckInWithContactId: (contactId: ContactId) => void;
@@ -35,15 +36,15 @@ class LocalCheckInsRepository implements CheckInsRepository {
     throw new Error('Unable to check in on contact with ID : ' + contactToCheckInId);
   }
 
-  public getLatestCheckInForContact(contactId?: ContactId): Date | null {
+  public getLatestCheckInForContact(contactId?: ContactId): CheckInEntity | null {
     if (!contactId) {
       return null;
     }
-    const res = this.db.getFirstSync<CheckInEntity>(`SELECT check_in_date FROM ${LocalCheckInsRepository.TABLE_NAME} WHERE contact_id = ? ORDER BY check_in_date DESC LIMIT 1`, [contactId])?.check_in_date ?? null;
+    const res = this.db.getFirstSync<CheckInEntity>(`SELECT * FROM ${LocalCheckInsRepository.TABLE_NAME} WHERE contact_id = ? ORDER BY check_in_date DESC LIMIT 1`, [contactId]) ?? null;
     if (!res) {
       return null;
     }
-    return new Date(res);
+    return res;
   }
 
   public deleteAllCheckInWithContactId(contactId: ContactId): void {

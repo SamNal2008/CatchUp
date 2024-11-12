@@ -3,7 +3,7 @@ import React, {createContext, ReactNode, useEffect, useState} from "react";
 import {DateUtils} from "@/constants/DateUtils";
 import {createNewContactEntity, ReminderFrequency} from "@/repositories";
 import {router} from "expo-router";
-import {useMyBottomSheet} from "@/contexts/BottomSheetProvider.context";
+import {MyBottomSheet, useModalRef} from "@/components/navigation/BottomSheet";
 import {Button, View} from "react-native";
 import {NewFriendSettings} from "@/components/organisms/NewFriendSettings";
 import {Colors} from "@/constants/design";
@@ -15,7 +15,7 @@ const NewFriendContext = createContext<NewFriendContextProps | null>(null);
 
 export const NewFriendContextProvider = ({children}: { children: ReactNode }) => {
     const {newContact, addNewFriend} = useContacts();
-    const {showBottomSheet, closeSheet} = useMyBottomSheet();
+    const modalRef = useModalRef();
     const [contactBirthday, setContactBirthday] = useState<Date>(DateUtils.getBirthDateFromBirthday(newContact) ?? new Date());
     const [contactLastCheckIn, setContactLastCheckIn] = useState<Date>(new Date());
     const [selectedFrequency, setSelectedFrequency] = useState<ReminderFrequency>("weekly");
@@ -28,17 +28,24 @@ export const NewFriendContextProvider = ({children}: { children: ReactNode }) =>
             birthDate: contactBirthday,
             lastCheckin: contactLastCheckIn
         }));
-        closeSheet();
+        modalRef.current?.close();
         router.navigate('/(tabs)/profile');
     };
 
     useEffect(() => {
         if (newContact) {
-            showBottomSheet(
-                <>
-                    <Button title="Cancel" color={Colors[theme].buttonBackground} onPress={closeSheet}/>
-                    <Button title="Save" color={Colors[theme].buttonBackground} onPress={saveNewFriend}/>
-                </>,
+            modalRef.current?.expand();
+        } else {
+            modalRef.current?.close();
+        }
+    }, [newContact]);
+
+    return (
+        <NewFriendContext.Provider value={null}>
+            {children}
+            <MyBottomSheet
+                ref={modalRef}
+                contentToDisplay={
                 <NewFriendSettings
                     frequency={selectedFrequency}
                     setFrequency={setSelectedFrequency}
@@ -48,15 +55,12 @@ export const NewFriendContextProvider = ({children}: { children: ReactNode }) =>
                     setBirthday={setContactBirthday}
                     setLastCheckin={setContactLastCheckIn}
                 />
-            );
-        } else {
-            closeSheet();
-        }
-    }, [newContact]);
-
-    return (
-        <NewFriendContext.Provider value={null}>
-            {children}
+            } header={
+                <>
+                    <Button title="Cancel" color={Colors[theme].buttonBackground} onPress={() => modalRef.current?.close()}/>
+                    <Button title="Save" color={Colors[theme].buttonBackground} onPress={saveNewFriend}/>
+                </>
+            }/>
         </NewFriendContext.Provider>
     )
 }

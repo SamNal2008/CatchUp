@@ -6,123 +6,28 @@ import {ThemedText} from "@/components/atoms/ThemedText";
 import {PrimaryButton} from "@/components/atoms/PrimaryButton";
 import {SecondaryButton} from "@/components/atoms/SecondaryButton";
 import {ContactModel} from "@/repositories";
-import {useMyBottomSheet} from "@/contexts/BottomSheetProvider.context";
-import DateTimePicker, {DateTimePickerEvent} from "@react-native-community/datetimepicker";
-import {create} from 'zustand'
-import {useEffect, useState} from "react";
-
-type Note = {
-    content: string,
-    date: Date
-}
-
-type NoteStore = {
-    note: Note,
-    setNoteContent: (content: string) => void;
-    setCheckinDate: (date: Date) => void;
-};
-
-const useNoteStore = create<NoteStore>((set) => ({
-    note: {
-        content: '',
-        date: new Date()
-    },
-    setNoteContent: (content: string) => set((state: NoteStore) => ({note: {...state.note, content}})),
-    setCheckinDate: (date: Date) => set((state: NoteStore) => ({note: {...state.note, date: date}})),
-}))
+import {useNewNoteCheckInModalControl, useSetContactToCheckin} from "@/store/CheckinNote.store";
+import {useModalRef} from "@/components/navigation/BottomSheet";
 
 export type CheckInToastProps = {
     checkedInContact: ContactModel,
-    hideToast: () => void
+    isVisible?: boolean,
 }
 
-type NewNoteHeaderProps = {
-    checkinDate: Date,
-    setCheckinDate: (date: Date) => void;
-    saveNewNote: () => void;
-}
-
-const NewNoteHeader = ({saveNewNote, setCheckinDate, checkinDate}: NewNoteHeaderProps) => {
-    const theme = useColorSchemeOrDefault();
-    const {closeSheet} = useMyBottomSheet();
-
-    const updateCheckinDate = (event: DateTimePickerEvent) => {
-        console.log(new Date(event.nativeEvent.timestamp));
-        console.log('changed')
-        setCheckinDate(new Date(event.nativeEvent.timestamp));
-    }
-    return (<>
-        <Button title="Cancel" color={Colors[theme].buttonBackground} onPress={closeSheet}/>
-        <View>
-            <DateTimePicker
-                value={checkinDate}
-                onChange={updateCheckinDate}
-            />
-            <Text>
-                with Samy NALBANDIAN
-            </Text>
-        </View>
-        <Button title="Save" color={Colors[theme].buttonBackground} onPress={saveNewNote}/>
-    </>);
-}
-
-
-type NewNoteTextInput = {
-    setNoteContent: (newNoteContent: string) => void;
-    noteContent: string;
-}
-
-const NewNoteTextInput = ({setNoteContent, noteContent}: NewNoteTextInput) => {
-    const [content, setContent] = useState('');
-    useEffect(() => {
-        setNoteContent(content);
-    }, [content]);
-    return (
-        <View style={{flex: 1, padding: 10}}>
-            <TextInput
-                value={content}
-                onChangeText={setContent}
-                style={{backgroundColor: Palette.GREY_200, padding: 20, color: 'black'}}
-                numberOfLines={10}
-                multiline
-            />
-        </View>
-    )
-}
-
-export const CheckInToast = ({checkedInContact, hideToast}: CheckInToastProps) => {
+export const CheckInToast = ({checkedInContact, isVisible}: CheckInToastProps) => {
     const theme: ColorSchemeName = useColorSchemeOrDefault();
-    const {showBottomSheet, closeSheet} = useMyBottomSheet();
     const styles = makeStyles(theme);
-    const {note, setNoteContent, setCheckinDate} = useNoteStore();
+    const {openModal, isModalVisible} = useNewNoteCheckInModalControl();
+    const setContactToCheckin = useSetContactToCheckin();
 
-    const saveNewNote = () => {
-        console.log(`Saving new note for date ${note.date} and with content : ${note.content}`);
-        closeSheet();
-        /*checkInsRepository.checkInOnContact(contact.id);
-        postPoneReminder(contact);*/
-    };
-
-
-    const addNote = () => {
-        hideToast();
-        showBottomSheet(
-            <NewNoteHeader
-                checkinDate={note.date}
-                setCheckinDate={setCheckinDate}
-                saveNewNote={saveNewNote}
-            />,
-            <NewNoteTextInput
-                noteContent={note.content}
-                setNoteContent={setNoteContent}
-            />
-        )
-    };
+    const undoContactCheckin = () => {
+        setContactToCheckin(null);
+    }
 
     return (
         <>
             <Toast
-                visible={true}
+                visible={!isModalVisible && isVisible}
                 position={650}
                 shadow={false}
                 animation={true}
@@ -141,8 +46,8 @@ export const CheckInToast = ({checkedInContact, hideToast}: CheckInToastProps) =
                         </ThemedText>
                     </View>
                     <View style={{flexDirection: 'row', gap: 5, flex: 1}}>
-                        <SecondaryButton title={"Undo"} onPress={hideToast}/>
-                        <PrimaryButton title={"+ Note"} onPress={addNote}/>
+                        <SecondaryButton title={"Undo"} onPress={undoContactCheckin}/>
+                        <PrimaryButton title={"+ Note"} onPress={openModal}/>
                     </View>
                 </View>
             </Toast>
@@ -160,7 +65,7 @@ const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
         width: 360,
         height: 70,
         alignItems: 'stretch',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     container: {
         flex: 1,

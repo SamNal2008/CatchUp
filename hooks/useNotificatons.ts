@@ -7,7 +7,7 @@ type UseNotifications = {
     askForNotificationPermission: () => void;
     registerFriendNotificationReminder: (contact: ContactModel) => void;
     registerFriendNotificationBirthdayReminder: (contact: ContactModel) => void;
-    postPoneReminder: (contact: ContactModel) => void;
+    postPoneReminder: (contact: ContactModel, checkinDate: Date) => void;
     clearAllNotifications: () => void;
     deleteFriendNotification: (contactId: ContactId) => Promise<void>;
 };
@@ -29,7 +29,7 @@ export const useNotifications = (): UseNotifications => {
 
     const registerFriendNotificationReminder = async (contact: ContactModel) => {
         try {
-            const notificationId = await notificationsService.registerNotificationForContact(contact);
+            const notificationId = await notificationsService.registerNotificationForContact(contact, new Date());
             notificationRepository.saveReminder({
                 notification_id: notificationId,
                 frequency: contact.frequency,
@@ -48,7 +48,7 @@ export const useNotifications = (): UseNotifications => {
         }
     }
 
-    const postPoneReminder = async (contact: ContactModel) => {
+    const postPoneReminder = async (contact: ContactModel, checkinDate: Date) => {
         if (!contact.id) {
             console.error(`Unable to postpone notification for contact without id`);
             return;
@@ -59,7 +59,7 @@ export const useNotifications = (): UseNotifications => {
             return;
         }
         try {
-            const newNotification = await notificationsService.deleteNotificationAndCreateNewPostponed(notification.notification_id, contact);
+            const newNotification = await notificationsService.deleteNotificationAndCreateNewPostponed(notification.notification_id, contact, checkinDate);
             notificationRepository.updateReminder({
                 notification_id: newNotification.notificationId,
                 contact_id: contact.id,

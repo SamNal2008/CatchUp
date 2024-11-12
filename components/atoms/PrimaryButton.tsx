@@ -36,7 +36,9 @@ export const PrimaryButton = ({ title, style, textStyle, disabled, ...rest }: Bu
     return (
         <Pressable style={({pressed}) => [
             styles.button,
-            pressed || disabled ? styles.backgroundGreyedOut : null,
+            pressed || disabled ?
+                styles.backgroundGreyedOut :
+                null,
             style
         ]}
         {...rest}

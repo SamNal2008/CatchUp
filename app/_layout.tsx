@@ -11,14 +11,13 @@ import "react-native-reanimated";
 import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import {ContactProvider} from "@/contexts/Contact.context";
 import {SQLiteDatabase, SQLiteProvider} from "expo-sqlite";
-import {DATABASE_NAME} from "../repositories/contacts/Contacts.repository";
+import {DATABASE_NAME} from "@/repositories";
 import {CheckInsProvider} from "@/contexts/CheckIns.context";
-import {MyBottomSheetProvider} from "@/contexts/BottomSheetProvider.context";
 import {RootSiblingParent} from "react-native-root-siblings";
-import Toast from 'react-native-root-toast';
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {NewFriendContextProvider} from "@/contexts/NewFriendProvider.context";
+import {NewNoteModal} from "@/components/organisms/NewNoteModal";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -47,7 +46,6 @@ export default function RootLayout() {
                         <RootSiblingParent>
                             <CheckInsProvider>
                                 <ContactProvider>
-                                    <MyBottomSheetProvider>
                                         <NewFriendContextProvider>
                                             <Stack>
                                                 <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
@@ -60,8 +58,8 @@ export default function RootLayout() {
                                                 />
                                                 <Stack.Screen name="+not-found"/>
                                             </Stack>
+                                            <NewNoteModal />
                                         </NewFriendContextProvider>
-                                    </MyBottomSheetProvider>
                                 </ContactProvider>
                             </CheckInsProvider>
                         </RootSiblingParent>
@@ -73,7 +71,7 @@ export default function RootLayout() {
 }
 
 async function migrateDbIfNeeded(db: SQLiteDatabase) {
-    const DATABASE_VERSION = 3;
+    const DATABASE_VERSION = 4;
     const dbInfo = await db.getFirstAsync<{ user_version: number }>(
         "PRAGMA user_version"
     );
@@ -111,8 +109,18 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
         currentDbVersion = 3;
     }
 
-    // if (currentDbVersion === 3) {
+    if (currentDbVersion === 3) {
+        console.log('Adding note in checkin table');
+        await db.execAsync(`
+      PRAGMA journal_mode = 'wal';
+      ALTER TABLE check_ins ADD COLUMN note_content TEXT DEFAULT NULL;
+      `);
+        currentDbVersion = 4;
+    }
+
+    // if (currentDbVersion === 4) {
     //   add more migration
     // }
+
     await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }

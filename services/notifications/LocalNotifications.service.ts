@@ -3,15 +3,15 @@ import {NotificationsService} from "./Notification.service";
 import * as Notifications from 'expo-notifications';
 import {Alert} from "react-native";
 import {getRandomBetween, ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency";
-import {NotificationEntity, NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
+import {NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
 
-const registerNotificationForContact = (contact: ContactModel): Promise<string> => {
+const registerNotificationForContact = (contact: ContactModel, checkinDate: Date): Promise<string> => {
     return Notifications.scheduleNotificationAsync({
         content: {
             title: `Catch’up with ${contact.firstName} !`,
             body: `You last checked in ${ReminderFrequencyUtils.translateFrequencyToEnglish(contact.frequency)} ago`,
         },
-        trigger: ReminderFrequencyUtils.getNextNotificationTrigger(contact.frequency),
+        trigger: ReminderFrequencyUtils.getNextNotificationTrigger(contact.frequency, checkinDate),
     });
 }
 
@@ -35,9 +35,9 @@ const initializeNotificationsSettings = () => {
     });
 }
 
-const deleteNotificationAndCreateNewPostponed = async (notificationId: NotificationId, contact: ContactModel): Promise<NotificationModel> => {
+const deleteNotificationAndCreateNewPostponed = async (notificationId: NotificationId, contact: ContactModel, checkinDate: Date): Promise<NotificationModel> => {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
-    const newNotificationId = await registerNotificationForContact(contact);
+    const newNotificationId = await registerNotificationForContact(contact, checkinDate);
     return {
         contact: contact,
         notificationId: newNotificationId

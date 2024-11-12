@@ -26,15 +26,14 @@ const translateFrequencyToEnglish = (frequency: ReminderFrequency): string => {
     }
 }
 
-const getWeekOfMonthOfToday = (): number => {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+const getWeekOfMonthOfToday = (checkinDate: Date): number => {
+    const start = new Date(checkinDate.getFullYear(), checkinDate.getMonth(), 1);
     const dayOfWeek = start.getDay();
-    const today = now.getDate() + 1;
-    return Math.ceil((today + dayOfWeek) / 7);
+    const dayOfCheckin = checkinDate.getDate() + 1;
+    return Math.ceil((dayOfCheckin + dayOfWeek) / 7);
 }
 
-const getNextNotificationTrigger = (frequency: ReminderFrequency): NotificationTriggerInput => {
+const getNextNotificationTrigger = (frequency: ReminderFrequency, checkInDate: Date): NotificationTriggerInput => {
     const randomHour = getRandomBetween([{min: 8, max: 10}, {min: 12, max: 14}, {min: 18, max: 20}]);
     const randomMinute = getRandomBetween([{min: 0, max: 59}]);
     const baseTriggerInput = {
@@ -48,18 +47,18 @@ const getNextNotificationTrigger = (frequency: ReminderFrequency): NotificationT
             return baseTriggerInput;
         case 'weekly':
             return {
-                weekday: new Date().getDay() + 1,
+                weekday: checkInDate.getDay() + 1,
                 ...baseTriggerInput
             };
         case 'monthly':
             return {
-                weekOfMonth: getWeekOfMonthOfToday(),
+                weekOfMonth: getWeekOfMonthOfToday(checkInDate),
                 ...baseTriggerInput
             }
         case 'yearly':
             return {
-                month: new Date().getMonth() + 1,
-                day: new Date().getDate(),
+                month: checkInDate.getMonth() + 1,
+                day: checkInDate.getDate(),
                 ...baseTriggerInput
             }
     }

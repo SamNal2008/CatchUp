@@ -1,16 +1,11 @@
-import {ContactId, ContactModel} from "../contacts/ContactEntity";
-import {Date} from "expo-contacts";
+import {ContactId, ContactModel} from "@/repositories";
 
 export type CheckInId = string;
 
 export type CheckInEntity = {
     contact_id: ContactId;
     check_in_date: Date;
-}
-
-export type CheckInWithNoteEntity = {
-    check_in_id: CheckInId;
-    noteContent: string;
+    note_content?: string;
 }
 
 export type CheckInModel = {
