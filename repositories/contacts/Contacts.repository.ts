@@ -1,7 +1,8 @@
 import * as SQLite from "expo-sqlite";
 import * as Contact from 'expo-contacts';
-import { ContactModel, ContactId, ContactEntity, createNewContactEntity } from "./ContactEntity";
+import {ContactEntity, ContactId, ContactModel, createNewContactEntity} from "./ContactEntity";
 import {DateUtils} from "@/constants/DateUtils";
+import {logService} from "@/services/log.service";
 
 export const DATABASE_NAME = "catch_up.db";
 
@@ -56,7 +57,7 @@ class LocalRepository implements ContactsRepository {
     for (const entity of entities) {
       const contactInPhone: Contact.Contact | undefined = await Contact.getContactByIdAsync(entity.contact_id, [Contact.Fields.ID, Contact.Fields.FirstName, Contact.Fields.LastName, Contact.Fields.Image, Contact.Fields.Birthday]);
       if (!contactInPhone) {
-        console.warn(`Contact with ID : ${entity.contact_id} not found in phone anymore`);
+        logService.warn(`Contact with ID : ${entity.contact_id} not found in phone anymore`);
         continue;
       }
       result.push(createNewContactEntity({contact: contactInPhone, frequency: entity.frequency, birthDate: DateUtils.getBirthDateFromBirthday(contactInPhone), lastCheckin: null}));

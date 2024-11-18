@@ -3,6 +3,7 @@ export const Size = {
     medium: 16,
     large: 24,
     extraLarge: 32,
+    full: '100%'
 } as const;
 
 export const BorderRadius = {

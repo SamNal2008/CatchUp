@@ -18,6 +18,7 @@ import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {BottomSheetModalProvider} from "@gorhom/bottom-sheet";
 import {NewFriendContextProvider} from "@/contexts/NewFriendProvider.context";
 import {NewNoteModal} from "@/components/organisms/NewNoteModal";
+import {logService} from "@/services/log.service";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -82,9 +83,9 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
     if (currentDbVersion >= DATABASE_VERSION) {
         return;
     }
-    console.debug(`Migrating database from version ${currentDbVersion} to ${DATABASE_VERSION}`);
+    logService.debug(`Migrating database from version ${currentDbVersion} to ${DATABASE_VERSION}`);
     if (currentDbVersion === 0) {
-        console.log('creating contacts table');
+        logService.log('creating contacts table');
         await db.execAsync(`
       PRAGMA journal_mode = 'wal';
      CREATE TABLE if not exists contacts (contact_id TEXT PRIMARY KEY, frequency TEXT NOT NULL);
@@ -92,7 +93,7 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
         currentDbVersion = 1;
     }
     if (currentDbVersion === 1) {
-        console.log('creating check_ins table');
+        logService.log('creating check_ins table');
         await db.execAsync(`
       PRAGMA journal_mode = 'wal';
      CREATE TABLE if not exists check_ins (contact_id TEXT, check_in_date TIMESTAMP NOT NULL, PRIMARY KEY (contact_id, check_in_date));
@@ -101,7 +102,7 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
     }
 
     if (currentDbVersion === 2) {
-        console.log('creating notifications table');
+        logService.log('creating notifications table');
         await db.execAsync(`
       PRAGMA journal_mode = 'wal';
      CREATE TABLE if not exists notifications (contact_id TEXT, notification_id TEXT, frequency TEXT , PRIMARY KEY (contact_id, notification_id));
@@ -110,7 +111,7 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
     }
 
     if (currentDbVersion === 3) {
-        console.log('Adding note in checkin table');
+        logService.log('Adding note in checkin table');
         await db.execAsync(`
       PRAGMA journal_mode = 'wal';
       ALTER TABLE check_ins ADD COLUMN note_content TEXT DEFAULT NULL;

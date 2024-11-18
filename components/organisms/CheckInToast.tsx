@@ -7,7 +7,9 @@ import {PrimaryButton} from "@/components/atoms/PrimaryButton";
 import {SecondaryButton} from "@/components/atoms/SecondaryButton";
 import {ContactModel} from "@/repositories";
 import {useNewNoteCheckInModalControl, useSetContactToCheckin} from "@/store/CheckinNote.store";
-import {useModalRef} from "@/components/navigation/BottomSheet";
+import {useEffect, useRef, useState} from "react";
+import {TimeConstants} from "@/constants/Time";
+import {useCheckIns} from "@/contexts/CheckIns.context";
 
 export type CheckInToastProps = {
     checkedInContact: ContactModel,
@@ -16,13 +18,33 @@ export type CheckInToastProps = {
 
 export const CheckInToast = ({checkedInContact, isVisible}: CheckInToastProps) => {
     const theme: ColorSchemeName = useColorSchemeOrDefault();
+    const [userWantsToAddNote, setUserWantsToAddNote] = useState(false);
+    const userWantsToAddNoteRef = useRef(userWantsToAddNote);
     const styles = makeStyles(theme);
     const {openModal, isModalVisible} = useNewNoteCheckInModalControl();
     const setContactToCheckin = useSetContactToCheckin();
+    const {checkInOnContact} = useCheckIns();
+
+    const addNote = () => {
+        setUserWantsToAddNote(true);
+        userWantsToAddNoteRef.current = true;
+        openModal();
+    }
 
     const undoContactCheckin = () => {
         setContactToCheckin(null);
     }
+
+    useEffect(() => {
+        if (isVisible) {
+            const timeout = setTimeout(() => {
+                if (!userWantsToAddNoteRef.current) {
+                    checkInOnContact();
+                }
+            }, TimeConstants.CONFIRM_CHECKIN_DELAY);
+            return () => clearTimeout(timeout);
+        }
+    }, [isVisible]);
 
     return (
         <>
@@ -47,7 +69,7 @@ export const CheckInToast = ({checkedInContact, isVisible}: CheckInToastProps) =
                     </View>
                     <View style={{flexDirection: 'row', gap: 5, flex: 1}}>
                         <SecondaryButton title={"Undo"} onPress={undoContactCheckin}/>
-                        <PrimaryButton title={"+ Note"} onPress={openModal}/>
+                        <PrimaryButton title={"+ Note"} onPress={addNote}/>
                     </View>
                 </View>
             </Toast>

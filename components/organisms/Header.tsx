@@ -1,14 +1,28 @@
 import { ThemedText } from "@/components/atoms/ThemedText";
-import { AntDesign } from "@expo/vector-icons";
+import {AntDesign, FontAwesome6} from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 import * as Contacts from 'expo-contacts';
 import { Colors } from "@/constants/design/Colors";
 import { useContacts } from "@/contexts/Contact.context";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
+import { usePathname } from 'expo-router';
 
+const usePageTitle = () => {
+    const pathname = usePathname();
+    switch (pathname) {
+        case '/':
+            return 'Journal';
+        case '/profile':
+            return "Catchup";
+        case '/settings':
+            return 'Settings';
+        default:
+            return 'Catchup';
+    }
+}
 
 export const Header = () => {
-
+    const pageTitle = usePageTitle();
     const theme = useColorSchemeOrDefault();
     const { setNewContact } = useContacts();
 
@@ -30,9 +44,9 @@ export const Header = () => {
         }
     }
 
-    return (<View style={styles.header}>
-        <ThemedText type={'subtitle'} style={{ fontSize: 24 }}>Catchup</ThemedText>
-        <AntDesign size={46} suppressHighlighting color={Colors[theme].icon} onPress={openModalToChoseContact} name={'pluscircle'} />
+    return (<View style={[styles.header, {backgroundColor: Colors[theme].background}]}>
+        <ThemedText type={'subtitle'} style={{ fontSize: 24 }}>{pageTitle}</ThemedText>
+        {pageTitle === 'Catchup' ? <FontAwesome6 size={40} suppressHighlighting color={Colors[theme].borderColor} onPress={openModalToChoseContact} name={'circle-plus'} /> : null}
     </View>);
 }
 

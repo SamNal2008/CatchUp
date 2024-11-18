@@ -1,19 +1,17 @@
 import {MyBottomSheet, useModalRef} from "@/components/navigation/BottomSheet";
 import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import {
-    useContactToCheckin,
-    useIsModalVisible, useNewNoteCheckInModalControl,
-    useNoteContent,
-    useCheckinDate,
+    useNewNoteCheckInModalControl,
     useSetNoteContent,
-    useSetNoteDate, useSetContactToCheckin
+    useSetNoteDate, useNewCheckinInfo, useSetContactToCheckin
 } from "@/store/CheckinNote.store";
 import DateTimePicker, {DateTimePickerEvent} from "@react-native-community/datetimepicker";
-import {Button, Text, TextInput, View} from "react-native";
-import {Colors, Palette} from "@/constants/design";
+import {Button, TextInput, View} from "react-native";
+import {Colors} from "@/constants/design";
 import {useCheckIns} from "@/contexts/CheckIns.context";
-import {useNotifications} from "@/hooks/useNotificatons";
 import {useEffect, useRef, useState} from "react";
+import {ThemedText} from "@/components/atoms/ThemedText";
+import {logService} from "@/services/log.service";
 
 
 type NewNoteHeaderProps = {
@@ -22,33 +20,40 @@ type NewNoteHeaderProps = {
 
 const NewNoteHeader = ({saveNewCheckinWithNote}: NewNoteHeaderProps) => {
     const theme = useColorSchemeOrDefault();
-    const checkinDate = useCheckinDate();
+    const {checkinDate, contactToCheckin} = useNewCheckinInfo();
+    const setContactToCheckin = useSetContactToCheckin();
     const setCheckinDate = useSetNoteDate();
     const {closeModal} = useNewNoteCheckInModalControl();
 
     const updateCheckinDate = (event: DateTimePickerEvent) => {
-        console.log(new Date(event.nativeEvent.timestamp));
-        console.log('changed')
+        logService.log(new Date(event.nativeEvent.timestamp));
         setCheckinDate(new Date(event.nativeEvent.timestamp));
     }
 
+    const cancelCheckin = () => {
+        setContactToCheckin(null);
+        closeModal();
+    }
+
     return (<>
-        <Button title="Cancel" color={Colors[theme].buttonBackground} onPress={closeModal}/>
+        <Button title="Cancel" color={Colors[theme].buttonBackground} onPress={cancelCheckin}/>
         <View>
             <DateTimePicker
                 value={checkinDate}
                 onChange={updateCheckinDate}
             />
-            <Text>
-                with Samy NALBANDIAN
-            </Text>
+            <ThemedText>
+                with {contactToCheckin?.firstName} {contactToCheckin?.lastName?.toUpperCase()}
+            </ThemedText>
         </View>
         <Button title="Save" color={Colors[theme].buttonBackground} onPress={saveNewCheckinWithNote}/>
     </>);
 }
 
 const NewNoteTextInput = () => {
-    const noteContent = useNoteContent();
+    const theme = useColorSchemeOrDefault();
+    const {noteContent} = useNewCheckinInfo()
+    ;
     const setNoteContent = useSetNoteContent();
     const {isModalVisible} = useNewNoteCheckInModalControl();
     const inputRef = useRef<TextInput>(null);
@@ -69,7 +74,7 @@ const NewNoteTextInput = () => {
                 ref={inputRef}
                 value={noteContent}
                 onChangeText={setNoteContent}
-                style={{backgroundColor: Palette.GREY_200, padding: 20, color: 'black', lineHeight: 20}}
+                style={{backgroundColor: Colors[theme].textInput, padding: 20, color: Colors[theme].text, lineHeight: 20}}
                 numberOfLines={10}
                 multiline
             />
@@ -79,13 +84,9 @@ const NewNoteTextInput = () => {
 
 export const NewNoteModal = () => {
     const modalRef = useModalRef();
-    const {openModal, isModalVisible, closeModal} = useNewNoteCheckInModalControl();
-    const {postPoneReminder} = useNotifications();
+    const {isModalVisible, closeModal} = useNewNoteCheckInModalControl();
     const {checkInOnContact} = useCheckIns();
-    const contact = useContactToCheckin();
-    const noteContent = useNoteContent();
-    const checkinDate = useCheckinDate();
-    const setContactToCheckin = useSetContactToCheckin();
+    const {contactToCheckin} = useNewCheckinInfo();
 
     useEffect(() => {
         if (isModalVisible) {
@@ -96,22 +97,12 @@ export const NewNoteModal = () => {
     }, [isModalVisible]);
 
     const saveNewCheckinWithNote = () => {
-        if (!contact) {
-            console.warn('No contact to checkin with');
+        if (!contactToCheckin) {
+            logService.warn('No contact to checkin with');
             return;
         }
-        checkInOnContact({
-            contact,
-            noteContent,
-            checkInDate: checkinDate
-        });
-        postPoneReminder(contact, checkinDate);
-        setContactToCheckin(null);
+        checkInOnContact();
         closeModal();
-    };
-
-    const addNote = () => {
-        openModal();
     };
 
     return (

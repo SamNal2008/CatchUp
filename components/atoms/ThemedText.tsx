@@ -1,6 +1,8 @@
 import { Text, type TextProps, StyleSheet } from 'react-native';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
+import {Colors} from "@/constants/design";
+import {ColorSchemeName, useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
@@ -16,6 +18,8 @@ export function ThemedText({
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor('text', { light: lightColor, dark: darkColor });
+  const theme = useColorSchemeOrDefault();
+  const styles = makeStyles(theme);
 
   return (
     <Text
@@ -36,7 +40,7 @@ export function ThemedText({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
   default: {
     fontSize: 16,
     lineHeight: 24,
@@ -60,6 +64,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 21,
     fontFamily: 'SF Pro',
+    color: Colors[theme].icon,
   },
   link: {
     lineHeight: 30,

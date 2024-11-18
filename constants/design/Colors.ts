@@ -35,6 +35,7 @@ export const Colors = {
     buttonText: Palette.WHITE,
     buttonBackgroundDisabled: Palette.GREY_300,
     toastBackground: Palette.WHITE,
+    textInput: Palette.GREY_200
   },
   dark: {
     text: PaletteDarkMode.BLACK,
@@ -48,6 +49,7 @@ export const Colors = {
     buttonText: PaletteDarkMode.WHITE,
     buttonBackgroundDisabled: PaletteDarkMode.GREY_300,
     toastBackground: PaletteDarkMode.WHITE,
+    textInput: PaletteDarkMode.GREY_200
   },
 } as const;
 

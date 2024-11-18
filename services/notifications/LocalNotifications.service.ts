@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 import {Alert} from "react-native";
 import {getRandomBetween, ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency";
 import {NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
+import {logService} from "@/services/log.service";
 
 const registerNotificationForContact = (contact: ContactModel, checkinDate: Date): Promise<string> => {
     return Notifications.scheduleNotificationAsync({
@@ -71,7 +72,7 @@ const deleteNotificationWithId = async (notificationId: NotificationId) => {
     try {
         await Notifications.cancelScheduledNotificationAsync(notificationId);
     } catch (e) {
-        console.warn(`Notification with ID : ${notificationId} could not have been deleted`);
+        logService.warn(`Notification with ID : ${notificationId} could not have been deleted`);
     }
 }
 

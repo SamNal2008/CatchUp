@@ -1,7 +1,8 @@
 import {ContactId, ContactModel} from "@/repositories";
-import { getNotificationRepository } from "@/repositories/notifications/Notification.repository";
-import { getNotificationsService, NotificationsService } from "@/services/notifications/Notification.service";
-import { useSQLiteContext } from "expo-sqlite";
+import {getNotificationRepository} from "@/repositories/notifications/Notification.repository";
+import {getNotificationsService} from "@/services/notifications/Notification.service";
+import {useSQLiteContext} from "expo-sqlite";
+import {logService} from "@/services/log.service";
 
 type UseNotifications = {
     askForNotificationPermission: () => void;
@@ -36,7 +37,7 @@ export const useNotifications = (): UseNotifications => {
                 contact_id: contact.id!
             });
         } catch (e) {
-            console.error(`Unable to register notification for contact ${contact.id}`, e);
+            logService.error(`Unable to register notification for contact ${contact.id}`, e);
         }
     }
 
@@ -44,18 +45,18 @@ export const useNotifications = (): UseNotifications => {
         try {
             const notificationId = await notificationsService.registerBirthdayNotificationForContact(contact);
         } catch (e) {
-            console.error(`Unable to register birthday notification for contact ${contact.id}`, e);
+            logService.error(`Unable to register birthday notification for contact ${contact.id}`, e);
         }
     }
 
     const postPoneReminder = async (contact: ContactModel, checkinDate: Date) => {
         if (!contact.id) {
-            console.error(`Unable to postpone notification for contact without id`);
+            logService.error(`Unable to postpone notification for contact without id`);
             return;
         }
         const notification = notificationRepository.getReminder(contact.id);
         if (!notification) {
-            console.error(`Unable to get notification for contact ${contact.id}`);
+            logService.error(`Unable to get notification for contact ${contact.id}`);
             return;
         }
         try {
@@ -66,14 +67,14 @@ export const useNotifications = (): UseNotifications => {
                 frequency: contact.frequency
             });
         } catch (e) {
-            console.error(`Unable to postpone notification for contact ${contact.id}`, e);
+            logService.error(`Unable to postpone notification for contact ${contact.id}`, e);
         }
     }
 
     const deleteFriendNotification = async (contactId: ContactId) => {
         const notification = notificationRepository.getReminder(contactId);
         if (!notification) {
-            console.warn('Notification not found for friend with contact id : ' + contactId);
+            logService.warn('Notification not found for friend with contact id : ' + contactId);
             return;
         }
         notificationRepository.deleteReminder(notification.notification_id);

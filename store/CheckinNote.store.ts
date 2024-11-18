@@ -25,15 +25,16 @@ const newCheckinStore = create<NewCheckinWithNoteStore>((set) => ({
     setCheckinDate: (checkinDate: Date) => set(() => ({checkinDate})),
 }));
 
-export const useNoteContent = () => useStore(newCheckinStore, store => store.noteContent);
-export const useCheckinDate = () => useStore(newCheckinStore, store => store.checkinDate);
 export const useSetNoteContent = () => useStore(newCheckinStore, store => store.setNoteContent);
 export const useSetNoteDate = () => useStore(newCheckinStore, store => store.setCheckinDate);
-export const useIsModalVisible = () => useStore(newCheckinStore, store => store.isModalVisible);
-export const useOpenModal = () => useStore(newCheckinStore, store => store.openModal);
-export const useCloseModal = () => useStore(newCheckinStore, store => store.closeModal);
-export const useContactToCheckin = () => useStore(newCheckinStore, store => store.contactToCheckin);
 export const useSetContactToCheckin = () => useStore(newCheckinStore, store => store.setContentToCheckin);
+
+export const useNewCheckinInfo = () => {
+    const noteContent = useNoteContent();
+    const checkinDate = useCheckinDate();
+    const contactToCheckin = useContactToCheckin();
+    return {noteContent, checkinDate, contactToCheckin};
+}
 
 export const useNewNoteCheckInModalControl = () => {
     const openModal = useOpenModal();
@@ -42,3 +43,11 @@ export const useNewNoteCheckInModalControl = () => {
 
     return {openModal, closeModal, isModalVisible};
 }
+
+const useNoteContent = () => useStore(newCheckinStore, store => store.noteContent);
+const useCheckinDate = () => useStore(newCheckinStore, store => store.checkinDate);
+const useContactToCheckin = () => useStore(newCheckinStore, store => store.contactToCheckin);
+
+const useCloseModal = () => useStore(newCheckinStore, store => store.closeModal);
+const useOpenModal = () => useStore(newCheckinStore, store => store.openModal);
+const useIsModalVisible = () => useStore(newCheckinStore, store => store.isModalVisible);

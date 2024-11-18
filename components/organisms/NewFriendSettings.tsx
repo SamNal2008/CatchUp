@@ -22,6 +22,7 @@ import {SymbolView} from 'expo-symbols';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
 import {DateUtils} from "@/constants/DateUtils";
 import {InitialImage} from "@/components/molecules/InitialImage";
+import {logService} from "@/services/log.service";
 
 type NewFriendSettingsProps = {
     contact: Contact | null;
@@ -53,11 +54,6 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
         "monthly",
         "yearly",
     ];
-
-    const handleFrequencyChange = (itemValue: ItemValue) => {
-        setFrequency(itemValue as ReminderFrequency);
-        togglePicker();
-    };
 
     const callContact = async () => {
         const phoneNumber = contact.phoneNumbers?.at(0)?.number;
@@ -91,7 +87,7 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
                 alert("SMS is not available on this device");
             }
         } catch (error) {
-            console.error(error);
+            logService.error(error);
             alert("An error occured");
         }
     };

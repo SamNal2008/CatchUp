@@ -2,11 +2,13 @@ import { BorderRadius, FontWeight, LetterSpacing, LineHeight, Spacing, Typograph
 import { Colors } from "@/constants/design/Colors";
 import { ColorSchemeName, useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { StyleSheet, Pressable, Text, StyleProp, ViewStyle, PressableProps, TextStyle } from "react-native";
+import Animated from "react-native-reanimated";
 
 export type ButtonProps = {
     title: string;
     style?: StyleProp<ViewStyle>;
     textStyle?: StyleProp<TextStyle>;
+    loading?: boolean;
 } & Omit<PressableProps, 'style'>;
 
 const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
@@ -30,9 +32,10 @@ const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
     },
 });
 
-export const PrimaryButton = ({ title, style, textStyle, disabled, ...rest }: ButtonProps) => {
+export const PrimaryButton = ({ title, style, textStyle, disabled, loading, ...rest }: ButtonProps) => {
     const theme: ColorSchemeName = useColorSchemeOrDefault();
     const styles = makeStyles(theme);
+
     return (
         <Pressable style={({pressed}) => [
             styles.button,

@@ -1,7 +1,7 @@
 import * as SQLite from "expo-sqlite";
-import { ContactId, ReminderFrequency, CheckInEntity } from "@/repositories";
-import { DateUtils } from "@/constants/DateUtils";
-import {CheckInModel} from "@/repositories/check-ins/CheckInEntity";
+import {CheckInEntity, ContactId, ReminderFrequency} from "@/repositories";
+import {DateUtils} from "@/constants/DateUtils";
+import {logService} from "@/services/log.service";
 
 export const DATABASE_NAME = "catch_up.db";
 
@@ -52,7 +52,7 @@ class LocalCheckInsRepository implements CheckInsRepository {
     try {
       this.db.runSync(`DELETE FROM ${LocalCheckInsRepository.TABLE_NAME} WHERE contact_id = ?`, [contactId]);
     } catch (e) {
-      console.warn(`Could not delete all check in for contact id : ${contactId}`, e);
+      logService.warn(`Could not delete all check in for contact id : ${contactId}`, e);
     }
   }
 

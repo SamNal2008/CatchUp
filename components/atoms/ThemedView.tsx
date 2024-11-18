@@ -2,36 +2,33 @@ import { ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { Header } from "@/components/organisms/Header";
+import {ColorSchemeName, useColorSchemeOrDefault} from "@/hooks/useColorScheme";
+import {Colors, Size, Spacing} from "@/constants/design";
 
 export type ThemedViewProps = ViewProps & {
     lightColor?: string;
     darkColor?: string;
 };
 
-export function ThemedView({ style, lightColor, darkColor, ...otherProps }: ThemedViewProps) {
-    const backgroundColor = useThemeColor('background', { light: lightColor, dark: darkColor });
+export function ThemedView({ style, ...otherProps }: ThemedViewProps) {
+    const theme = useColorSchemeOrDefault();
+    const styles = makeStyles(theme);
     return (
-        <ScrollView contentContainerStyle={[{ backgroundColor }, styles.default]}>
-            <View style={[styles.content, style]}>
-                {otherProps.children}
-            </View>
-        </ScrollView>
+        <View style={[styles.default, style]}>
+            {otherProps.children}
+        </View>
     );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
     default: {
+        backgroundColor: Colors[theme].background,
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
-    },
-    content: {
-        flex: 4,
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
+        paddingTop: Spacing.medium,
+        paddingHorizontal: Spacing.small,
         width: '100%'
-    }
+    },
 });

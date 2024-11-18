@@ -1,16 +1,20 @@
 import {getCheckInsRepository, CheckInsRepository} from "@/repositories/check-ins/CheckIns.repository";
 import {useSQLiteContext} from "expo-sqlite";
-import {createContext, ReactNode, useContext} from "react";
-import {ContactId, ContactsRepository, getContactsRepository} from "@/repositories";
+import {createContext, ReactNode, useContext, useEffect, useState} from "react";
+import {ContactId, getContactsRepository} from "@/repositories";
 import {CheckInModel} from "@/repositories/check-ins/CheckInEntity";
-import {useContacts} from "@/contexts/Contact.context";
+import {useNotifications} from "@/hooks/useNotificatons";
+import {useNewCheckinInfo, useSetContactToCheckin, useSetNoteContent, useSetNoteDate} from "@/store/CheckinNote.store";
+import {logService} from "@/services/log.service";
+import {useRouter} from "expo-router";
 
 type CheckInsContextProps = {
     deleteCheckinForFriend: (contactId: ContactId) => void;
-    checkInOnContact: (checkIn: CheckInModel) => void;
+    checkInOnContact: () => void;
     clearAllCheckIns: () => void;
     getLatestCheckInForContact: (contactId: ContactId) => Date | null;
     getAllCheckins: () => Promise<CheckInModel[]>;
+    checkIns: CheckInModel[];
 }
 
 const CheckInsContext = createContext<CheckInsContextProps | null>(null);
@@ -23,30 +27,52 @@ export const useCheckIns = () => {
 
 export const CheckInsProvider = ({children}: { children: ReactNode }) => {
     const db = useSQLiteContext();
+    const {navigate} = useRouter();
+    const setContactToCheckin = useSetContactToCheckin();
+    const setNoteContent = useSetNoteContent();
+    const setCheckinDate = useSetNoteDate();
+    const {checkinDate, contactToCheckin, noteContent} = useNewCheckinInfo();
+    const {postPoneReminder} = useNotifications();
+
+    const [checkIns, setCheckIns] = useState<CheckInModel[]>([]);
+
     const checkInsRepository: CheckInsRepository = getCheckInsRepository(db);
     const contactsRepository = getContactsRepository(db);
+
+    const refreshCheckIns = async () => {
+        const checkIns = await getAllCheckins();
+        setCheckIns(checkIns);
+    }
+
     const deleteCheckinForFriend = (contactId: ContactId) => {
         checkInsRepository.deleteAllCheckInWithContactId(contactId);
     }
 
-    const checkInOnContact = (checkIn: CheckInModel) => {
-        if (!checkIn.contact.id) {
-            console.warn('Contact id is not defined');
+    const checkInOnContact = () => {
+        if (!contactToCheckin || !contactToCheckin?.id) {
+            logService.warn('Contact id is not defined');
             return;
         }
         try {
             checkInsRepository.checkInOnContact({
-                contact_id: checkIn.contact.id!,
-                check_in_date: checkIn.checkInDate,
-                note_content: checkIn.noteContent
+                contact_id: contactToCheckin.id,
+                check_in_date: checkinDate,
+                note_content: noteContent
             });
+            postPoneReminder(contactToCheckin, checkinDate);
+            setContactToCheckin(null);
+            setCheckinDate(new Date());
+            setNoteContent('');
+            refreshCheckIns().catch(logService.error);
+            navigate("/");
         } catch (e) {
-            console.error("Error while saving checking on friend", e);
+            logService.error("Error while saving checking on friend", e);
         }
     }
 
     const clearAllCheckIns = () => {
         checkInsRepository.deleteAllCheckIns();
+        refreshCheckIns().then().catch(logService.error);
     }
 
     const getLatestCheckInForContact = (contactId: ContactId): Date | null => {
@@ -67,13 +93,18 @@ export const CheckInsProvider = ({children}: { children: ReactNode }) => {
         return checkInModels;
     }
 
+    useEffect(() => {
+        refreshCheckIns().catch(logService.error);
+    }, []);
+
     return (
         <CheckInsContext.Provider value={{
             deleteCheckinForFriend,
             checkInOnContact,
             clearAllCheckIns,
             getLatestCheckInForContact,
-            getAllCheckins
+            getAllCheckins,
+            checkIns
         }}>
             {children}
         </CheckInsContext.Provider>

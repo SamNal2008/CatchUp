@@ -16,7 +16,11 @@ import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import {useSQLiteContext} from "expo-sqlite";
 import * as Notifications from 'expo-notifications';
 import {CheckInToast} from "@/components/organisms/CheckInToast";
-import {useContactToCheckin, useOpenModal, useSetContactToCheckin, useSetNoteContent} from "@/store/CheckinNote.store";
+import {
+  useNewCheckinInfo,
+  useSetContactToCheckin,
+} from "@/store/CheckinNote.store";
+import {logService} from "@/services/log.service";
 
 const styles = StyleSheet.create({
   friendContainer: {
@@ -77,7 +81,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
   const borderColor = useThemeColor('borderColor');
   const { deleteFriend, friends } = useContacts();
   const { getLatestCheckInForContact } = useCheckIns();
-  const { postPoneReminder, askForNotificationPermission } = useNotifications();
+  const { askForNotificationPermission } = useNotifications();
 
   const [isOnDeleteMode, setIsOnDeleteMode] = useState<boolean>(false);
   const toggleDeleteFriend = () => {
@@ -87,7 +91,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
   const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
   const [reload, setReload] = useState<boolean>(false);
   const setContactToCheckin = useSetContactToCheckin();
-  const contactToCheckin = useContactToCheckin();
+  const {contactToCheckin} = useNewCheckinInfo();
 
   const isCheckingOnContact = contactToCheckin?.id === contact.id;
 
@@ -219,21 +223,28 @@ export default function Profile() {
   }
 
   const selectAllData = () => {
-    console.log("Contacts: " + db.getAllSync('SELECT * FROM contacts'));
-    console.log("Notifications : "+ db.getAllSync('SELECT * FROM notifications'));
-    console.log("Checkins : " + db.getAllSync('SELECT * FROM check_ins'));
-    console.log('Notifications service : ' + Notifications.getAllScheduledNotificationsAsync().then(console.log));
+    logService.log("Contacts: " + db.getAllSync('SELECT * FROM contacts'));
+    logService.log("Notifications : "+ db.getAllSync('SELECT * FROM notifications'));
+    logService.log("Checkins : " + db.getAllSync('SELECT * FROM check_ins'));
+    logService.log('Notifications service : ' + Notifications.getAllScheduledNotificationsAsync().then(logService.log));
   }
 
   return (
     <ThemedView>
-      <View style={{ flex: 1, width: '100%', paddingTop: 30 }}>
-        <Button title="Clear databases" onPress={wipeAll} />
-        <Button title={"Select all data in database"} onPress={selectAllData} />
+      <View style={{ flex: 1, width: '100%' }}>
+        {/*<Button title="Clear databases" onPress={wipeAll} />
+        <Button title={"Select all data in database"} onPress={selectAllData} />*/}
         {friends.length === 0 ?
           <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, gap: 15 }}>
-            <ThemedText type={'subtitle'}>C'est vide ici 😭 !</ThemedText>
-            <ThemedText type={'defaultSemiBold'}>Cliquer en haut à gauche pour catch'up ↗️ </ThemedText>
+            <>
+              <ThemedText type={"subtitle"}>
+                Keep your closest within reach
+              </ThemedText>
+              <ThemedText type={"default"} style={{textAlign: "center"}}>
+                Add friends to stay in touch, share memories, and never miss a
+                birthday
+              </ThemedText>
+            </>
           </View>
           :
           <View style={{ flex: 1, gap: 30 }}>

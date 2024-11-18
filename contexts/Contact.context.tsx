@@ -6,6 +6,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import *  as TaskManager from 'expo-task-manager';
 import {useCheckIns} from "@/contexts/CheckIns.context";
+import {logService} from "@/services/log.service";
 
 interface ContactContextProps {
     newContact: Contact | null;
@@ -55,7 +56,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
             registerFriendNotificationBirthdayReminder(contact);
             await fetchFriends();
         } catch (error) {
-            console.error('Error saving contact', error);
+            logService.error('Error saving contact', error);
             alert('Unable to save contact : ' + contact.firstName + ', are you sure you did not already add this friend ?');
         }
     };

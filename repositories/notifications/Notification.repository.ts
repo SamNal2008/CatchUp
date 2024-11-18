@@ -1,6 +1,7 @@
 import * as SQLite from "expo-sqlite";
-import { NotificationEntity, NotificationId } from "./NotificationEntity";
-import { ContactId } from "@/repositories";
+import {NotificationEntity, NotificationId} from "./NotificationEntity";
+import {ContactId} from "@/repositories";
+import {logService} from "@/services/log.service";
 
 type NotificationRepository = {
     saveReminder: (notificationEntity: NotificationEntity) => void;
@@ -28,7 +29,7 @@ class LocalRepository implements NotificationRepository {
     };
 
     public getReminder(contactId: ContactId): NotificationEntity | null {
-        console.log(this.db.getFirstSync<NotificationEntity>(`SELECT * from ${LocalRepository.TABLE_NAME}`));
+        logService.log(this.db.getFirstSync<NotificationEntity>(`SELECT * from ${LocalRepository.TABLE_NAME}`));
         const res = this.db.getFirstSync<NotificationEntity>(`SELECT * from ${LocalRepository.TABLE_NAME} where contact_id = ?`, [contactId]);
         if (!res) {
             return null;
