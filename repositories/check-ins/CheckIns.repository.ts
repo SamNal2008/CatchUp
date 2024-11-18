@@ -6,11 +6,12 @@ import {CheckInModel} from "@/repositories/check-ins/CheckInEntity";
 export const DATABASE_NAME = "catch_up.db";
 
 export interface CheckInsRepository {
-  checkInOnContact: (contactToCheckInId: ContactId) => void;
+  checkInOnContact: (checkInEntity: CheckInEntity) => void;
   getLatestCheckInForContact: (contactId?: ContactId) => CheckInEntity | null;
   hasAlreadyCheckedInWantedFrequency: (contactId: ContactId, wantedFrequency: ReminderFrequency) => boolean;
   deleteAllCheckIns: () => void;
   deleteAllCheckInWithContactId: (contactId: ContactId) => void;
+  getAllCheckIns: () => CheckInEntity[];
 }
 
 class LocalCheckInsRepository implements CheckInsRepository {
@@ -28,12 +29,12 @@ class LocalCheckInsRepository implements CheckInsRepository {
       [contactId, new Date(new Date().getTime() - daysAgoWanted.getTime()).toISOString()]) ?? false;
   }
 
-  public checkInOnContact(contactToCheckInId: ContactId): void {
-    const res = this.db.runSync(`INSERT INTO ${LocalCheckInsRepository.TABLE_NAME} (contact_id, check_in_date) VALUES (?, ?)`, [contactToCheckInId, new Date().toISOString()]);
+  public checkInOnContact(checkIn: CheckInEntity): void {
+    const res = this.db.runSync(`INSERT INTO ${LocalCheckInsRepository.TABLE_NAME} (contact_id, check_in_date, note_content) VALUES (?, ?, ?)`, [checkIn.contact_id, checkIn.check_in_date.toISOString(), checkIn.note_content ?? '']);
     if (res.changes > 0){
       return;
     }
-    throw new Error('Unable to check in on contact with ID : ' + contactToCheckInId);
+    throw new Error('Unable to check in on contact with ID : ' + checkIn.contact_id);
   }
 
   public getLatestCheckInForContact(contactId?: ContactId): CheckInEntity | null {
@@ -53,6 +54,10 @@ class LocalCheckInsRepository implements CheckInsRepository {
     } catch (e) {
       console.warn(`Could not delete all check in for contact id : ${contactId}`, e);
     }
+  }
+
+  public getAllCheckIns(): CheckInEntity[] {
+    return this.db.getAllSync<CheckInEntity>(`SELECT * FROM ${LocalCheckInsRepository.TABLE_NAME}`) ?? [];
   }
 }
 

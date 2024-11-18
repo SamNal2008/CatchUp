@@ -128,7 +128,7 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
     setContactToCheckin(contact);
   }
 
-  const hasAlreadyCheckedIn = lastCheckedIn !== null && false;
+  const hasAlreadyCheckedIn = lastCheckedIn !== null && false; // FIXME
   const toDaysAgo = hasAlreadyCheckedIn ? Math.round((new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24)) : null;
   const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
 
