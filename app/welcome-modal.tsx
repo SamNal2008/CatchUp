@@ -32,8 +32,8 @@ const CatchUpPurpose = ({content, title, icon}: {title: string, content: string,
 const CatchUpPurposes = () => {
     return (
         <View style={styles.purposes}>
-            <CatchUpPurpose icon="bell" content="Lorem ipsum dolor sit amet" title="Reminder"/>
-            <CatchUpPurpose icon="gift" content="Lorem ipsum dolor sit amet" title="Birthday"/>
+            <CatchUpPurpose icon="bell" content="Catch’up your friends at the right moment." title="Reminder"/>
+            <CatchUpPurpose icon="gift" content="Never miss a friend’s birthday again. " title="Birthday"/>
         </View>
     )
 }
