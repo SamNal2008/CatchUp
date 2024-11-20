@@ -15,7 +15,7 @@ const usePageTitle = () => {
         case '/profile':
             return "Catchup";
         case '/settings':
-            return 'Settings';
+            return 'Settings :)';
         default:
             return 'Catchup';
     }
