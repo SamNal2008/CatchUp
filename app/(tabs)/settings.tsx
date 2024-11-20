@@ -80,6 +80,7 @@ export default function Settings() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">Settings page</ThemedText>
+      <ThemedText>Test</ThemedText>
       <Pressable style={styles.removeAddButton}>
         <ThemedText style={styles.removeAddButtonText}>
           Remove adds ⊖

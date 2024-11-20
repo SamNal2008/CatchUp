@@ -35,8 +35,10 @@ export const CheckInToast = ({checkedInContact, isVisible}: CheckInToastProps) =
         setContactToCheckin(null);
     }
 
+    const isCheckinVisible = (isVisible && !isModalVisible) ?? true;
+
     useEffect(() => {
-        if (isVisible) {
+        if (isCheckinVisible) {
             const timeout = setTimeout(() => {
                 if (!userWantsToAddNoteRef.current) {
                     checkInOnContact();
@@ -44,12 +46,12 @@ export const CheckInToast = ({checkedInContact, isVisible}: CheckInToastProps) =
             }, TimeConstants.CONFIRM_CHECKIN_DELAY);
             return () => clearTimeout(timeout);
         }
-    }, [isVisible]);
+    }, [isCheckinVisible]);
 
     return (
         <>
             <Toast
-                visible={!isModalVisible && isVisible}
+                visible={isCheckinVisible}
                 position={650}
                 shadow={false}
                 animation={true}
