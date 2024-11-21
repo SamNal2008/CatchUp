@@ -20,9 +20,6 @@
           "fetch",
           "remote-notification"
         ]
-      },
-      "config": {
-        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -72,6 +69,12 @@
         "projectId": "2c8b8f97-c742-4f5b-8d17-8fee99edd947"
       }
     },
-    "owner": "samynalban"
+    "owner": "samynalban",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2c8b8f97-c742-4f5b-8d17-8fee99edd947"
+    }
   }
 }

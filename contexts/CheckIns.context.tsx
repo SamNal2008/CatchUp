@@ -56,7 +56,7 @@ export const CheckInsProvider = ({children}: { children: ReactNode }) => {
         try {
             checkInsRepository.checkInOnContact({
                 contact_id: contactToCheckin.id,
-                check_in_date: checkinDate,
+                check_in_date: checkinDate as unknown as string,
                 note_content: noteContent
             });
             postPoneReminder(contactToCheckin, checkinDate);
@@ -76,7 +76,11 @@ export const CheckInsProvider = ({children}: { children: ReactNode }) => {
     }
 
     const getLatestCheckInForContact = (contactId: ContactId): Date | null => {
-        return checkInsRepository.getLatestCheckInForContact(contactId)?.check_in_date ?? null;
+        const res = checkInsRepository.getLatestCheckInForContact(contactId)?.check_in_date ?? null;
+        if (res !== null) {
+            return new Date(res);
+        }
+        return res;
     }
 
     const getAllCheckins = async (): Promise<CheckInModel[]> => {

@@ -43,8 +43,7 @@ export const MyBottomSheet = forwardRef<BottomSheetModal, ModalProps>(({header, 
     );
 
     const iconColor = useThemeColor("icon");
-    const backgroundColor = useThemeColor("background");
-    const theme = useColorSchemeOrDefault();
+    const backgroundColor = useThemeColor("toastBackground");
 
     return (
         <BottomSheet

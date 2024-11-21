@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width: '100%',
         paddingHorizontal: 20,
+        height: 50,
     },
     contentContainer: {
         flex: 1,

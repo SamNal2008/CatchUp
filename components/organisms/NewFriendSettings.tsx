@@ -1,5 +1,5 @@
 import {Contact, presentFormAsync} from "expo-contacts";
-import {Dispatch, SetStateAction, useRef, useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {
     StyleSheet,
     Image,
@@ -11,8 +11,7 @@ import {
     TouchableOpacity,
     Platform
 } from "react-native";
-import {ItemValue} from "@react-native-picker/picker/typings/Picker";
-import {AntDesign, Feather, FontAwesome, Ionicons} from "@expo/vector-icons";
+import {AntDesign, Ionicons} from "@expo/vector-icons";
 import * as SMS from "expo-sms";
 import {Picker} from "@react-native-picker/picker";
 import {Colors} from "@/constants/design/Colors";
@@ -20,9 +19,10 @@ import * as Linking from 'expo-linking';
 import {ReminderFrequency} from "@/repositories/contacts/ReminderFrequency";
 import {SymbolView} from 'expo-symbols';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
-import {DateUtils} from "@/constants/DateUtils";
 import {InitialImage} from "@/components/molecules/InitialImage";
 import {logService} from "@/services/log.service";
+import { ThemedText } from "../atoms/ThemedText";
+import DropDownPicker from 'react-native-dropdown-picker';
 
 type NewFriendSettingsProps = {
     contact: Contact | null;
@@ -37,6 +37,14 @@ type NewFriendSettingsProps = {
 export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday, birthDay, setLastCheckin, lastCheckin}: NewFriendSettingsProps) => {
     const theme = useColorScheme() ?? 'light';
     const [isPickerVisible, setIsPickerVisible] = useState(false);
+
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([
+               {label: 'English', value: 'en'},                  
+               {label: 'Deutsch', value: 'de'},
+               {label: 'French', value: 'fr'},
+                 ]);
 
     if (!contact) {
         return null;
@@ -108,28 +116,34 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
         setLastCheckin(new Date(event.nativeEvent.timestamp));
     }
 
+    const handleFrequencyChange = (items: any) => {
+        setFrequency(items[0].value);
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.contactInfo}>
-                {contact.image?.uri ? <Image
-                    style={styles.image}
-                    source={{uri: contact.image?.uri}}
-                /> : <InitialImage firstName={contact.firstName} lastName={contact.lastName} size={100}/>}
-                <Text style={styles.name}>{contact.firstName} {contact.lastName}</Text>
+                <View style={{width: 100, height: 100}}>
+                    {contact.image?.uri ? <Image
+                        style={styles.image}
+                        source={{uri: contact.image?.uri}}
+                        /> : <InitialImage firstName={contact.firstName} lastName={contact.lastName}/>}
+                </View>
+                    <Text style={styles.name}>{contact.firstName} {contact.lastName}</Text>
             </View>
             <View style={styles.actions}>
                 {/* Button with icon */}
                 <Pressable style={styles.button} onPress={sendSms}>
-                    <SymbolView name="message.fill" style={styles.actionIcon} tintColor={Colors.light.icon}/>
-                    <Text style={styles.buttonText}>Message</Text>
+                    <SymbolView name="message.fill" style={styles.actionIcon} tintColor={Colors[theme].tint}/>
+                    <ThemedText type="defaultSemiBold">Message</ThemedText>
                 </Pressable>
                 <Pressable style={styles.button} onPress={callContact}>
-                    <SymbolView name="phone.fill" style={styles.actionIcon} tintColor={Colors.light.icon}/>
-                    <Text style={styles.buttonText}>Call</Text>
+                    <SymbolView name="phone.fill" style={styles.actionIcon} tintColor={Colors[theme].tint}/>
+                    <ThemedText type="defaultSemiBold">Call</ThemedText>
                 </Pressable>
                 <Pressable style={styles.button} onPress={seeContact}>
-                    <SymbolView name="person.fill" style={styles.actionIcon} tintColor={Colors.light.icon}/>
-                    <Text style={styles.buttonText}>Contact</Text>
+                    <SymbolView name="person.fill" style={styles.actionIcon} tintColor={Colors[theme].tint}/>
+                    <ThemedText type="defaultSemiBold">Contact</ThemedText>
                 </Pressable>
             </View>
             <View style={styles.complementaryInfos}>
@@ -154,57 +168,18 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
                         <Ionicons size={20} color={Colors[theme].icon} name="refresh-outline"/>
                         <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
                     </View>
-                    <TouchableOpacity style={styles.frequencyButton} onPress={openPicker}>
-                        <Text style={styles.frequencyText}>{frequency}</Text>
-                    </TouchableOpacity>
-                    {Platform.OS === 'ios' && isPickerVisible && (
-                        <Modal
-                            transparent={true}
-                            visible={isPickerVisible}
-                            animationType="fade"
-                            onRequestClose={closePicker}
-                        >
-                            <View style={styles.modalBackground}>
-                                <View style={styles.modalContainer}>
-                                    <TouchableOpacity onPress={closePicker} style={styles.doneButton}>
-                                        <Text style={styles.doneButtonText}>Done</Text>
-                                    </TouchableOpacity>
-                                    <Picker
-                                        selectedValue={frequency}
-                                        onValueChange={(itemValue) => setFrequency(itemValue)}
-                                    >
-                                        {reminderFrequencyOptions.map((frequency) => (
-                                            <Picker.Item key={frequency} label={frequency} value={frequency}/>
-                                        ))}
-                                    </Picker>
-                                </View>
-                            </View>
-                        </Modal>
-                    )}
-
-                    {/* Picker component directly for Android */}
-                    {Platform.OS === 'android' && (
-                        <Picker
-                            selectedValue={frequency}
-                            onValueChange={(itemValue) => setFrequency(itemValue)}
-                            style={styles.androidPicker}
-                            mode="dropdown"
-                        >
-                            {reminderFrequencyOptions.map((frequency) => (
-                                <Picker.Item key={frequency} label={frequency} value={frequency}/>
-                            ))}
-                        </Picker>
-                    )}
-                    {/*<Picker
-            selectedValue={frequency}
-            mode="dropdown"
-            onValueChange={handleFrequencyChange}
-            style={{ width: 150, height: 150, color: Colors[theme].icon }} itemStyle={{ color: Colors[theme].icon }}
-          >
-            {reminderFrequencyOptions.map((option) => (
-              <Picker.Item key={option} label={option} value={option} />
-            ))}
-          </Picker> */}
+                    <DropDownPicker
+                        style={{alignSelf: 'flex-end', flex: 1, backgroundColor: Colors[theme].background}}
+                        containerStyle={{height: 40, flex: 1}}
+                        textStyle={{color: Colors[theme].text}}
+                        dropDownContainerStyle={{backgroundColor: Colors[theme].background}}
+                        open={open}
+                        value={value}
+                        items={reminderFrequencyOptions.map((option) => ({label: option.toUpperCase(), value: option}))}
+                        setOpen={setOpen}
+                        setValue={setValue}
+                        setItems={handleFrequencyChange}
+                        />
                 </View>
             </View>
         </View>
@@ -264,7 +239,7 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
         paddingHorizontal: 14,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#F3F2F8",
+        backgroundColor: Colors[color].background,
         borderRadius: 16,
         flexDirection: "column",
         opacity: 0.7,
@@ -273,15 +248,11 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
         flexShrink: 0,
         flexBasis: 0,
     },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: "bold",
-    },
     actionIcon: {
         width: 25,
         height: 25,
         margin: 5,
-        color: Colors[color].background,
+        color: Colors[color].text,
     },
     complementaryInfo: {
         width: "100%",
@@ -308,6 +279,7 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
         flexDirection: "row",
         gap: 10,
         alignItems: "center",
+        flex: 1
     },
     label: {fontSize: 16, marginVertical: 10},
     frequencyButton: {

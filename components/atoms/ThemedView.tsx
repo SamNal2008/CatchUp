@@ -28,7 +28,7 @@ const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: Spacing.medium,
-        paddingHorizontal: Spacing.small,
-        width: '100%'
+        paddingHorizontal: Spacing.medium,
+        width: '100%',
     },
 });

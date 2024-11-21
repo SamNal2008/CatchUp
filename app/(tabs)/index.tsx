@@ -199,31 +199,29 @@ export default function HomeScreen() {
     }, []);
 
     return (
-        <ThemedView>
-            <View style={[styles.container, hasCheckIns ? styles.containerWithCheckin : null]}>
-                {!hasCheckIns ?
-                    <>
-                        <ThemedText type={"subtitle"}>
-                            Keep your closest within reach
-                        </ThemedText>
-                        <ThemedText type={"default"} style={{textAlign: "center"}}>
-                            Add friends to stay in touch, share memories, and never miss a
-                            birthday
-                        </ThemedText>
-                    </> :
-                    <FlatList
-                        contentContainerStyle={{gap: Spacing.medium, width: Size.full}}
-                        style={{width: '100%'}}
-                        data={Object.keys(checkInsByMonth)}
-                        renderItem={({item}) =>
-                            <CheckInMonthYear
-                                checkIns={checkInsByMonth}
-                                checkInMonthWithYear={item}
-                            />
-                        }
-                    />
-                }
-            </View>
+        <ThemedView style={[styles.container, hasCheckIns ? styles.containerWithCheckin : null]}>
+            {!hasCheckIns ?
+                <>
+                    <ThemedText type={"subtitle"}>
+                        Keep your closest within reach
+                    </ThemedText>
+                    <ThemedText type={"default"} style={{textAlign: "center"}}>
+                        Add friends to stay in touch, share memories, and never miss a
+                        birthday
+                    </ThemedText>
+                </> :
+                <FlatList
+                    contentContainerStyle={{gap: Spacing.medium, width: Size.full}}
+                    style={{width: '100%'}}
+                    data={Object.keys(checkInsByMonth)}
+                    renderItem={({item}) =>
+                        <CheckInMonthYear
+                            checkIns={checkInsByMonth}
+                            checkInMonthWithYear={item}
+                        />
+                    }
+                />
+            }
         </ThemedView>
     );
 }
@@ -232,7 +230,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         gap: 20,
-        padding: 16,
+        paddingHorizontal: 16,
         justifyContent: "center",
         alignItems: "center",
         width: '100%'

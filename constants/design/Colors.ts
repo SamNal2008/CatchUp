@@ -11,15 +11,11 @@ export const Palette = {
   GREY_200: '#E2E2E4',
   GREY_300: '#8A898E',
   RED: '#FF0000',
-} as const;
-
-export const PaletteDarkMode = {
-  BLACK: '#E0E0E0',
-  WHITE: '#121212',
-  GREY_100: '#2C2C2E',
-  GREY_200: '#3A3A3C',
-  GREY_300: '#A1A1A6',
-  RED: '#FF0000'
+  WHITE_100: '#E0E0E0',
+  BLACK_100: '#121212',
+  BLACK_GREY_100: '#2C2C2E',
+  BLACK_GREY_200: '#3A3A3C',
+  BLACK_GREY_300: '#A1A1A6',
 } as const;
 
 export const Colors = {
@@ -38,18 +34,18 @@ export const Colors = {
     textInput: Palette.GREY_200
   },
   dark: {
-    text: PaletteDarkMode.BLACK,
-    background: PaletteDarkMode.GREY_100,
-    tint: PaletteDarkMode.BLACK,
-    icon: PaletteDarkMode.GREY_300,
-    tabIconDefault: PaletteDarkMode.GREY_200,
-    tabIconSelected: PaletteDarkMode.GREY_200,
-    borderColor: PaletteDarkMode.BLACK,
-    buttonBackground: PaletteDarkMode.BLACK,
-    buttonText: PaletteDarkMode.WHITE,
-    buttonBackgroundDisabled: PaletteDarkMode.GREY_300,
-    toastBackground: PaletteDarkMode.WHITE,
-    textInput: PaletteDarkMode.GREY_200
+    text: Palette.WHITE_100,
+    background: Palette.BLACK_GREY_100,
+    tint: Palette.WHITE_100,
+    icon: Palette.BLACK_GREY_300,
+    tabIconDefault: Palette.BLACK_GREY_200,
+    tabIconSelected: Palette.BLACK_GREY_200,
+    borderColor: Palette.WHITE_100,
+    buttonBackground: Palette.WHITE_100,
+    buttonText: Palette.BLACK_100,
+    buttonBackgroundDisabled: Palette.BLACK_GREY_300,
+    toastBackground: Palette.BLACK_100,
+    textInput: Palette.BLACK_GREY_200
   },
 } as const;
 

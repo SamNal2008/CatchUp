@@ -132,7 +132,8 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
     setContactToCheckin(contact);
   }
 
-  const hasAlreadyCheckedIn = lastCheckedIn !== null && false; // FIXME
+  const hasAlreadyCheckedIn = !!lastCheckedIn;
+
   const toDaysAgo = hasAlreadyCheckedIn ? Math.round((new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24)) : null;
   const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
 
@@ -146,15 +147,13 @@ const FriendLine = ({ contact }: { contact: ContactModel }) => {
           <View>
             <ThemedText style={styles.friendName}>{contact.firstName}</ThemedText>
             {hasAlreadyCheckedIn ?
-              hasCheckedInToday ?
-                  <ThemedText type="subText">Checked in today</ThemedText> :
-                  <ThemedText type="subText">Checked in {toDaysAgo} days ago</ThemedText>
+              <ThemedText type="subText">{hasCheckedInToday ? "Checked in today" : `Checked in ${toDaysAgo} days ago`}</ThemedText>
                 :
               <ThemedText type="subText">Never checked in yet !</ThemedText>
             }
           </View>
         </View>
-        <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} />
+        <PrimaryButton disabled={hasCheckedInToday} title={hasCheckedInToday ? 'Come later' : 'Check In'} onPress={checkInOnFriend} />
         <CheckInToast checkedInContact={contact} isVisible={isCheckingOnContact}/>
       </View>
     </Swipeable>
@@ -231,11 +230,10 @@ export default function Profile() {
 
   return (
     <ThemedView>
-      <View style={{ flex: 1, width: '100%' }}>
         {/*<Button title="Clear databases" onPress={wipeAll} />
         <Button title={"Select all data in database"} onPress={selectAllData} />*/}
         {friends.length === 0 ?
-          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, gap: 15 }}>
+          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, gap: 15, width: '100%' }}>
             <>
               <ThemedText type={"subtitle"}>
                 Keep your closest within reach
@@ -247,14 +245,13 @@ export default function Profile() {
             </>
           </View>
           :
-          <View style={{ flex: 1, gap: 30 }}>
+          <View style={{ flex: 1, gap: 30, width: '100%' }}>
             <Section title="Every day" contacts={dailyContacts} />
             <Section title='Every week' contacts={weeklyContacts} />
             <Section title="Every month" contacts={monthlyContacts} />
             <Section title="Every year" contacts={yearlyContacts} />
           </View>
         }
-      </View>
     </ThemedView>
   );
 }
