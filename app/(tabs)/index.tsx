@@ -117,15 +117,18 @@ const CheckInMonthYear = ({checkInMonthWithYear, checkIns}: CheckInMonthYearProp
                 style={{width: Size.full, gap: Spacing.medium}}
                 data={checkIns[checkInMonthWithYear]}
                 renderItem={({item}) => <CheckInSummary checkIn={item}/>}
-                keyExtractor={(item) => `${item.contact.id} ${item.checkInDate}`}
+                keyExtractor={(item) => `${item?.contact?.id} ${item?.checkInDate}`}
             />
         </View>
     );
 }
 
 const CheckInSummary = ({checkIn}: CheckInSummaryProps) => {
-    const isNoteContentEmpty = checkIn.noteContent === null || checkIn.noteContent === '';
+    const isNoteContentEmpty = checkIn?.noteContent === null || checkIn?.noteContent === '';
     const theme = useColorSchemeOrDefault();
+    if (!checkIn || ! checkIn.contact) {
+        return null;
+    }
     return (
         <View style={{
             backgroundColor: Colors[theme].toastBackground,
@@ -138,9 +141,9 @@ const CheckInSummary = ({checkIn}: CheckInSummaryProps) => {
                 <View style={{alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', gap: 10}}>
                     <DateDayBox date={checkIn.checkInDate}/>
                     <ThemedText
-                        type={"defaultSemiBold"}>{checkIn.contact.firstName} {checkIn.contact.lastName}</ThemedText>
+                        type={"defaultSemiBold"}>{checkIn.contact?.firstName} {checkIn.contact?.lastName}</ThemedText>
                 </View>
-                {checkIn.contact.image ?
+                {checkIn.contact?.image ?
                     <Image source={checkIn.contact.image} style={styles.friendImage}/> :
                     <InitialImage firstName={checkIn.contact.firstName} lastName={checkIn.contact.lastName} size={32}/>
                 }

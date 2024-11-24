@@ -1,9 +1,7 @@
-import { ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
+import { StyleSheet, View, type ViewProps } from 'react-native';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { Header } from "@/components/organisms/Header";
-import {ColorSchemeName, useColorSchemeOrDefault} from "@/hooks/useColorScheme";
-import {Colors, Size, Spacing} from "@/constants/design";
+import { Colors, Spacing } from "@/constants/design";
+import { ColorSchemeName, useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 
 export type ThemedViewProps = ViewProps & {
     lightColor?: string;

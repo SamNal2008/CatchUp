@@ -7,6 +7,9 @@ import {NotificationId, NotificationModel} from "@/repositories/notifications/No
 import {logService} from "@/services/log.service";
 
 const registerNotificationForContact = (contact: ContactModel, checkinDate: Date): Promise<string> => {
+    if (contact.frequency === 'never') {
+        return Promise.resolve('no-notification');
+    }
     return Notifications.scheduleNotificationAsync({
         content: {
             title: `Catch’up with ${contact.firstName} !`,

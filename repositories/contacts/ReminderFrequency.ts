@@ -11,7 +11,29 @@ export const getRandomBetween = (randomHourInterval: RandomHourInterval[]): numb
     return Math.floor(Math.random() * (randomInterval.max - randomInterval.min + 1)) + randomInterval.min;
 }
 
-export type ReminderFrequency = "weekly" | "monthly" | "yearly" | "daily";
+export const ReminderFrequencies = ["daily", "weekly", "bimonthly", "monthly", "quarterly", "biannually", "yearly",  "never"] as const;
+export type ReminderFrequency = typeof ReminderFrequencies[number];
+export type ReminderFrequencyWithoutNever = Exclude<ReminderFrequency, "never">;
+
+const createReminderFrequencyOptions = (value: ReminderFrequency): { label: string; value: ReminderFrequency } => ({
+    label: translateFrequencyToEnglishOptions(value),
+    value
+});
+
+const translateFrequencyToEnglishOptions = (frequency: ReminderFrequency): string => {
+    switch (frequency) {
+        case 'daily': return 'Every day';
+        case 'weekly': return 'Every week';
+        case 'bimonthly': return 'Every 2 weeks';
+        case 'monthly': return 'Every month';
+        case 'quarterly': return 'Every 3 months';
+        case 'biannually': return 'Every 6 months';
+        case 'yearly': return 'Every year';
+        default: return 'Never';
+    }
+};
+
+export const reminderFrequencyOptionsWithTranslation = ReminderFrequencies.map(createReminderFrequencyOptions);
 
 const translateFrequencyToEnglish = (frequency: ReminderFrequency): string => {
     switch (frequency) {
@@ -22,7 +44,15 @@ const translateFrequencyToEnglish = (frequency: ReminderFrequency): string => {
         case 'yearly':
             return '1 year';
         case 'daily':
-            return '1 days'
+            return '1 days';
+        case "biannually":
+            return '6 months';
+        case "quarterly":
+            return '3 months';
+        case "bimonthly":
+            return '2 weeks';
+        default:
+            return 'never';
     }
 }
 
@@ -33,7 +63,7 @@ const getWeekOfMonthOfToday = (checkinDate: Date): number => {
     return Math.ceil((dayOfCheckin + dayOfWeek) / 7);
 }
 
-const getNextNotificationTrigger = (frequency: ReminderFrequency, checkInDate: Date): NotificationTriggerInput => {
+const getNextNotificationTrigger = (frequency: ReminderFrequencyWithoutNever, checkInDate: Date): NotificationTriggerInput => {
     const randomHour = getRandomBetween([{min: 8, max: 10}, {min: 12, max: 14}, {min: 18, max: 20}]);
     const randomMinute = getRandomBetween([{min: 0, max: 59}]);
     const baseTriggerInput = {
@@ -57,14 +87,34 @@ const getNextNotificationTrigger = (frequency: ReminderFrequency, checkInDate: D
             }
         case 'yearly':
             return {
-                month: checkInDate.getMonth() + 1,
+                month: (checkInDate.getMonth() + 1) % 12,
                 day: checkInDate.getDate(),
                 ...baseTriggerInput
             }
+        case 'bimonthly':
+            return {
+                month: (checkInDate.getMonth() + 2) % 12,
+                day: checkInDate.getDate(),
+                ...baseTriggerInput
+            }
+        case 'quarterly':
+            return {
+                month: (checkInDate.getMonth() + 3) % 12,
+                day: checkInDate.getDate(),
+                ...baseTriggerInput
+            }
+        case 'biannually':
+            return {
+                month: (checkInDate.getMonth() + 6) % 12,
+                day: checkInDate.getDate(),
+                ...baseTriggerInput
+            };
     }
 };
 
 export const ReminderFrequencyUtils = {
     translateFrequencyToEnglish,
-    getNextNotificationTrigger
-}
+    getNextNotificationTrigger,
+    createReminderFrequencyOptions,
+    translateFrequencyToEnglishOptions
+};

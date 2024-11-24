@@ -1,24 +1,26 @@
+import { AdminModal } from "@/components/molecules/AdminDataSelection";
+import { NewNoteModal } from "@/components/organisms/NewNoteModal";
+import { CheckInsProvider } from "@/contexts/CheckIns.context";
+import { ContactProvider } from "@/contexts/Contact.context";
+import { NewFriendContextProvider } from "@/contexts/NewFriendProvider.context";
+import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
+import { DATABASE_NAME } from "@/repositories";
+import { logService } from "@/services/log.service";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import {
     DarkTheme,
     DefaultTheme,
     ThemeProvider,
 } from "@react-navigation/native";
-import {useFonts} from "expo-font";
-import {Stack} from "expo-router";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, {useEffect} from "react";
+import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
+import { StatusBar } from 'expo-status-bar';
+import React, { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
-import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
-import {ContactProvider} from "@/contexts/Contact.context";
-import {SQLiteDatabase, SQLiteProvider} from "expo-sqlite";
-import {DATABASE_NAME} from "@/repositories";
-import {CheckInsProvider} from "@/contexts/CheckIns.context";
-import {RootSiblingParent} from "react-native-root-siblings";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
-import {BottomSheetModalProvider} from "@gorhom/bottom-sheet";
-import {NewFriendContextProvider} from "@/contexts/NewFriendProvider.context";
-import {NewNoteModal} from "@/components/organisms/NewNoteModal";
-import {logService} from "@/services/log.service";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -42,6 +44,7 @@ export default function RootLayout() {
     return (
         <GestureHandlerRootView style={{flex: 1}}>
             <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+            <StatusBar style="auto" />
                 <BottomSheetModalProvider>
                     <SQLiteProvider databaseName={DATABASE_NAME} onInit={migrateDbIfNeeded}>
                         <RootSiblingParent>
@@ -60,6 +63,7 @@ export default function RootLayout() {
                                                 <Stack.Screen name="+not-found"/>
                                             </Stack>
                                             <NewNoteModal />
+                                            <AdminModal />
                                         </NewFriendContextProvider>
                                 </ContactProvider>
                             </CheckInsProvider>

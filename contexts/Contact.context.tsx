@@ -4,7 +4,6 @@ import { getContactsRepository } from "@/repositories/contacts/Contacts.reposito
 import { Contact } from "expo-contacts";
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import *  as TaskManager from 'expo-task-manager';
 import {useCheckIns} from "@/contexts/CheckIns.context";
 import {logService} from "@/services/log.service";
 

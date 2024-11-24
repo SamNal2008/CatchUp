@@ -1,5 +1,5 @@
 import { Contact } from "expo-contacts";
-import { ReminderFrequency } from "./ReminderFrequency";
+import { ReminderFrequency, ReminderFrequencyWithoutNever } from "./ReminderFrequency";
 
 export type ContactModel = {
     frequency: ReminderFrequency;

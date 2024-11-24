@@ -73,9 +73,7 @@
       }
     },
     "owner": "samynalban",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/2c8b8f97-c742-4f5b-8d17-8fee99edd947",
       "requestHeaders": {

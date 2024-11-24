@@ -5,24 +5,21 @@ import {
     Image,
     View,
     Text,
-    useColorScheme,
     Pressable,
-    Modal,
-    TouchableOpacity,
-    Platform
 } from "react-native";
 import {AntDesign, Ionicons} from "@expo/vector-icons";
 import * as SMS from "expo-sms";
 import {Picker} from "@react-native-picker/picker";
 import {Colors} from "@/constants/design/Colors";
 import * as Linking from 'expo-linking';
-import {ReminderFrequency} from "@/repositories/contacts/ReminderFrequency";
+import {ReminderFrequencies, reminderFrequencyOptionsWithTranslation, ReminderFrequency, ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency";
 import {SymbolView} from 'expo-symbols';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
 import {InitialImage} from "@/components/molecules/InitialImage";
 import {logService} from "@/services/log.service";
 import { ThemedText } from "../atoms/ThemedText";
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 
 type NewFriendSettingsProps = {
     contact: Contact | null;
@@ -35,33 +32,15 @@ type NewFriendSettingsProps = {
 };
 
 export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday, birthDay, setLastCheckin, lastCheckin}: NewFriendSettingsProps) => {
-    const theme = useColorScheme() ?? 'light';
-    const [isPickerVisible, setIsPickerVisible] = useState(false);
+    const theme = useColorSchemeOrDefault();
 
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
-    const [items, setItems] = useState([
-               {label: 'English', value: 'en'},                  
-               {label: 'Deutsch', value: 'de'},
-               {label: 'French', value: 'fr'},
-                 ]);
 
     if (!contact) {
         return null;
     }
 
-    const togglePicker = () => {
-        setIsPickerVisible(!isPickerVisible);
-    };
-
     const styles = makeStyles(theme);
-
-    const reminderFrequencyOptions: ReminderFrequency[] = [
-        "daily",
-        "weekly",
-        "monthly",
-        "yearly",
-    ];
 
     const callContact = async () => {
         const phoneNumber = contact.phoneNumbers?.at(0)?.number;
@@ -100,14 +79,6 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
         }
     };
 
-    const openPicker = () => {
-        setIsPickerVisible(true);
-    };
-
-    const closePicker = () => {
-        setIsPickerVisible(false);
-    };
-
     const updateContactBirthday = (event: DateTimePickerEvent) => {
         setBirthday(new Date(event.nativeEvent.timestamp));
     }
@@ -127,7 +98,7 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
                     {contact.image?.uri ? <Image
                         style={styles.image}
                         source={{uri: contact.image?.uri}}
-                        /> : <InitialImage firstName={contact.firstName} lastName={contact.lastName}/>}
+                        /> : <InitialImage firstName={contact.firstName} lastName={contact.lastName} size={100}/>}
                 </View>
                     <Text style={styles.name}>{contact.firstName} {contact.lastName}</Text>
             </View>
@@ -168,16 +139,16 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
                         <Ionicons size={20} color={Colors[theme].icon} name="refresh-outline"/>
                         <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
                     </View>
-                    <DropDownPicker
+                    <DropDownPicker<ReminderFrequency>
                         style={{alignSelf: 'flex-end', flex: 1, backgroundColor: Colors[theme].background}}
                         containerStyle={{height: 40, flex: 1}}
                         textStyle={{color: Colors[theme].text}}
                         dropDownContainerStyle={{backgroundColor: Colors[theme].background}}
                         open={open}
-                        value={value}
-                        items={reminderFrequencyOptions.map((option) => ({label: option.toUpperCase(), value: option}))}
+                        value={frequency}
+                        items={reminderFrequencyOptionsWithTranslation}
                         setOpen={setOpen}
-                        setValue={setValue}
+                        setValue={setFrequency}
                         setItems={handleFrequencyChange}
                         />
                 </View>
@@ -280,39 +251,5 @@ const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
         gap: 10,
         alignItems: "center",
         flex: 1
-    },
-    label: {fontSize: 16, marginVertical: 10},
-    frequencyButton: {
-        padding: 10,
-        backgroundColor: "#eee",
-        borderRadius: 5,
-        alignItems: "center",
-        alignSelf: "flex-start",
-    },
-    frequencyText: {fontSize: 16},
-
-    // Modal styles for iOS picker
-    modalBackground: {
-        flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        justifyContent: "flex-end",
-    },
-    modalContainer: {
-        backgroundColor: "white",
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        paddingBottom: 20,
-    },
-    doneButton: {
-        alignItems: "flex-end",
-        padding: 10,
-        backgroundColor: "white",
-    },
-    doneButtonText: {
-        fontSize: 16,
-        color: "#007AFF",
-    },
-    androidPicker: {
-        width: "100%",
     },
 });

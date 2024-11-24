@@ -1,17 +1,19 @@
-import {MyBottomSheet, useModalRef} from "@/components/navigation/BottomSheet";
-import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
+import { ThemedText } from "@/components/atoms/ThemedText";
+import { MyBottomSheet, useModalRef } from "@/components/navigation/BottomSheet";
+import { Colors } from "@/constants/design";
+import { useCheckIns } from "@/contexts/CheckIns.context";
+import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
+import { logService } from "@/services/log.service";
 import {
+    useNewCheckinInfo,
     useNewNoteCheckInModalControl,
+    useSetContactToCheckin,
     useSetNoteContent,
-    useSetNoteDate, useNewCheckinInfo, useSetContactToCheckin
+    useSetNoteDate
 } from "@/store/CheckinNote.store";
-import DateTimePicker, {DateTimePickerEvent} from "@react-native-community/datetimepicker";
-import {Button, TextInput, View} from "react-native";
-import {Colors} from "@/constants/design";
-import {useCheckIns} from "@/contexts/CheckIns.context";
-import {useEffect, useRef, useState} from "react";
-import {ThemedText} from "@/components/atoms/ThemedText";
-import {logService} from "@/services/log.service";
+import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import { useEffect, useRef, useState } from "react";
+import { Button, TextInput, View } from "react-native";
 
 
 type NewNoteHeaderProps = {
