@@ -2,7 +2,6 @@ import { BorderRadius, FontWeight, LetterSpacing, LineHeight, Spacing, Typograph
 import { Colors } from "@/constants/design/Colors";
 import { ColorSchemeName, useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { StyleSheet, Pressable, Text, StyleProp, ViewStyle, PressableProps, TextStyle } from "react-native";
-import Animated from "react-native-reanimated";
 
 export type ButtonProps = {
     title: string;

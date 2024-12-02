@@ -5,7 +5,6 @@ import { useCheckIns } from "@/contexts/CheckIns.context";
 import { useNotifications } from "@/hooks/useNotificatons";
 import { useSQLiteContext } from "expo-sqlite";
 import { useContacts } from "@/contexts/Contact.context";
-import { useNewNoteCheckInModalControl, useNewCheckinInfo } from "@/store/CheckinNote.store";
 import React, { useEffect } from "react";
 import { useModalRef, MyBottomSheet } from "../navigation/BottomSheet";
 
