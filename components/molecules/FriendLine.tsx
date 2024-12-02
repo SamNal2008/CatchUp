@@ -24,21 +24,16 @@ type RightActionProps = {
 const RightAction = ({drag, onPress, progress}: RightActionProps) => {
     const styleAnimation = useAnimatedStyle(() => {
         return {
-            transform: [{translateX: drag.value + 50}],
+            transform: [{translateX: drag.value + 60}],
             opacity: progress.value,
-            backgroundColor: Palette.RED,
-            marginRight: -100,
-            width: 100
         };
     });
 
     return (
         <Reanimated.View style={[deleteStyles.container, styleAnimation]}>
-            <View style={deleteStyles.actionContainer}>
-                <Pressable onPress={onPress}>
-                    <SymbolView name="trash.fill" size={32} tintColor={Palette.WHITE}/>
-                </Pressable>
-            </View>
+            <Pressable onPress={onPress}>
+                <SymbolView name="trash.fill" size={32} tintColor={Palette.WHITE}/>
+            </Pressable>
         </Reanimated.View>
     );
 };
@@ -48,12 +43,10 @@ const deleteStyles = StyleSheet.create({
     container: {
         height: '100%',
         justifyContent: 'center',
-        alignItems: 'center',
-    },
-    actionContainer: {
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
+        backgroundColor: Palette.RED,
+        paddingHorizontal: 16,
+        // marginRight: -64
     },
 });
 
@@ -61,11 +54,6 @@ export const FriendLine = ({contact}: { contact: ContactModel }) => {
     const {deleteFriend, friends} = useContacts();
     const {getLatestCheckInForContact} = useCheckIns();
     const {askForNotificationPermission} = useNotifications();
-
-    const [isOnDeleteMode, setIsOnDeleteMode] = useState<boolean>(false);
-    const toggleDeleteFriend = () => {
-        setIsOnDeleteMode((prev) => !prev);
-    };
 
     const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
     const [reload, setReload] = useState<boolean>(false);
@@ -79,26 +67,6 @@ export const FriendLine = ({contact}: { contact: ContactModel }) => {
             askForNotificationPermission();
         }
     }, []);
-
-    const createThreeButtonAlert = () =>
-        Alert.alert('Alert Title', 'My Alert Msg', [
-            {
-                text: 'Ask me later',
-                onPress: () => console.log('Ask me later pressed'),
-            },
-            {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-            },
-            {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ]);
-
-    useEffect(() => {
-        if (isOnDeleteMode) {
-            createThreeButtonAlert();
-        }
-    }, [isOnDeleteMode]);
 
     useEffect(() => {
         if (!contact.id) {
@@ -131,8 +99,11 @@ export const FriendLine = ({contact}: { contact: ContactModel }) => {
     const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
 
     return (
-        <Swipeable renderRightActions={(progress, drag) => <RightAction drag={drag} progress={progress}
-                                                                        onPress={toggleDeleteFriend}/>}>
+        <Swipeable
+            friction={2}
+            overshootRight={false}
+            renderRightActions={(progress, drag) => <RightAction drag={drag} progress={progress}
+                                                                 onPress={removeFriend}/>}>
             <View style={[styles.friendContainer]}>
                 <View style={styles.friendNameContainer}>
                     {contact.image ?
