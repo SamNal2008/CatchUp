@@ -1,4 +1,4 @@
-import {Contact, presentFormAsync} from "expo-contacts";
+import {presentFormAsync} from "expo-contacts";
 import {Dispatch, SetStateAction, useState} from "react";
 import {
     StyleSheet,
@@ -9,10 +9,9 @@ import {
 } from "react-native";
 import {AntDesign, Ionicons} from "@expo/vector-icons";
 import * as SMS from "expo-sms";
-import {Picker} from "@react-native-picker/picker";
 import {Colors} from "@/constants/design/Colors";
 import * as Linking from 'expo-linking';
-import {ReminderFrequencies, reminderFrequencyOptionsWithTranslation, ReminderFrequency, ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency";
+import { reminderFrequencyOptionsWithTranslation, ReminderFrequency} from "@/repositories/contacts/ReminderFrequency";
 import {SymbolView} from 'expo-symbols';
 import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
 import {InitialImage} from "@/components/molecules/InitialImage";
@@ -20,19 +19,15 @@ import {logService} from "@/services/log.service";
 import { ThemedText } from "../atoms/ThemedText";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
+import {useNewFriendStore} from "@/store/NewFriend.store";
+import Tooltip from 'rn-tooltip';
+import styled, { css } from '@emotion/native';
+import {DatePicker} from "@/components/atoms/DatePicker";
 
-type NewFriendSettingsProps = {
-    contact: Contact | null;
-    frequency: ReminderFrequency;
-    setFrequency: Dispatch<SetStateAction<ReminderFrequency>>;
-    birthDay: Date | null;
-    lastCheckin: Date | null;
-    setBirthday: Dispatch<SetStateAction<Date>>;
-    setLastCheckin: Dispatch<SetStateAction<Date>>;
-};
 
-export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday, birthDay, setLastCheckin, lastCheckin}: NewFriendSettingsProps) => {
+export const NewFriendSettings = () => {
     const theme = useColorSchemeOrDefault();
+    const {selectedFrequency, setSelectedFrequency, reset, contact, setContact, setContactBirthday, contactBirthday, setContactLastCheckIn, contactLastCheckIn} = useNewFriendStore();
 
     const [open, setOpen] = useState(false);
 
@@ -48,7 +43,7 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
             alert("No phone number available");
             return;
         }
-        Linking.openURL(`tel:${phoneNumber}`);
+        Linking.openURL(`tel:${phoneNumber}`).catch(logService.error);
     };
 
     const seeContact = async () => {
@@ -80,16 +75,13 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
     };
 
     const updateContactBirthday = (event: DateTimePickerEvent) => {
-        setBirthday(new Date(event.nativeEvent.timestamp));
+        setContactBirthday(new Date(event.nativeEvent.timestamp));
     }
 
     const updateContactLastCheckIn = (event: DateTimePickerEvent) => {
-        setLastCheckin(new Date(event.nativeEvent.timestamp));
+        setContactLastCheckIn(new Date(event.nativeEvent.timestamp));
     }
 
-    const handleFrequencyChange = (items: any) => {
-        setFrequency(items[0].value);
-    }
 
     return (
         <View style={styles.container}>
@@ -123,39 +115,72 @@ export const NewFriendSettings = ({contact, frequency, setFrequency, setBirthday
                         <Ionicons size={20} color={Colors[theme].icon} name="gift"/>
                         <Text style={styles.complementaryInfoTitle}>Birthday :</Text>
                     </View>
-                    <DateTimePicker
-                        value={birthDay ? birthDay : new Date()}
-                        onChange={updateContactBirthday}/>
+                    <DatePicker
+                        value={contactBirthday}
+                        onChange={updateContactBirthday}
+                        maximumDate={new Date()}
+                    />
                 </View>
                 <View style={styles.complementaryInfo}>
                     <View style={styles.complementaryInfoTitleContainer}>
                         <AntDesign size={20} color={Colors[theme].icon} name="calendar"/>
                         <Text style={styles.complementaryInfoTitle}>Last check in :</Text>
                     </View>
-                    <DateTimePicker value={lastCheckin ?? new Date()} onChange={updateContactLastCheckIn}/>
+                    <DatePicker
+                        value={contactLastCheckIn}
+                        onChange={updateContactLastCheckIn}
+                        maximumDate={new Date()}
+                    />
                 </View>
                 <View style={styles.complementaryInfo}>
                     <View style={styles.complementaryInfoTitleContainer}>
                         <Ionicons size={20} color={Colors[theme].icon} name="refresh-outline"/>
                         <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
                     </View>
+                    <Tooltip
+                        popover={<TooltipText />}
+                        actionType="press"
+                        width={10}
+                        height={10}
+                        containerStyle={css({
+                            backgroundColor: Colors[theme].background,
+                            borderRadius: 8,
+                            paddingHorizontal: 16,
+                            paddingVertical: 8,
+                            alignItems: 'flex-start',
+                            flex: 1,
+                        })}
+                        withPointer
+                        pointerColor={Colors[theme].background}
+                        withOverlay={false}>
+                        <View hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                            <Text>Test</Text>
+                        </View>
+                    </Tooltip>
                     <DropDownPicker<ReminderFrequency>
                         style={{alignSelf: 'flex-end', flex: 1, backgroundColor: Colors[theme].background}}
                         containerStyle={{height: 40, flex: 1}}
                         textStyle={{color: Colors[theme].text}}
                         dropDownContainerStyle={{backgroundColor: Colors[theme].background}}
                         open={open}
-                        value={frequency}
+                        value={selectedFrequency}
                         items={reminderFrequencyOptionsWithTranslation}
                         setOpen={setOpen}
-                        setValue={setFrequency}
-                        setItems={handleFrequencyChange}
+                        setValue={setSelectedFrequency as Dispatch<SetStateAction<ReminderFrequency>>}
                         />
                 </View>
             </View>
         </View>
     );
 };
+
+const TooltipText = () => {
+    return (
+        <Text style={{color: 'black'}}>
+            {`The frequency of your reminder will be set to this value. You can change it at any time.`}
+        </Text>
+    );
+}
 
 const makeStyles = (color: 'light' | 'dark') => StyleSheet.create({
     container: {

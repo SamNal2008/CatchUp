@@ -1,110 +1,103 @@
-import { ThemedText } from "@/components/atoms/ThemedText";
-import { ThemedView } from "@/components/atoms/ThemedView";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { Pressable, StyleSheet, View, useColorScheme } from "react-native";
+import {ThemedText} from "@/components/atoms/ThemedText";
+import {Pressable, StyleSheet, View, Linking, AppState} from "react-native";
+import {Colors, Spacing} from "@/constants/design";
+import {Switch} from "react-native-gesture-handler";
+import {useEffect, useRef, useState} from "react";
+import {SymbolView} from "expo-symbols";
+import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
+import {useNotifications} from "@/hooks/useNotificatons";
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignContent: "center",
-    paddingTop: 30,
-    gap: 20,
-  },
-  removeAddButton: {
-    backgroundColor: "red",
-    padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-  removeAddButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  categoryContainer: {
-    marginTop: 20,
-  },
-  categoryTitle: {
-    fontWeight: "bold",
-    fontSize: 18,
-  },
+    container: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignContent: 'flex-start',
+        flexDirection: 'column',
+        padding: Spacing.medium,
+        gap: Spacing.medium,
+    },
+    categoryContainer: {
+        gap: Spacing.small,
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+
+    },
 });
 
 type CategoryProps = {
-  name: string;
-  children: React.ReactNode;
+    name: string;
+    children: React.ReactNode;
 };
 
-const Category = ({ name, children }: CategoryProps) => (
-  <View style={styles.categoryContainer}>
-    <ThemedText style={styles.categoryTitle}>{name}</ThemedText>
-    {children}
-  </View>
-);
 
-const User = () => {
-    const textColor = useThemeColor('tint');
-  return (
-    <View>
-      <ThemedText>Username: user123</ThemedText>
-      <ThemedText>
-        Email:
-        <ThemedText style={{ color: textColor, textDecorationLine: "underline" }}>
-          Test@email.com
-        </ThemedText>
-      </ThemedText>
-    </View>
-  );
-};
+const Category = ({name, children}: CategoryProps) => {
+    const theme = useColorSchemeOrDefault();
+    return (
+        <View style={styles.categoryContainer}>
+            <ThemedText type='subSectionTitle' style={{fontSize: 13}}>{name}</ThemedText>
+            <View style={{
+                width: '100%',
+                height: 64,
+                backgroundColor: Colors[theme].plainBackground,
+                padding: 16,
+                borderRadius: 16,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexDirection: 'row'
+            }}>
+                {children}
+            </View>
+        </View>
+    );
+}
 
-const Account = () => (
-  <View>
-    <ThemedText>Account type: Free</ThemedText>
-    <ThemedText>Account status: Active</ThemedText>
-  </View>
-);
-
-const Appearance = () => {
-  const theme = useColorScheme();
-  return (
-    <View>
-      <ThemedText>Theme: {theme}</ThemedText>
-      <ThemedText>Font size: Medium</ThemedText>
-    </View>
-  );
-};
 
 export default function Settings() {
-  return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">Settings page</ThemedText>
-      <Pressable style={styles.removeAddButton}>
-        <ThemedText style={styles.removeAddButtonText}>
-          Remove adds ⊖
-        </ThemedText>
-      </Pressable>
-      <View style={{ alignSelf: "baseline" }}>
-        <Category name="User">
-          <User />
-        </Category>
-        <Category name="Account">
-          <Account />
-        </Category>
-        <Category name="Appearance">
-          <Appearance />
-        </Category>
-        <Category name="Notifications">
-          <ThemedText>Receive notifications</ThemedText>
-        </Category>
-        <Category name="Privacy">
-          <ThemedText>Privacy policy</ThemedText>
-        </Category>
-        <Category name="Support">
-          <ThemedText>Help</ThemedText>
-        </Category>
-      </View>
-    </ThemedView>
-  );
+    const theme = useColorSchemeOrDefault();
+    const [hasNotifications, setHasNotifications] = useState(false);
+    const {hasNotificationEnabledOnPhone} = useNotifications();
+    const refreshNotificationState = async () => {
+        const hasNotificationEnabled = await hasNotificationEnabledOnPhone();
+        setHasNotifications(hasNotificationEnabled);
+    };
+
+    useEffect(() => {
+        refreshNotificationState();
+    }, [hasNotificationEnabledOnPhone]);
+
+    const handleChangeNotificationToggle = () => {
+        if (!hasNotifications) {
+            Linking.openSettings();
+        }
+    };
+
+    const openFeedback = () => {
+        const feedbackUrl =
+            'https://lagrange-romain.notion.site/1351adc1e47f807c8213c84320bbdfc1?pvs=21';
+        Linking.openURL(feedbackUrl).catch((err) =>
+            console.error('Failed to open URL:', err)
+        );
+    }
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener("change", refreshNotificationState);
+        return () => {
+            subscription.remove();
+        };
+    }, []);
+
+    return (
+        <View style={[styles.container, {backgroundColor: Colors[theme].background}]}>
+            <Category name={"Notifications"}>
+                <ThemedText>Push notifications</ThemedText>
+                <Switch value={hasNotifications} onChange={handleChangeNotificationToggle}/>
+            </Category>
+            <Pressable onPress={openFeedback}>
+                <Category name={"Contact us"}>
+                    <ThemedText>Send feedback</ThemedText>
+                    <SymbolView name={'mail.fill'} tintColor={Colors[theme].tint} size={24}/>
+                </Category>
+            </Pressable>
+        </View>
+    );
 }

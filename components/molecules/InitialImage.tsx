@@ -9,8 +9,8 @@ interface InitialImageProps {
 }
 
 export const InitialImage = ({firstName, lastName, size = 45}: InitialImageProps) => {
-    const firstNameInitial = firstName?.charAt(0)?.toUpperCase();
-    const lastNameInitial = lastName?.charAt(0)?.toUpperCase();
+    const firstNameInitial = firstName?.charAt(0)?.toUpperCase() ?? '';
+    const lastNameInitial = lastName?.charAt(0)?.toUpperCase() ?? '';
     const initial = `${firstNameInitial}${lastNameInitial}`;
     const styles = makeStyles(size);
 

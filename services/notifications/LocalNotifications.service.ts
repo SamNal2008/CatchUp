@@ -1,6 +1,7 @@
 import {ContactModel} from "@/repositories/contacts/ContactEntity";
 import {NotificationsService} from "./Notification.service";
 import * as Notifications from 'expo-notifications';
+import {SchedulableTriggerInputTypes} from 'expo-notifications';
 import {Alert} from "react-native";
 import {getRandomBetween, ReminderFrequencyUtils} from "@/repositories/contacts/ReminderFrequency";
 import {NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
@@ -52,15 +53,18 @@ const registerBirthdayNotificationForContact = (contact: ContactModel): any => {
     if (!contact.birthDate) {
         return;
     }
+    const base12Month = (contact.birthDate.getMonth() + 1) % 12;
+    const birthday = contact.birthDate.getDate();
     return Notifications.scheduleNotificationAsync({
         content: {
             title: `It’s ${contact.firstName}’s birthday 🎉`,
             body: `Send wishes, make their day!`,
         },
         trigger: {
+            type: SchedulableTriggerInputTypes.YEARLY,
             channelId: 'default',
-            month: contact.birthDate.getMonth() + 1,
-            day: contact.birthDate.getDate(),
+            month: base12Month,
+            day: birthday,
             hour: getRandomBetween([{min: 9, max: 10}]),
             minute: getRandomBetween([{min: 0, max: 59}]),
         }
@@ -79,6 +83,11 @@ const deleteNotificationWithId = async (notificationId: NotificationId) => {
     }
 }
 
+const hasNotificationEnabledOnPhone = async (): Promise<boolean> => {
+    const permissions = await Notifications.getPermissionsAsync();
+    return permissions.granted;
+}
+
 export const localNotificationService: NotificationsService = {
     registerNotificationForContact,
     requestPermission,
@@ -86,5 +95,6 @@ export const localNotificationService: NotificationsService = {
     deleteNotificationAndCreateNewPostponed,
     registerBirthdayNotificationForContact,
     clearAllNotifications,
-    deleteNotificationWithId
+    deleteNotificationWithId,
+    hasNotificationEnabledOnPhone
 };

@@ -1,6 +1,6 @@
-import { ContactModel } from "@/repositories/contacts/ContactEntity";
-import { localNotificationService } from "./LocalNotifications.service";
-import {NotificationEntity, NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
+import {ContactModel} from "@/repositories/contacts/ContactEntity";
+import {localNotificationService} from "./LocalNotifications.service";
+import {NotificationId, NotificationModel} from "@/repositories/notifications/NotificationEntity";
 
 export interface NotificationsService {
   deleteNotificationAndCreateNewPostponed(notificationId: NotificationId, contact: ContactModel, checkInDate: Date): Promise<NotificationModel>;
@@ -10,6 +10,7 @@ export interface NotificationsService {
   registerBirthdayNotificationForContact(contact: ContactModel): any;
   clearAllNotifications(): void;
   deleteNotificationWithId(notificationId: NotificationId): Promise<void>;
+  hasNotificationEnabledOnPhone(): Promise<boolean>;
 }
 
 export const getNotificationsService = (): NotificationsService => localNotificationService;

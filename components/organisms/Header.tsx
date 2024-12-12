@@ -7,6 +7,7 @@ import { useContacts } from "@/contexts/Contact.context";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { usePathname } from "expo-router";
 import { useToggleAdminMode } from "@/store/Admin.store";
+import {useNewFriendStore} from "@/store/NewFriend.store";
 
 const usePageTitle = () => {
   const pathname = usePathname();
@@ -25,8 +26,8 @@ const usePageTitle = () => {
 export const Header = () => {
   const pageTitle = usePageTitle();
   const theme = useColorSchemeOrDefault();
-  const { setNewContact } = useContacts();
   const toggleAdminMode = useToggleAdminMode();
+  const {setContact} = useNewFriendStore();
 
   const openModalToChoseContact = async () => {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -43,7 +44,7 @@ export const Header = () => {
         ...newCatchUp,
         image: res.data.find((contact) => contact.id === newCatchUp?.id)?.image,
       };
-      setNewContact(newCatchUp);
+      setContact(newCatchUp);
     }
   };
 

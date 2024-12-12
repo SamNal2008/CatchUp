@@ -11,6 +11,7 @@ type UseNotifications = {
     postPoneReminder: (contact: ContactModel, checkinDate: Date) => void;
     clearAllNotifications: () => void;
     deleteFriendNotification: (contactId: ContactId) => Promise<void>;
+    hasNotificationEnabledOnPhone: () => Promise<boolean>;
 };
 
 export const useNotifications = (): UseNotifications => {
@@ -30,7 +31,7 @@ export const useNotifications = (): UseNotifications => {
 
     const registerFriendNotificationReminder = async (contact: ContactModel) => {
         try {
-            const notificationId = await notificationsService.registerNotificationForContact(contact, new Date());
+            const notificationId = await notificationsService.registerNotificationForContact(contact, contact.lastCheckin ?? new Date());
             notificationRepository.saveReminder({
                 notification_id: notificationId,
                 frequency: contact.frequency,
@@ -39,6 +40,10 @@ export const useNotifications = (): UseNotifications => {
         } catch (e) {
             logService.error(`Unable to register notification for contact ${contact.id}`, e);
         }
+    }
+
+    const hasNotificationEnabledOnPhone = () => {
+        return notificationsService.hasNotificationEnabledOnPhone();
     }
 
     const registerFriendNotificationBirthdayReminder = async (contact: ContactModel) => {
@@ -81,5 +86,5 @@ export const useNotifications = (): UseNotifications => {
         await notificationsService.deleteNotificationWithId(notification.notification_id);
     }
 
-    return { askForNotificationPermission, registerFriendNotificationReminder, postPoneReminder, clearAllNotifications, registerFriendNotificationBirthdayReminder, deleteFriendNotification };
+    return { askForNotificationPermission, registerFriendNotificationReminder, postPoneReminder, clearAllNotifications, registerFriendNotificationBirthdayReminder, deleteFriendNotification, hasNotificationEnabledOnPhone };
 };

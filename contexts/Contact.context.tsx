@@ -6,16 +6,14 @@ import { useSQLiteContext } from "expo-sqlite";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import {useCheckIns} from "@/contexts/CheckIns.context";
 import {logService} from "@/services/log.service";
+import {useNewFriendStore} from "@/store/NewFriend.store";
 
 interface ContactContextProps {
-    newContact: Contact | null;
     friends: Array<ContactModel>;
-    setNewContact: (contact: Contact) => void;
     fetchFriends: () => Promise<void>;
     addNewFriend: (contact: ContactModel) => Promise<void>;
     deleteFriend: (contactId: ContactId) => Promise<void>;
 }
-
 
 const ContactContext = createContext<ContactContextProps | null>(null);
 
@@ -27,11 +25,15 @@ export const useContacts = () => {
 
 export const ContactProvider = ({ children }: { children: ReactNode }) => {
     const { registerFriendNotificationReminder, registerFriendNotificationBirthdayReminder, deleteFriendNotification } = useNotifications();
+    const {setContact} = useNewFriendStore();
     const {deleteCheckinForFriend} = useCheckIns();
-    const [newContact, setNewContact] = useState<Contact | null>(null);
     const [friends, setFriends] = useState<Array<ContactModel>>([]);
     const db = useSQLiteContext();
     const contactsRepository = getContactsRepository(db);
+
+    const clearNewContact = () => {
+        setContact(null);
+    }
 
     useEffect(() => {
         fetchFriends();
@@ -53,6 +55,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
             await contactsRepository.addNewFriend(contact);
             registerFriendNotificationReminder(contact);
             registerFriendNotificationBirthdayReminder(contact);
+            clearNewContact();
             await fetchFriends();
         } catch (error) {
             logService.error('Error saving contact', error);
@@ -61,7 +64,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <ContactContext.Provider value={{ newContact, friends, setNewContact, fetchFriends, addNewFriend, deleteFriend }}>
+        <ContactContext.Provider value={{ friends, fetchFriends, addNewFriend, deleteFriend }}>
             {children}
         </ContactContext.Provider>
     );

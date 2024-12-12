@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/atoms/ThemedText";
 import { MyBottomSheet, useModalRef } from "@/components/navigation/BottomSheet";
 import { Colors } from "@/constants/design";
 import { useCheckIns } from "@/contexts/CheckIns.context";
-import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
+import {ColorSchemeName, useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import { logService } from "@/services/log.service";
 import {
     useNewCheckinInfo,
@@ -55,11 +55,13 @@ const NewNoteHeader = ({saveNewCheckinWithNote}: NewNoteHeaderProps) => {
 const NewNoteTextInput = () => {
     const theme = useColorSchemeOrDefault();
     const {noteContent} = useNewCheckinInfo()
-    ;
     const setNoteContent = useSetNoteContent();
     const {isModalVisible} = useNewNoteCheckInModalControl();
     const inputRef = useRef<TextInput>(null);
     const [isFocused, setIsFocused] = useState(false);
+
+    const styles = makeStyles(theme);
+
     useEffect(() => {
         if (isModalVisible) {
             inputRef.current?.focus();
@@ -76,7 +78,7 @@ const NewNoteTextInput = () => {
                 ref={inputRef}
                 value={noteContent}
                 onChangeText={setNoteContent}
-                style={{backgroundColor: Colors[theme].textInput, padding: 20, color: Colors[theme].text, lineHeight: 20}}
+                style={styles.textInput}
                 numberOfLines={10}
                 multiline
             />
@@ -91,6 +93,7 @@ export const NewNoteModal = () => {
     const {contactToCheckin} = useNewCheckinInfo();
 
     useEffect(() => {
+        console.log('isModalVisible', isModalVisible);
         if (isModalVisible) {
             modalRef.current?.expand();
         } else {
@@ -115,3 +118,14 @@ export const NewNoteModal = () => {
         />
     );
 }
+
+const makeStyles = (theme: ColorSchemeName) => ({
+    textInput: {
+        backgroundColor: Colors[theme].textInput,
+        padding: 20,
+        color: Colors[theme].text,
+        lineHeight: 20,
+        borderRadius: 8,
+        flex: 2
+    }
+});

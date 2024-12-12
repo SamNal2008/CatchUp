@@ -7,7 +7,7 @@ import {ColorSchemeName, useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'subText' | 'icon' | 'sectionTitle';
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'subText' | 'icon' | 'sectionTitle' | 'subSectionTitle';
 };
 
 export function ThemedText({
@@ -33,6 +33,7 @@ export function ThemedText({
         type === 'subText' ? styles.subText : undefined,
         type === 'icon' ? styles.icon : undefined,
         type === 'sectionTitle' ? styles.sectionTitle : undefined,
+        type === 'subSectionTitle' ? styles.subSectionTitle : undefined,
         style,
       ]}
       {...rest}
@@ -44,20 +45,24 @@ const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
   default: {
     fontSize: 16,
     lineHeight: 24,
+    fontWeight: '400',
   },
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
+    fontFamily: 'SF Pro',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     lineHeight: 32,
+    fontFamily: 'SF Pro',
   },
   subtitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    fontFamily: 'SF Pro',
   },
   sectionTitle: {
     fontSize: 16,
@@ -77,5 +82,13 @@ const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
   },
   icon: {
     fontSize: 72
+  },
+  subSectionTitle: {
+    fontSize: 13,
+    fontWeight: '400',
+    fontFamily: 'SF Pro',
+    color: Colors[theme].icon,
+    lineHeight: 16,
+    fontStyle: 'normal',
   }
 });

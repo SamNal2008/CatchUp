@@ -1,4 +1,4 @@
-import { ReminderFrequency } from "@/repositories/contacts/ReminderFrequency";
+import {ReminderFrequency} from "@/repositories/contacts/ReminderFrequency";
 import * as Contact from "expo-contacts";
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;

@@ -64,7 +64,6 @@ export const CheckInsProvider = ({children}: { children: ReactNode }) => {
             setCheckinDate(new Date());
             setNoteContent('');
             refreshCheckIns().catch(logService.error);
-            navigate("/");
         } catch (e) {
             logService.error("Error while saving checking on friend", e);
         }

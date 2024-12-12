@@ -1,4 +1,4 @@
-import {NotificationTriggerInput} from "expo-notifications/src/Notifications.types";
+import {NotificationTriggerInput, SchedulableTriggerInputTypes} from "expo-notifications/src/Notifications.types";
 
 
 type RandomHourInterval = {
@@ -66,11 +66,12 @@ const getWeekOfMonthOfToday = (checkinDate: Date): number => {
 const getNextNotificationTrigger = (frequency: ReminderFrequencyWithoutNever, checkInDate: Date): NotificationTriggerInput => {
     const randomHour = getRandomBetween([{min: 8, max: 10}, {min: 12, max: 14}, {min: 18, max: 20}]);
     const randomMinute = getRandomBetween([{min: 0, max: 59}]);
-    const baseTriggerInput = {
+    const baseTriggerInput: NotificationTriggerInput = {
         hour: randomHour,
         minute: randomMinute,
+        channelId: 'default',
         repeats: true,
-        channelId: 'default'
+        type: SchedulableTriggerInputTypes.CALENDAR
     }
     switch (frequency) {
         case 'daily':
@@ -78,36 +79,36 @@ const getNextNotificationTrigger = (frequency: ReminderFrequencyWithoutNever, ch
         case 'weekly':
             return {
                 weekday: checkInDate.getDay() + 1,
-                ...baseTriggerInput
+                ...baseTriggerInput,
             };
         case 'monthly':
             return {
                 weekOfMonth: getWeekOfMonthOfToday(checkInDate),
-                ...baseTriggerInput
+                ...baseTriggerInput,
             }
         case 'yearly':
             return {
                 month: (checkInDate.getMonth() + 1) % 12,
                 day: checkInDate.getDate(),
-                ...baseTriggerInput
+                ...baseTriggerInput,
             }
         case 'bimonthly':
             return {
                 month: (checkInDate.getMonth() + 2) % 12,
                 day: checkInDate.getDate(),
-                ...baseTriggerInput
+                ...baseTriggerInput,
             }
         case 'quarterly':
             return {
                 month: (checkInDate.getMonth() + 3) % 12,
                 day: checkInDate.getDate(),
-                ...baseTriggerInput
+                ...baseTriggerInput,
             }
         case 'biannually':
             return {
                 month: (checkInDate.getMonth() + 6) % 12,
                 day: checkInDate.getDate(),
-                ...baseTriggerInput
+                ...baseTriggerInput,
             };
     }
 };

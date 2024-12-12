@@ -6,11 +6,12 @@ import { ContactModel, ReminderFrequency, ReminderFrequencyUtils } from "@/repos
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+import {Spacing} from "@/constants/design";
+import {CheckInToast} from "@/components/organisms/CheckInToast";
 
 const styles = StyleSheet.create({
   section: {
     flexDirection: 'column',
-    gap: 10,
     width: '100%',
   },
   additionalButton: {
@@ -19,11 +20,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#8A898E'
-  }
 });
 
 type SectionProps = {
@@ -34,13 +30,13 @@ type SectionProps = {
 const Section = ({ contacts, title }: SectionProps) => {
   return contacts.length > 0 ? (
     <View style={styles.section}>
-      <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
+      <ThemedText type={'sectionTitle'}>{title}</ThemedText>
       {contacts.map(contact => <FriendLine key={contact.id} contact={contact} />)}
     </View>
   ) : null;
 }
 
-export default function Profile() {
+export default function Friends() {
   const { friends } = useContacts();
 
   const friendsByFrequency = friends.reduce((acc, contact) => {
@@ -71,7 +67,9 @@ export default function Profile() {
               data={Object.keys(friendsByFrequency)}
               renderItem={({item}) => <Section title={ReminderFrequencyUtils.translateFrequencyToEnglishOptions(item as ReminderFrequency)} contacts={friendsByFrequency[item as ReminderFrequency]}/>}
               keyExtractor={(item) => item}
+              contentContainerStyle={{ gap : Spacing.medium }}
             />
+            <CheckInToast />
           </View>
         }
     </ThemedView>

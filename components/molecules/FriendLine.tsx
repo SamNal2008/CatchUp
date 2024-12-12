@@ -58,9 +58,7 @@ export const FriendLine = ({contact}: { contact: ContactModel }) => {
     const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
     const [reload, setReload] = useState<boolean>(false);
     const setContactToCheckin = useSetContactToCheckin();
-    const {contactToCheckin} = useNewCheckinInfo();
 
-    const isCheckingOnContact = contactToCheckin?.id === contact.id;
 
     useEffect(() => {
         if (friends.length > 0) {
@@ -119,9 +117,8 @@ export const FriendLine = ({contact}: { contact: ContactModel }) => {
                         }
                     </View>
                 </View>
-                <PrimaryButton disabled={hasCheckedInToday} title={hasCheckedInToday ? 'Come later' : 'Check In'}
+                <PrimaryButton title={hasCheckedInToday ? 'Come later' : 'Check In'}
                                onPress={checkInOnFriend}/>
-                <CheckInToast checkedInContact={contact} isVisible={isCheckingOnContact}/>
             </View>
         </Swipeable>
     )
@@ -147,5 +144,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
+        position: 'relative'
     },
 });

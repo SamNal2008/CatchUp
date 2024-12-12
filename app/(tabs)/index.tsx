@@ -126,7 +126,7 @@ const CheckInMonthYear = ({checkInMonthWithYear, checkIns}: CheckInMonthYearProp
 const CheckInSummary = ({checkIn}: CheckInSummaryProps) => {
     const isNoteContentEmpty = checkIn?.noteContent === null || checkIn?.noteContent === '';
     const theme = useColorSchemeOrDefault();
-    if (!checkIn || ! checkIn.contact) {
+    if (!checkIn || !checkIn.contact) {
         return null;
     }
     return (
@@ -214,7 +214,7 @@ export default function HomeScreen() {
                     </ThemedText>
                 </> :
                 <FlatList
-                    contentContainerStyle={{gap: Spacing.medium, width: Size.full}}
+                    contentContainerStyle={{gap: Spacing.medium, width: Size.full, paddingBottom: Spacing.medium}}
                     style={{width: '100%'}}
                     data={Object.keys(checkInsByMonth)}
                     renderItem={({item}) =>
