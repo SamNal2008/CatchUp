@@ -2,12 +2,12 @@ import {ThemedText} from "@/components/atoms/ThemedText";
 import {Pressable, StyleSheet, View, Linking, AppState} from "react-native";
 import {Colors, Spacing} from "@/constants/design";
 import {Switch} from "react-native-gesture-handler";
-import {useEffect, useRef, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {SymbolView} from "expo-symbols";
-import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
+import {ColorSchemeName, useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import {useNotifications} from "@/hooks/useNotificatons";
 
-const styles = StyleSheet.create({
+const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'flex-start',
@@ -22,29 +22,32 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
 
     },
+    toggle: {
+        width: '100%',
+        height: 44,
+        backgroundColor: Colors[theme].plainBackground,
+        paddingHorizontal: Spacing.medium,
+        borderRadius: Spacing.medium,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    }
+
 });
 
 type CategoryProps = {
     name: string;
-    children: React.ReactNode;
+    children: ReactNode;
 };
 
 
 const Category = ({name, children}: CategoryProps) => {
     const theme = useColorSchemeOrDefault();
+    const styles = makeStyles(theme);
     return (
         <View style={styles.categoryContainer}>
-            <ThemedText type='subSectionTitle' style={{fontSize: 13}}>{name}</ThemedText>
-            <View style={{
-                width: '100%',
-                height: 64,
-                backgroundColor: Colors[theme].plainBackground,
-                padding: 16,
-                borderRadius: 16,
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexDirection: 'row'
-            }}>
+            <ThemedText type='subSectionTitle' style={{fontSize: 13, paddingHorizontal: 16}}>{name}</ThemedText>
+            <View style={styles.toggle}>
                 {children}
             </View>
         </View>
@@ -60,6 +63,8 @@ export default function Settings() {
         const hasNotificationEnabled = await hasNotificationEnabledOnPhone();
         setHasNotifications(hasNotificationEnabled);
     };
+
+    const styles = makeStyles(theme);
 
     useEffect(() => {
         refreshNotificationState();
@@ -88,13 +93,13 @@ export default function Settings() {
 
     return (
         <View style={[styles.container, {backgroundColor: Colors[theme].background}]}>
-            <Category name={"Notifications"}>
-                <ThemedText>Push notifications</ThemedText>
+            <Category name={'Notifications'}>
+                <ThemedText type={'settings'}>Push notifications</ThemedText>
                 <Switch value={hasNotifications} onChange={handleChangeNotificationToggle}/>
             </Category>
             <Pressable onPress={openFeedback}>
-                <Category name={"Contact us"}>
-                    <ThemedText>Send feedback</ThemedText>
+                <Category name={'Contact us'}>
+                    <ThemedText type={'settings'}>Send feedback</ThemedText>
                     <SymbolView name={'mail.fill'} tintColor={Colors[theme].tint} size={24}/>
                 </Category>
             </Pressable>

@@ -7,7 +7,7 @@ import {ColorSchemeName, useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'subText' | 'icon' | 'sectionTitle' | 'subSectionTitle';
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'subText' | 'icon' | 'sectionTitle' | 'subSectionTitle' | 'settings';
 };
 
 export function ThemedText({
@@ -34,6 +34,7 @@ export function ThemedText({
         type === 'icon' ? styles.icon : undefined,
         type === 'sectionTitle' ? styles.sectionTitle : undefined,
         type === 'subSectionTitle' ? styles.subSectionTitle : undefined,
+        type === 'settings' ? styles.settings : undefined,
         style,
       ]}
       {...rest}
@@ -90,5 +91,9 @@ const makeStyles = (theme: ColorSchemeName) => StyleSheet.create({
     color: Colors[theme].icon,
     lineHeight: 16,
     fontStyle: 'normal',
+  },
+  settings: {
+    fontSize: 17,
+    color: Colors[theme].text
   }
 });
