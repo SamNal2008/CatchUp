@@ -8,6 +8,7 @@ import { StyleSheet, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import {Spacing} from "@/constants/design";
 import {CheckInToast} from "@/components/organisms/CheckInToast";
+import {PlaceholderScreen} from "@/components/molecules/PlaceholderScreen";
 
 const styles = StyleSheet.create({
   section: {
@@ -48,20 +49,15 @@ export default function Friends() {
   }, {} as Record<ReminderFrequency, ContactModel[]>);
 
   return (
-    <ThemedView>
-        {friends.length === 0 ?
-          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, gap: 15, width: '100%' }}>
-            <>
-              <ThemedText type={"subtitle"}>
-                Keep your closest within reach
-              </ThemedText>
-              <ThemedText type={"default"} style={{textAlign: "center"}}>
-                Add friends to stay in touch, share memories, and never miss a
-                birthday
-              </ThemedText>
-            </>
-          </View>
-          :
+    <ThemedView style={{
+      flex: 1,
+      gap: 20,
+      paddingHorizontal: 16,
+      justifyContent: "center",
+      alignItems: "center",
+      width: '100%'
+    }}>
+        {friends.length === 0 ? <PlaceholderScreen /> :
           <View style={{ flex: 1, gap: 30, width: '100%' }}>
             <FlatList
               data={Object.keys(friendsByFrequency)}

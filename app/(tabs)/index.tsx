@@ -10,92 +10,12 @@ import {useCheckIns} from "@/contexts/CheckIns.context";
 import {InitialImage} from "@/components/molecules/InitialImage";
 import {useColorSchemeOrDefault} from "@/hooks/useColorScheme";
 import {logService} from "@/services/log.service";
+import {PlaceholderScreen} from "@/components/molecules/PlaceholderScreen";
+import {DateDayBox} from "@/components/atoms/DateDayBox";
+import {DateUtils} from "@/constants/DateUtils";
 
 type CheckInSummaryProps = {
     checkIn: CheckInModel
-}
-
-const getWeekDayName = (day: number) => {
-    switch (day) {
-        case 0:
-            return 'Sunday';
-        case 1:
-            return 'Monday';
-        case 2:
-            return 'Tuesday';
-        case 3:
-            return 'Wednesday';
-        case 4:
-            return 'Thursday';
-        case 5:
-            return 'Friday';
-        case 6:
-            return 'Saturday';
-    }
-}
-
-const getMonthName = (monthWithYear: string) => {
-    const month = monthWithYear.split(' ')[0];
-    switch (month) {
-        case "0":
-            return 'January';
-        case "1":
-            return 'February';
-        case "2":
-            return 'March';
-        case "3":
-            return 'April';
-        case "4":
-            return 'May';
-        case "5":
-            return 'June';
-        case "6":
-            return 'July';
-        case "7":
-            return 'August';
-        case "8":
-            return 'September';
-        case "9":
-            return 'October';
-        case "10":
-            return 'November';
-        case "11":
-            return 'December';
-    }
-}
-
-const DateDayBox = ({date}: { date: Date }) => {
-    const weekDay = getWeekDayName(date.getDay())?.toUpperCase().substring(0, 3);
-    const theme = useColorSchemeOrDefault();
-    return (
-        <View style={{
-            height: 40,
-            backgroundColor: Colors[theme].background,
-            alignItems: 'center',
-            borderRadius: 6,
-            paddingHorizontal: 8,
-        }}>
-            <ThemedText style={{
-                height: 18,
-                fontFamily: 'SF Pro',
-                fontSize: 13,
-                lineHeight: 18,
-            }}>
-                {weekDay}
-            </ThemedText>
-            <ThemedText style={{
-                width: 26,
-                height: 22,
-                fontFamily: 'SF Pro',
-                fontWeight: '600',
-                fontSize: 17,
-                lineHeight: 22,
-                textAlign: 'center'
-            }}>
-                {date.getDate()}
-            </ThemedText>
-        </View>
-    );
 }
 
 type CheckInMonthYearProps = {
@@ -104,7 +24,7 @@ type CheckInMonthYearProps = {
 }
 
 const CheckInMonthYear = ({checkInMonthWithYear, checkIns}: CheckInMonthYearProps) => {
-    const month = getMonthName(checkInMonthWithYear);
+    const month = DateUtils.getMonthName(checkInMonthWithYear);
     const year = checkInMonthWithYear.split(' ')[1];
 
     return (
@@ -140,8 +60,7 @@ const CheckInSummary = ({checkIn}: CheckInSummaryProps) => {
             <View style={{alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', gap: 30}}>
                 <View style={{alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', gap: 10}}>
                     <DateDayBox date={checkIn.checkInDate}/>
-                    <ThemedText
-                        type={"defaultSemiBold"}>{checkIn.contact?.firstName} {checkIn.contact?.lastName}</ThemedText>
+                    <ThemedText type={"defaultSemiBold"}>{checkIn.contact?.firstName} {checkIn.contact?.lastName}</ThemedText>
                 </View>
                 {checkIn.contact?.image ?
                     <Image source={checkIn.contact.image} style={styles.friendImage}/> :
@@ -203,16 +122,7 @@ export default function HomeScreen() {
 
     return (
         <ThemedView style={[styles.container, hasCheckIns ? styles.containerWithCheckin : null]}>
-            {!hasCheckIns ?
-                <>
-                    <ThemedText type={"subtitle"}>
-                        Keep your closest within reach
-                    </ThemedText>
-                    <ThemedText type={"default"} style={{textAlign: "center"}}>
-                        Add friends to stay in touch, share memories, and never miss a
-                        birthday
-                    </ThemedText>
-                </> :
+            {!hasCheckIns ? <PlaceholderScreen /> :
                 <FlatList
                     contentContainerStyle={{gap: Spacing.medium, width: Size.full, paddingBottom: Spacing.medium}}
                     style={{width: '100%'}}
