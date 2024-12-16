@@ -17,6 +17,7 @@ export default function TabLayout() {
                 tabBarShowLabel: false,
                 tabBarStyle: {
                     backgroundColor: Colors[colorScheme].background,
+                    borderTopColor: 'transparent',
                 },
                 header: () => <Header/>,
             }}>
