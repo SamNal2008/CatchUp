@@ -58,7 +58,7 @@ export const Header = () => {
         </ThemedText>
         {pageTitle === "Catchup" ? (
           <FontAwesome6
-            size={40}
+            size={32}
             suppressHighlighting
             color={Colors[theme].borderColor}
             onPress={openModalToChoseContact}
