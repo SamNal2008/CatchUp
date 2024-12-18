@@ -52,6 +52,7 @@ export const DatePicker = ({value, onChange, ...rest}: DatePickerProps) => {
                         onChange={forwardOnChangeAndClose}
                         display="inline"
                         maximumDate={new Date()}
+                        {...rest}
                     />
                 </View>
             </Modal>

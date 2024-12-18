@@ -14,6 +14,7 @@ import {
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { useEffect, useRef, useState } from "react";
 import { Button, TextInput, View } from "react-native";
+import {DatePicker} from "@/components/atoms/DatePicker";
 
 
 type NewNoteHeaderProps = {
@@ -40,9 +41,10 @@ const NewNoteHeader = ({saveNewCheckinWithNote}: NewNoteHeaderProps) => {
     return (<>
         <Button title="Cancel" color={Colors[theme].buttonBackground} onPress={cancelCheckin}/>
         <View>
-            <DateTimePicker
+            <DatePicker
                 value={checkinDate}
                 onChange={updateCheckinDate}
+                style={{width: 2000}}
             />
             <ThemedText>
                 with {contactToCheckin?.firstName} {contactToCheckin?.lastName?.toUpperCase()}
@@ -93,7 +95,6 @@ export const NewNoteModal = () => {
     const {contactToCheckin} = useNewCheckinInfo();
 
     useEffect(() => {
-        console.log('isModalVisible', isModalVisible);
         if (isModalVisible) {
             modalRef.current?.expand();
         } else {
