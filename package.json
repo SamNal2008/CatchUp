@@ -21,6 +21,15 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
+    },
+    "collectCoverage": true,
+    "coverageThreshold": {
+      "changedSince": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
     }
   },
   "dependencies": {

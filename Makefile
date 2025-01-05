@@ -10,7 +10,7 @@ test-watch:
 	npx jest --watch
 
 test-coverage:
-	npx jest --coverage --coverageReporters="json-summary" --coverageReporters="text"
+	npx jest --coverage --changedSince=preview --coverageReporters="json-summary" --coverageReporters="text"
 	./scripts/check-coverage.sh
 
 # All CI tasks
@@ -22,9 +22,11 @@ lint:
 	npx eslint . --max-warnings 2
 
 check-coverage:
-	npx jest --coverage --coverageReporters="json" --coverageReporters="text"
-	./scripts/check-diff-coverage.sh
-
+	ifeq ($(GITHUB_BASE_REF),)
+		npx jest --coverage --changedSince=preview --coverageThreshold='{"global":{"branches":80,"functions":80,"lines":80,"statements":80}}'
+	else
+		npx jest --coverage --changedSince=origin/$(GITHUB_BASE_REF) --coverageThreshold='{"global":{"branches":80,"functions":80,"lines":80,"statements":80}}'
+	endif
 
 # All CD Tasks
 
