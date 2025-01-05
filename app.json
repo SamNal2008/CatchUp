@@ -62,7 +62,8 @@
         {
           "defaultChannel": "default"
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true

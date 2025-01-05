@@ -7,13 +7,14 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useContacts } from "@/contexts/Contact.context";
 import React, { useEffect } from "react";
 import { useModalRef, MyBottomSheet } from "../navigation/BottomSheet";
+import * as Notifications from 'expo-notifications';
 
 const AdminDataSelection = () => {
-    const { friends, deleteFriend } = useContacts();
-    const { clearAllCheckIns } = useCheckIns();
-    const { clearAllNotifications } = useNotifications();
-    const db = useSQLiteContext();
-    const isAdmin = useIsAdmin();
+  const { friends, deleteFriend } = useContacts();
+  const { clearAllCheckIns } = useCheckIns();
+  const { clearAllNotifications } = useNotifications();
+  const db = useSQLiteContext();
+  const isAdmin = useIsAdmin();
 
 
   const wipeAllDatabases = () => {
@@ -44,45 +45,45 @@ const AdminDataSelection = () => {
 
   const selectAllData = () => {
     logService.log("Contacts: " + db.getAllSync('SELECT * FROM contacts'));
-    logService.log("Notifications : "+ db.getAllSync('SELECT * FROM notifications'));
+    logService.log("Notifications : " + db.getAllSync('SELECT * FROM notifications'));
     logService.log("Checkins : " + db.getAllSync('SELECT * FROM check_ins'));
     logService.log('Notifications service : ' + Notifications.getAllScheduledNotificationsAsync().then(logService.log));
   }
 
 
-    if (!isAdmin) {
-        return null;
-    }
+  if (!isAdmin) {
+    return null;
+  }
 
-    return (
-        <>
-            <Button title="Clear databases" onPress={wipeAll} />
-            <Button title={"Select all data in database"} onPress={selectAllData} />
-        </>
-    );
+  return (
+    <>
+      <Button title="Clear databases" onPress={wipeAll} />
+      <Button title={"Select all data in database"} onPress={selectAllData} />
+    </>
+  );
 }
 
 export const AdminModal = () => {
-    const modalRef = useModalRef();
-    const isAdmin = useIsAdmin();
-    const toggleAdminMode = useToggleAdminMode();
+  const modalRef = useModalRef();
+  const isAdmin = useIsAdmin();
+  const toggleAdminMode = useToggleAdminMode();
 
-    useEffect(() => {
-        if (isAdmin) {
-            modalRef.current?.expand();
-        } else {
-            modalRef.current?.close();
-        }
-    }, [isAdmin]);
+  useEffect(() => {
+    if (isAdmin) {
+      modalRef.current?.expand();
+    } else {
+      modalRef.current?.close();
+    }
+  }, [isAdmin]);
 
 
-    return (
-        <MyBottomSheet
-            contentToDisplay={<AdminDataSelection/>}
-            header={<>
-                <Button title="Close" onPress={toggleAdminMode}/>
-            </>}
-            ref={modalRef}
-        />
-    );
+  return (
+    <MyBottomSheet
+      contentToDisplay={<AdminDataSelection />}
+      header={<>
+        <Button title="Close" onPress={toggleAdminMode} />
+      </>}
+      ref={modalRef}
+    />
+  );
 }
