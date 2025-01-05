@@ -1,9 +1,7 @@
 .PHONY: format lint test test-watch test-coverage
 
 format:
-	npx eslint . --fix
-
-format-and-lint: format lint
+	npx eslint . --fix --max-warnings 2
 
 test:
 	npx jest
@@ -12,21 +10,20 @@ test-watch:
 	npx jest --watch
 
 test-coverage:
-	npx jest --coverage --coverageReporters="json" --coverageReporters="text"
-
-ci: format-and-lint test-coverage
+	npx jest --coverage --coverageReporters="json-summary" --coverageReporters="text"
+	./scripts/check-coverage.sh
 
 # All CI tasks
 
 install:
-	npm run ci
+	npx expo install
 
 lint:
 	npx eslint . --max-warnings 2
 
 check-coverage:
 	npx jest --coverage --coverageReporters="json" --coverageReporters="text"
-	npx ./scripts/check-diff-coverage.js
+	./scripts/check-diff-coverage.sh
 
 
 # All CD Tasks

@@ -1,3 +1,17 @@
 #!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx|js|jsx)$' || true)
+
+if [ -n "$STAGED_FILES" ]; then
+    echo "$STAGED_FILES" | while IFS= read -r file; do
+        if [ -f "$file" ]; then
+            npx eslint "$file" --fix --max-warnings 2
+            git add "$file"
+        fi
+    done
+fi
+
+# Run lint check on all files
 make lint

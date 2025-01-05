@@ -28,4 +28,4 @@ jobs:
         
       - name: Run Tests with Coverage
         run: |
-          make test-coverage
+          make check-coverage
