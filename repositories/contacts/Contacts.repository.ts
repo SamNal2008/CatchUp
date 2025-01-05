@@ -1,13 +1,13 @@
-import * as SQLite from "expo-sqlite";
+import { DateUtils } from "@/constants/DateUtils";
+import { logService } from "@/services/log.service";
 import * as Contact from "expo-contacts";
+import * as SQLite from "expo-sqlite";
 import {
   ContactEntity,
   ContactId,
   ContactModel,
   createNewContactEntity,
 } from "./ContactEntity";
-import { DateUtils } from "@/constants/DateUtils";
-import { logService } from "@/services/log.service";
 
 export const DATABASE_NAME = "catch_up.db";
 
@@ -38,6 +38,17 @@ class LocalRepository implements ContactsRepository {
     );
     if (res.changes <= 0) {
       throw new Error("Unable to save contact with ID : " + contactToSave.id);
+    }
+
+    if (contactToSave.birthDate) {
+      logService.info(
+        `Contact with ID : ${contactToSave.id} has been saved with birth date : ${contactToSave.birthDate}`,
+      );
+    } else {
+      throw new Error(
+        "Unable to save contact without birth date : " +
+          JSON.stringify(contactToSave),
+      );
     }
 
     return contactToSave;

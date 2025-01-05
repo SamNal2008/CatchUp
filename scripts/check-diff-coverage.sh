@@ -17,8 +17,14 @@ COVERAGE_FILE="./coverage/coverage-final.json"
 calculate_percentage() {
     local covered=$1
     local total=$2
+    
+    # Convert null or empty to 0
+    covered=${covered:-0}
+    total=${total:-0}
+    
+    # Handle division by zero
     if [ "$total" -eq 0 ]; then
-        echo 100
+        echo "100"
     else
         echo "scale=2; ($covered * 100) / $total" | bc
     fi
@@ -35,13 +41,42 @@ print_coverage() {
     fi
 }
 
+# Function to safely get json value
+get_json_value() {
+    local json=$1
+    local field=$2
+    local value
+    
+    # Get value and handle null/missing
+    value=$(echo "$json" | jq -r "if .$field.total == null then \"0\" else \".$field.total\" end")
+    if [ "$value" = "null" ] || [ -z "$value" ]; then
+        echo "0"
+    else
+        echo "$value"
+    fi
+}
+
 # Get changed files
 if [ -n "$GITHUB_BASE_REF" ]; then
-    # PR mode
-    CHANGED_FILES=$(git diff --name-only origin/$GITHUB_BASE_REF...HEAD | grep -E '\.tsx?$' || true)
+    # PR mode - get all changes between base branch and current HEAD
+    echo -e "${BLUE}Fetching base branch...${NC}"
+    git fetch origin "$GITHUB_BASE_REF" --depth=1
+    MERGE_BASE=$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)
+    CHANGED_FILES=$(git diff --name-only "$MERGE_BASE" HEAD | grep -E '\.tsx?$' || true)
+    echo -e "${BLUE}Comparing changes with base branch: ${CYAN}$GITHUB_BASE_REF${NC}"
 else
-    # Push mode
-    CHANGED_FILES=$(git diff --name-only HEAD^ | grep -E '\.tsx?$' || true)
+    # Push mode - compare with the parent of the first commit in the branch
+    BRANCH_FIRST_COMMIT=$(git rev-list --max-parents=0 HEAD)
+    if [ "$(git rev-parse --abbrev-ref HEAD)" = "preview" ]; then
+        # On preview branch, get all changes
+        CHANGED_FILES=$(git diff --name-only "$BRANCH_FIRST_COMMIT" HEAD | grep -E '\.tsx?$' || true)
+        echo -e "${BLUE}Checking all changes in preview branch${NC}"
+    else
+        # On feature branch, get changes since branching from preview
+        MERGE_BASE=$(git merge-base preview HEAD)
+        CHANGED_FILES=$(git diff --name-only "$MERGE_BASE" HEAD | grep -E '\.tsx?$' || true)
+        echo -e "${BLUE}Comparing changes with preview branch${NC}"
+    fi
 fi
 
 if [ -z "$CHANGED_FILES" ]; then
@@ -69,28 +104,29 @@ while IFS= read -r file; do
     echo -e "\n${BLUE}Analyzing: ${CYAN}$file${NC}"
     
     # Extract coverage data for the file using jq
-    if FILE_DATA=$(jq --arg file "$file" '.[$file]' "$COVERAGE_FILE"); then
+    FILE_DATA=$(jq --arg file "$file" '.[$file] // {}' "$COVERAGE_FILE")
+    if [ -n "$FILE_DATA" ] && [ "$FILE_DATA" != "null" ]; then
         # Statements
-        STATEMENTS_TOTAL=$(echo "$FILE_DATA" | jq '.s.total')
-        STATEMENTS_COVERED=$(echo "$FILE_DATA" | jq '.s.covered')
+        STATEMENTS_TOTAL=$(echo "$FILE_DATA" | jq '.s.total // 0')
+        STATEMENTS_COVERED=$(echo "$FILE_DATA" | jq '.s.covered // 0')
         TOTAL_STATEMENTS=$((TOTAL_STATEMENTS + STATEMENTS_TOTAL))
         COVERED_STATEMENTS=$((COVERED_STATEMENTS + STATEMENTS_COVERED))
         
         # Branches
-        BRANCHES_TOTAL=$(echo "$FILE_DATA" | jq '.b.total')
-        BRANCHES_COVERED=$(echo "$FILE_DATA" | jq '.b.covered')
+        BRANCHES_TOTAL=$(echo "$FILE_DATA" | jq '.b.total // 0')
+        BRANCHES_COVERED=$(echo "$FILE_DATA" | jq '.b.covered // 0')
         TOTAL_BRANCHES=$((TOTAL_BRANCHES + BRANCHES_TOTAL))
         COVERED_BRANCHES=$((COVERED_BRANCHES + BRANCHES_COVERED))
         
         # Functions
-        FUNCTIONS_TOTAL=$(echo "$FILE_DATA" | jq '.f.total')
-        FUNCTIONS_COVERED=$(echo "$FILE_DATA" | jq '.f.covered')
+        FUNCTIONS_TOTAL=$(echo "$FILE_DATA" | jq '.f.total // 0')
+        FUNCTIONS_COVERED=$(echo "$FILE_DATA" | jq '.f.covered // 0')
         TOTAL_FUNCTIONS=$((TOTAL_FUNCTIONS + FUNCTIONS_TOTAL))
         COVERED_FUNCTIONS=$((COVERED_FUNCTIONS + FUNCTIONS_COVERED))
         
         # Lines
-        LINES_TOTAL=$(echo "$FILE_DATA" | jq '.l.total')
-        LINES_COVERED=$(echo "$FILE_DATA" | jq '.l.covered')
+        LINES_TOTAL=$(echo "$FILE_DATA" | jq '.l.total // 0')
+        LINES_COVERED=$(echo "$FILE_DATA" | jq '.l.covered // 0')
         TOTAL_LINES=$((TOTAL_LINES + LINES_TOTAL))
         COVERED_LINES=$((COVERED_LINES + LINES_COVERED))
         
@@ -104,6 +140,8 @@ while IFS= read -r file; do
         print_coverage "Branches" "$BRANCHES_PCT"
         print_coverage "Functions" "$FUNCTIONS_PCT"
         print_coverage "Lines" "$LINES_PCT"
+    else
+        echo -e "${YELLOW}No coverage data found for $file${NC}"
     fi
 done <<< "$CHANGED_FILES"
 
