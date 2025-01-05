@@ -16,7 +16,7 @@ test-coverage:
 # All CI tasks
 
 install:
-	npx expo install
+	npm install
 
 lint:
 	npx eslint . --max-warnings 2
