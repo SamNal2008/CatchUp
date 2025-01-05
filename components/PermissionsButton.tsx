@@ -1,18 +1,20 @@
-import React from 'react';
-import { Button, View, StyleSheet } from 'react-native';
-import * as TaskManager from 'expo-task-manager';
-import * as Location from 'expo-location';
-import {logService} from "@/services/log.service";
+import React from "react";
+import { Button, View, StyleSheet } from "react-native";
+import * as TaskManager from "expo-task-manager";
+import * as Location from "expo-location";
+import { logService } from "@/services/log.service";
 
-const LOCATION_TASK_NAME = 'background-location-task';
+const LOCATION_TASK_NAME = "background-location-task";
 
 const requestPermissions = async () => {
-  const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
-  logService.log('foregroundStatus : ' + foregroundStatus);
-  if (foregroundStatus === 'granted') {
-    const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
-    logService.log('backgroundStatus : ' + backgroundStatus);
-    if (backgroundStatus === 'granted') {
+  const { status: foregroundStatus } =
+    await Location.requestForegroundPermissionsAsync();
+  logService.log("foregroundStatus : " + foregroundStatus);
+  if (foregroundStatus === "granted") {
+    const { status: backgroundStatus } =
+      await Location.requestBackgroundPermissionsAsync();
+    logService.log("backgroundStatus : " + backgroundStatus);
+    if (backgroundStatus === "granted") {
       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
         accuracy: Location.Accuracy.Balanced,
       });
@@ -32,7 +34,9 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
     return;
   }
   if (data) {
-    const { locations } = data as unknown as { locations: Location.LocationObject[] };
+    const { locations } = data as unknown as {
+      locations: Location.LocationObject[];
+    };
     logService.log(locations);
     // do something with the locations captured in the background
   }
@@ -41,7 +45,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

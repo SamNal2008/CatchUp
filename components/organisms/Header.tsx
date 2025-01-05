@@ -3,11 +3,10 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 import * as Contacts from "expo-contacts";
 import { Colors } from "@/constants/design/Colors";
-import { useContacts } from "@/contexts/Contact.context";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { usePathname } from "expo-router";
 import { useToggleAdminMode } from "@/store/Admin.store";
-import {useNewFriendStore} from "@/store/NewFriend.store";
+import { useNewFriendStore } from "@/store/NewFriend.store";
 
 const usePageTitle = () => {
   const pathname = usePathname();
@@ -27,7 +26,7 @@ export const Header = () => {
   const pageTitle = usePageTitle();
   const theme = useColorSchemeOrDefault();
   const toggleAdminMode = useToggleAdminMode();
-  const {setContact} = useNewFriendStore();
+  const { setContact } = useNewFriendStore();
 
   const openModalToChoseContact = async () => {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -53,7 +52,12 @@ export const Header = () => {
       <View
         style={[styles.header, { backgroundColor: Colors[theme].background }]}
       >
-        <ThemedText type={"subtitle"} style={{ fontSize: 24 }} suppressHighlighting onLongPress={toggleAdminMode}>
+        <ThemedText
+          type={"subtitle"}
+          style={{ fontSize: 24 }}
+          suppressHighlighting
+          onLongPress={toggleAdminMode}
+        >
           {pageTitle}
         </ThemedText>
         {pageTitle === "Catchup" ? (

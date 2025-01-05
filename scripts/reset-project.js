@@ -6,14 +6,14 @@
  * You can remove the `reset-project` script from package.json and safely delete this file after running it.
  */
 
-const fs = require('fs');
-const path = require('path');
-const {logService} = require("../services/log.service");
+const fs = require("fs");
+const path = require("path");
+const { logService } = require("../services/log.service");
 
 const root = process.cwd();
-const oldDirPath = path.join(root, 'app');
-const newDirPath = path.join(root, 'app');
-const newAppDirPath = path.join(root, 'app');
+const oldDirPath = path.join(root, "app");
+const newDirPath = path.join(root, "app");
+const newAppDirPath = path.join(root, "app");
 
 const indexContent = `import { Text, View } from "react-native";
 
@@ -47,27 +47,27 @@ fs.rename(oldDirPath, newDirPath, (error) => {
   if (error) {
     return logService.error(`Error renaming directory: ${error}`);
   }
-  logService.log('/app moved to /app.');
+  logService.log("/app moved to /app.");
 
   fs.mkdir(newAppDirPath, { recursive: true }, (error) => {
     if (error) {
       return logService.error(`Error creating new app directory: ${error}`);
     }
-    logService.log('New /app directory created.');
+    logService.log("New /app directory created.");
 
-    const indexPath = path.join(newAppDirPath, 'index.tsx');
+    const indexPath = path.join(newAppDirPath, "index.tsx");
     fs.writeFile(indexPath, indexContent, (error) => {
       if (error) {
         return logService.error(`Error creating index.tsx: ${error}`);
       }
-      logService.log('app/index.tsx created.');
+      logService.log("app/index.tsx created.");
 
-      const layoutPath = path.join(newAppDirPath, '_layout.tsx');
+      const layoutPath = path.join(newAppDirPath, "_layout.tsx");
       fs.writeFile(layoutPath, layoutContent, (error) => {
         if (error) {
           return logService.error(`Error creating _layout.tsx: ${error}`);
         }
-        logService.log('app/_layout.tsx created.');
+        logService.log("app/_layout.tsx created.");
       });
     });
   });

@@ -3,19 +3,18 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-
 export const Palette = {
-  BLACK: '#000000',
-  WHITE: '#FFFFFF',
-  GREY_100: '#F3F2F8',
-  GREY_200: '#E2E2E4',
-  GREY_300: '#8A898E',
-  RED: '#FF0000',
-  WHITE_100: '#E0E0E0',
-  BLACK_100: '#121212',
-  BLACK_GREY_100: '#2C2C2E',
-  BLACK_GREY_200: '#3A3A3C',
-  BLACK_GREY_300: '#A1A1A6',
+  BLACK: "#000000",
+  WHITE: "#FFFFFF",
+  GREY_100: "#F3F2F8",
+  GREY_200: "#E2E2E4",
+  GREY_300: "#8A898E",
+  RED: "#FF0000",
+  WHITE_100: "#E0E0E0",
+  BLACK_100: "#121212",
+  BLACK_GREY_100: "#2C2C2E",
+  BLACK_GREY_200: "#3A3A3C",
+  BLACK_GREY_300: "#A1A1A6",
 } as const;
 
 export const Colors = {
@@ -32,7 +31,7 @@ export const Colors = {
     buttonBackgroundDisabled: Palette.GREY_300,
     toastBackground: Palette.WHITE,
     textInput: Palette.GREY_200,
-    plainBackground: Palette.WHITE
+    plainBackground: Palette.WHITE,
   },
   dark: {
     text: Palette.WHITE_100,
@@ -47,7 +46,7 @@ export const Colors = {
     buttonBackgroundDisabled: Palette.BLACK_GREY_300,
     toastBackground: Palette.BLACK_100,
     textInput: Palette.BLACK_GREY_200,
-    plainBackground: Palette.BLACK_100
+    plainBackground: Palette.BLACK_100,
   },
 } as const;
 

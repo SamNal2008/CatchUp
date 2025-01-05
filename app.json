@@ -15,11 +15,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "fr.copains.CatchUp",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "location",
-          "fetch",
-          "remote-notification"
-        ]
+        "UIBackgroundModes": ["location", "fetch", "remote-notification"]
       },
       "config": {
         "usesNonExemptEncryption": false
