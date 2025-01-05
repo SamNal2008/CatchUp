@@ -1,0 +1,52 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ preview ]
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    name: Deploy to Expo
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for tags
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: make install
+      
+      - name: Setup EAS
+        run: npm install -g eas-cli
+      
+      - name: Configure EAS
+        run: |
+          echo "${{ secrets.EXPO_TOKEN }}" | eas login --non-interactive
+      
+      - name: Check for breaking changes
+        id: check_tag
+        run: |
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            echo "is_breaking=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_breaking=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Update Only (Non-Breaking)
+        if: steps.check_tag.outputs.is_breaking == 'false'
+        run: make update
+      
+      - name: Build and Deploy (Breaking Changes)
+        if: steps.check_tag.outputs.is_breaking == 'true'
+        run: |
+          make build
+          make deploy-ios

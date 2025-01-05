@@ -1,0 +1,31 @@
+name: Merge Request Checks
+
+on:
+  pull_request:
+    branches: [ preview ]
+
+jobs:
+  quality:
+    name: Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: make install
+        
+      - name: Run ESLint
+        run: make lint
+        
+      - name: Run Tests with Coverage
+        run: |
+          make test-coverage
