@@ -40,17 +40,6 @@ class LocalRepository implements ContactsRepository {
       throw new Error("Unable to save contact with ID : " + contactToSave.id);
     }
 
-    if (contactToSave.birthDate) {
-      logService.info(
-        `Contact with ID : ${contactToSave.id} has been saved with birth date : ${contactToSave.birthDate}`,
-      );
-    } else {
-      throw new Error(
-        "Unable to save contact without birth date : " +
-          JSON.stringify(contactToSave),
-      );
-    }
-
     return contactToSave;
   }
 
