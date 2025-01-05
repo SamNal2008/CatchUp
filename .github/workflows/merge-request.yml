@@ -26,6 +26,6 @@ jobs:
       - name: Run ESLint
         run: make lint
         
-      - name: Run Tests with Coverage
-        run: |
-          make check-coverage
+      - name: Jest coverage report
+        uses: ArtiomTr/jest-coverage-report-action@v2.3.1
+    
