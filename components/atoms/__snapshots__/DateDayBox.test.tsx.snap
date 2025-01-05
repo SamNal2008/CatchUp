@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DateDayBox matches snapshot 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "#F3F2F8",
+      "borderRadius": 6,
+      "height": 40,
+      "paddingHorizontal": 8,
+    }
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "color": "#000000",
+        },
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 24,
+        },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          "fontFamily": "SF Pro",
+          "fontSize": 13,
+          "height": 18,
+          "lineHeight": 18,
+        },
+      ]
+    }
+  >
+    SUN
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "color": "#000000",
+        },
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 24,
+        },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          "fontFamily": "SF Pro",
+          "fontSize": 17,
+          "fontWeight": "600",
+          "height": 22,
+          "lineHeight": 22,
+          "textAlign": "center",
+          "width": 26,
+        },
+      ]
+    }
+  >
+    5
+  </Text>
+</View>
+`;
+
+exports[`DateDayBox matches snapshot with custom style 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "#F3F2F8",
+      "borderRadius": 6,
+      "height": 40,
+      "paddingHorizontal": 8,
+    }
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "color": "#000000",
+        },
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 24,
+        },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          "fontFamily": "SF Pro",
+          "fontSize": 13,
+          "height": 18,
+          "lineHeight": 18,
+        },
+      ]
+    }
+  >
+    SUN
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "color": "#000000",
+        },
+        {
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 24,
+        },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          "fontFamily": "SF Pro",
+          "fontSize": 17,
+          "fontWeight": "600",
+          "height": 22,
+          "lineHeight": 22,
+          "textAlign": "center",
+          "width": 26,
+        },
+      ]
+    }
+  >
+    5
+  </Text>
+</View>
+`;

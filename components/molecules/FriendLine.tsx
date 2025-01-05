@@ -32,7 +32,7 @@ const RightAction = ({ drag, onPress, progress }: RightActionProps) => {
 
   return (
     <Reanimated.View style={[deleteStyles.container, styleAnimation]}>
-      <Pressable onPress={onPress}>
+      <Pressable onPress={onPress} testID="delete-friend-button">
         <SymbolView name="trash.fill" size={32} tintColor={Palette.WHITE} />
       </Pressable>
     </Reanimated.View>

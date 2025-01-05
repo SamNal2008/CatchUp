@@ -1,4 +1,4 @@
-.PHONY: format lint
+.PHONY: format lint test test-watch test-coverage
 
 format:
 	npx eslint . --fix
@@ -8,3 +8,13 @@ lint:
 
 format-and-lint: format lint
 
+test:
+	npx jest
+
+test-watch:
+	npx jest --watch
+
+test-coverage:
+	npx jest --coverage
+
+ci: format-and-lint test-coverage

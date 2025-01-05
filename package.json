@@ -12,7 +12,16 @@
     "prepare": "husky"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "setupFilesAfterEnv": [
+      "./jest.setup.ts"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    }
   },
   "dependencies": {
     "@emotion/native": "^11.11.0",
@@ -25,6 +34,7 @@
     "@react-native-community/netinfo": "11.4.1",
     "@react-native-picker/picker": "^2.7.5",
     "@react-navigation/native": "^7.0.0",
+    "@testing-library/user-event": "^14.5.2",
     "expo": "^52.0.23",
     "expo-background-fetch": "~13.0.3",
     "expo-constants": "~17.0.3",
@@ -63,7 +73,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@testing-library/react-native": "^12.7.2",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^12.9.0",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
     "@types/react-test-renderer": "^18.0.7",
