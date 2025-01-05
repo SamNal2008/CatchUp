@@ -24,7 +24,7 @@
     },
     "collectCoverage": true,
     "coverageThreshold": {
-      "changedSince": {
+      "global": {
         "branches": 80,
         "functions": 80,
         "lines": 80,
