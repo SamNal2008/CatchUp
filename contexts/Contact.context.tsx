@@ -7,7 +7,6 @@ import { useSQLiteContext } from "expo-sqlite";
 import {
   createContext,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -43,14 +42,15 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
     setContact(null);
   };
 
-  const fetchFriends = useCallback(async () => {
+  const fetchFriends = async () => {
     const friends = await contactsRepository.getAll();
     setFriends(friends);
-  }, []);
+  };
 
   useEffect(() => {
     fetchFriends();
-  }, [fetchFriends]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const deleteFriend = async (contactId: ContactId) => {
     await deleteFriendNotification(contactId);
@@ -69,8 +69,8 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
       logService.error("Error saving contact", error);
       alert(
         "Unable to save contact : " +
-        contact.firstName +
-        ", are you sure you did not already add this friend ?",
+          contact.firstName +
+          ", are you sure you did not already add this friend ?",
       );
     }
   };

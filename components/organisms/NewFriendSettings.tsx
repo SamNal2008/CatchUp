@@ -8,7 +8,6 @@ import {
 } from "@/repositories/contacts/ReminderFrequency";
 import { logService } from "@/services/log.service";
 import { useNewFriendStore } from "@/store/NewFriend.store";
-import { css } from "@emotion/native";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { presentFormAsync } from "expo-contacts";
@@ -18,7 +17,6 @@ import { SymbolView } from "expo-symbols";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import Tooltip from "rn-tooltip";
 import { ThemedText } from "../atoms/ThemedText";
 
 export const NewFriendSettings = () => {
@@ -163,27 +161,6 @@ export const NewFriendSettings = () => {
             />
             <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
           </View>
-          <Tooltip
-            popover={<TooltipText />}
-            actionType="press"
-            width={10}
-            height={10}
-            containerStyle={css({
-              backgroundColor: Colors[theme].background,
-              borderRadius: 8,
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              alignItems: "flex-start",
-              flex: 1,
-            })}
-            withPointer
-            pointerColor={Colors[theme].background}
-            withOverlay={false}
-          >
-            <View hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Text>Test</Text>
-            </View>
-          </Tooltip>
           <DropDownPicker<ReminderFrequency>
             style={{
               alignSelf: "flex-end",
