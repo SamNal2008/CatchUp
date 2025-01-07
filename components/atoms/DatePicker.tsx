@@ -34,7 +34,7 @@ export const DatePicker = ({
   const [show, setShow] = useState(false);
   const shouldShowIcon = showIcon !== undefined && showIcon !== false;
 
-  const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+  const handleChange = (event: DateTimePickerEvent) => {
     if (onChange) {
       onChange(event);
     }

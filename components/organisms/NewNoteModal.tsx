@@ -44,30 +44,37 @@ const NewNoteHeader = ({ saveNewCheckinWithNote }: NewNoteHeaderProps) => {
   };
 
   return (
-    <>
-      <Button
-        title="Cancel"
-        color={Colors[theme].buttonBackground}
-        onPress={cancelCheckin}
-      />
-      <View style={{ flexDirection: "column", alignItems: "center" }}>
-        <DatePicker
-          value={checkinDate}
-          onChange={updateCheckinDate}
-          style={{ width: 2000 }}
-          showIcon
-        />
+    <View
+      style={{
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+      }}
+    >
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, alignSelf: "flex-start" }}>
+          <Button
+            title="Cancel"
+            color={Colors[theme].buttonBackground}
+            onPress={cancelCheckin}
+          />
+        </View>
+      </View>
+      <View style={{ flex: 2, flexDirection: "column", alignItems: "center" }}>
+        <DatePicker value={checkinDate} onChange={updateCheckinDate} showIcon />
         <ThemedText>
           with {contactToCheckin?.firstName}{" "}
           {contactToCheckin?.lastName?.toUpperCase()}
         </ThemedText>
       </View>
-      <Button
-        title="Save"
-        color={Colors[theme].buttonBackground}
-        onPress={saveNewCheckinWithNote}
-      />
-    </>
+      <View style={{ flex: 1, alignItems: "flex-end" }}>
+        <Button
+          title="Save"
+          color={Colors[theme].buttonBackground}
+          onPress={saveNewCheckinWithNote}
+        />
+      </View>
+    </View>
   );
 };
 

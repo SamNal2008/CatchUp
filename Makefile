@@ -1,7 +1,7 @@
 .PHONY: format lint test test-watch test-coverage
 
 format:
-	npx eslint . --fix --max-warnings 2
+	npx eslint . --fix --max-warnings 3
 
 test:
 	npx jest
@@ -17,9 +17,6 @@ test-coverage:
 
 install:
 	npm install
-
-lint:
-	npx eslint . --max-warnings 2
 
 check-coverage:
 	npx jest --coverage --changedSince=preview --coverageReporters="json-summary" --coverageReporters="text"

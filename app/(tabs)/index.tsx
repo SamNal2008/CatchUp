@@ -135,6 +135,8 @@ export default function HomeScreen() {
     }
   };
 
+  redirectToWelcomeModalIfFirstConnection();
+
   const retrieveCheckinsFromRepository = (checkIns: CheckInModel[]) => {
     const checkInsByMonth = checkIns
       .sort((a, b) => {
@@ -156,10 +158,6 @@ export default function HomeScreen() {
   }, [checkIns]);
 
   const hasCheckIns = Object.keys(checkIns).length > 0;
-
-  useEffect(() => {
-    redirectToWelcomeModalIfFirstConnection().catch(logService.error);
-  }, []);
 
   return (
     <ThemedView

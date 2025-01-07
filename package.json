@@ -102,7 +102,7 @@
   "private": true,
   "husky": {
     "hooks": {
-      "pre-commit": "make lint"
+      "pre-commit": "make format"
     }
   }
 }

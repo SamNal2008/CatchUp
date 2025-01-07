@@ -188,14 +188,6 @@ export const NewFriendSettings = () => {
   );
 };
 
-const TooltipText = () => {
-  return (
-    <Text style={{ color: "black" }}>
-      {`The frequency of your reminder will be set to this value. You can change it at any time.`}
-    </Text>
-  );
-};
-
 const makeStyles = (color: "light" | "dark") =>
   StyleSheet.create({
     container: {
