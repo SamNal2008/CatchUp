@@ -1,5 +1,6 @@
-import { create, useStore } from "zustand/index";
 import { ContactModel } from "@/repositories";
+import { logService } from "@/services/log.service";
+import { create, useStore } from "zustand/index";
 
 type NewCheckinWithNoteStore = {
   noteContent: string;
@@ -20,7 +21,11 @@ const newCheckinStore = create<NewCheckinWithNoteStore>((set) => ({
   contactToCheckin: null,
   setContentToCheckin: (contactToCheckin: ContactModel | null) =>
     set(() => ({ contactToCheckin })),
-  openModal: () => set(() => ({ isModalVisible: true })),
+  openModal: () =>
+    set((prev) => {
+      logService.log("openModal : " + prev.isModalVisible);
+      return { isModalVisible: !prev.isModalVisible };
+    }),
   closeModal: () => set(() => ({ isModalVisible: false })),
   setNoteContent: (noteContent: string) => set(() => ({ noteContent })),
   setCheckinDate: (checkinDate: Date) => set(() => ({ checkinDate })),

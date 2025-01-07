@@ -10,6 +10,7 @@ import DateTimePicker, {
   IOSNativeProps,
   WindowsNativeProps,
 } from "@react-native-community/datetimepicker";
+import { SymbolView } from "expo-symbols";
 import { useState } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 
@@ -18,13 +19,20 @@ type MinuteInterval = 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30;
 type DatePickerProps = {
   value: Date | null;
   minuteInterval?: MinuteInterval;
+  showIcon?: boolean;
 } & Omit<
   IOSNativeProps | AndroidNativeProps | WindowsNativeProps,
   "value" | "display" | "minuteInterval"
 >;
 
-export const DatePicker = ({ value, onChange, ...rest }: DatePickerProps) => {
+export const DatePicker = ({
+  value,
+  onChange,
+  showIcon,
+  ...rest
+}: DatePickerProps) => {
   const [show, setShow] = useState(false);
+  const shouldShowIcon = showIcon !== undefined && showIcon !== false;
 
   const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     if (onChange) {
@@ -32,14 +40,27 @@ export const DatePicker = ({ value, onChange, ...rest }: DatePickerProps) => {
     }
   };
 
-  const styles = makeStyles(useColorSchemeOrDefault());
+  const theme = useColorSchemeOrDefault();
+
+  const styles = makeStyles(theme);
 
   return (
     <View>
       <Pressable onPress={() => setShow(true)}>
-        <ThemedText>
-          {value ? new Date(value).toDateString() : "Pick a date"}
-        </ThemedText>
+        {value ? (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <ThemedText>{new Date(value).toDateString()}</ThemedText>
+            {shouldShowIcon ? (
+              <SymbolView
+                size={16}
+                tintColor={Colors[theme].icon}
+                name="chevron.down"
+              />
+            ) : null}
+          </View>
+        ) : (
+          <ThemedText>Pick a date</ThemedText>
+        )}
       </Pressable>
 
       <Modal

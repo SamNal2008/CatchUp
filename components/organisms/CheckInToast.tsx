@@ -30,7 +30,6 @@ export const CheckInToast = () => {
   const isVisible = contactToCheckin !== null;
 
   const addNote = () => {
-    console.log("Adding note");
     setUserWantsToAddNote(true);
     userWantsToAddNoteRef.current = true;
     openModal();

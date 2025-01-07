@@ -50,11 +50,12 @@ const NewNoteHeader = ({ saveNewCheckinWithNote }: NewNoteHeaderProps) => {
         color={Colors[theme].buttonBackground}
         onPress={cancelCheckin}
       />
-      <View>
+      <View style={{ flexDirection: "column", alignItems: "center" }}>
         <DatePicker
           value={checkinDate}
           onChange={updateCheckinDate}
           style={{ width: 2000 }}
+          showIcon
         />
         <ThemedText>
           with {contactToCheckin?.firstName}{" "}
