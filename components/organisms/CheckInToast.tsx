@@ -21,7 +21,7 @@ export const CheckInToast = () => {
   const [userWantsToAddNote, setUserWantsToAddNote] = useState(false);
   const userWantsToAddNoteRef = useRef(userWantsToAddNote);
   const styles = makeStyles(theme);
-  const { openModal } = useNewNoteCheckInModalControl();
+  const { openModal, isModalVisible } = useNewNoteCheckInModalControl();
   const setContactToCheckin = useSetContactToCheckin();
   const { checkInOnContact } = useCheckIns();
   const fadeAnim = useAnimatedValue(1);
@@ -38,6 +38,12 @@ export const CheckInToast = () => {
   const undoContactCheckin = () => {
     setContactToCheckin(null);
   };
+
+  useEffect(() => {
+    if (!isModalVisible && userWantsToAddNoteRef.current) {
+      userWantsToAddNoteRef.current = false;
+    }
+  }, [isModalVisible]);
 
   useEffect(() => {
     if (isVisible) {

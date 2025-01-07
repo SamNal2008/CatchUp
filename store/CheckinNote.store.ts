@@ -11,7 +11,7 @@ type NewCheckinWithNoteStore = {
   openModal: () => void;
   closeModal: () => void;
   contactToCheckin: ContactModel | null;
-  setContentToCheckin: (contact: ContactModel | null) => void;
+  setContactToCheckin: (contact: ContactModel | null) => void;
 };
 
 const newCheckinStore = create<NewCheckinWithNoteStore>((set) => ({
@@ -19,7 +19,7 @@ const newCheckinStore = create<NewCheckinWithNoteStore>((set) => ({
   checkinDate: new Date(),
   isModalVisible: false,
   contactToCheckin: null,
-  setContentToCheckin: (contactToCheckin: ContactModel | null) =>
+  setContactToCheckin: (contactToCheckin: ContactModel | null) =>
     set(() => ({ contactToCheckin })),
   openModal: () =>
     set((prev) => {
@@ -36,13 +36,14 @@ export const useSetNoteContent = () =>
 export const useSetNoteDate = () =>
   useStore(newCheckinStore, (store) => store.setCheckinDate);
 export const useSetContactToCheckin = () =>
-  useStore(newCheckinStore, (store) => store.setContentToCheckin);
+  useStore(newCheckinStore, (store) => store.setContactToCheckin);
 
 export const useNewCheckinInfo = () => {
   const noteContent = useNoteContent();
   const checkinDate = useCheckinDate();
   const contactToCheckin = useContactToCheckin();
-  return { noteContent, checkinDate, contactToCheckin };
+  const setNoteContent = useSetNoteContent();
+  return { noteContent, checkinDate, contactToCheckin, setNoteContent };
 };
 
 export const useNewNoteCheckInModalControl = () => {

@@ -88,6 +88,7 @@ const NewNoteTextInput = () => {
     } else {
       inputRef.current?.blur();
       setIsFocused(false);
+      setNoteContent("");
     }
   }, [isModalVisible]);
   return (

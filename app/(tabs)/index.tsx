@@ -136,14 +136,18 @@ export default function HomeScreen() {
   };
 
   const retrieveCheckinsFromRepository = (checkIns: CheckInModel[]) => {
-    const checkInsByMonth = checkIns.reduce((acc, checkIn) => {
-      const month = `${checkIn.checkInDate.getMonth()} ${checkIn.checkInDate.getFullYear()}`;
-      if (!acc[month]) {
-        acc[month] = [];
-      }
-      acc[month].push(checkIn);
-      return acc;
-    }, {} as CheckInByMonth);
+    const checkInsByMonth = checkIns
+      .sort((a, b) => {
+        return a.checkInDate.getTime() - b.checkInDate.getTime();
+      })
+      .reduce((acc, checkIn) => {
+        const month = `${checkIn.checkInDate.getMonth()} ${checkIn.checkInDate.getFullYear()}`;
+        if (!acc[month]) {
+          acc[month] = [];
+        }
+        acc[month].push(checkIn);
+        return acc;
+      }, {} as CheckInByMonth);
     setCheckInsByMonth(checkInsByMonth);
   };
 
