@@ -44,9 +44,9 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const fetchFriends = useCallback(async () => {
-    const contacts = await contactsRepository.getAll();
-    setFriends(contacts);
-  }, [contactsRepository]);
+    const friends = await contactsRepository.getAll();
+    setFriends(friends);
+  }, []);
 
   useEffect(() => {
     fetchFriends();
@@ -69,8 +69,8 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
       logService.error("Error saving contact", error);
       alert(
         "Unable to save contact : " +
-          contact.firstName +
-          ", are you sure you did not already add this friend ?",
+        contact.firstName +
+        ", are you sure you did not already add this friend ?",
       );
     }
   };

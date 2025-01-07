@@ -19,6 +19,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
 } from "react";
 
 type CheckInsContextProps = {
@@ -69,10 +70,14 @@ export const CheckInsProvider = ({ children }: { children: ReactNode }) => {
     return checkInModels;
   };
 
-  const refreshCheckIns = async () => {
-    const checkIns = await getAllCheckins();
-    setCheckIns(checkIns);
-  };
+  const refreshCheckIns = useCallback(async () => {
+    try {
+      const checkIns = await getAllCheckins();
+      setCheckIns(checkIns);
+    } catch (error) {
+      logService.error(error);
+    }
+  }, []);
 
   const deleteCheckinForFriend = (contactId: ContactId) => {
     checkInsRepository.deleteAllCheckInWithContactId(contactId);
@@ -116,7 +121,7 @@ export const CheckInsProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     refreshCheckIns().catch(logService.error);
-  });
+  }, [refreshCheckIns]);
 
   return (
     <CheckInsContext.Provider

@@ -6,7 +6,7 @@ import {
 } from "@/hooks/useColorScheme";
 import { useNotifications } from "@/hooks/useNotificatons";
 import { SymbolView } from "expo-symbols";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { AppState, Linking, Pressable, StyleSheet, View } from "react-native";
 import { Switch } from "react-native-gesture-handler";
 
@@ -58,21 +58,27 @@ const Category = ({ name, children }: CategoryProps) => {
   );
 };
 
+const refreshNotificationState = async (
+  hasNotificationEnabledOnPhone: () => Promise<boolean>,
+  setHasNotifications: (value: boolean) => void,
+) => {
+  const hasNotificationEnabled = await hasNotificationEnabledOnPhone();
+  setHasNotifications(hasNotificationEnabled);
+};
+
 export default function Settings() {
   const theme = useColorSchemeOrDefault();
   const [hasNotifications, setHasNotifications] = useState(false);
   const { hasNotificationEnabledOnPhone } = useNotifications();
 
-  const refreshNotificationState = useCallback(async () => {
-    const hasNotificationEnabled = await hasNotificationEnabledOnPhone();
-    setHasNotifications(hasNotificationEnabled);
-  }, [hasNotificationEnabledOnPhone]);
-
   const styles = makeStyles(theme);
 
   useEffect(() => {
-    refreshNotificationState();
-  }, [hasNotificationEnabledOnPhone, refreshNotificationState]);
+    refreshNotificationState(
+      hasNotificationEnabledOnPhone,
+      setHasNotifications,
+    );
+  }, [hasNotificationEnabledOnPhone]);
 
   const handleChangeNotificationToggle = () => {
     if (!hasNotifications) {

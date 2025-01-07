@@ -155,7 +155,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     redirectToWelcomeModalIfFirstConnection().catch(logService.error);
-  });
+  }, []);
 
   return (
     <ThemedView

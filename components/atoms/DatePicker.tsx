@@ -1,12 +1,13 @@
-import DateTimePicker, {
+import { ThemedText } from "@/components/atoms/ThemedText";
+import { Colors } from "@/constants/design";
+import {
   AndroidNativeProps,
   DateTimePickerEvent,
   IOSNativeProps,
   WindowsNativeProps,
 } from "@react-native-community/datetimepicker";
-import { ThemedText } from "@/components/atoms/ThemedText";
-import { Modal, Pressable, View } from "react-native";
 import { useState } from "react";
+import { Pressable, View } from "react-native";
 
 type DatePickerProps = {
   value: Date | null;
@@ -18,47 +19,20 @@ type DatePickerProps = {
 export const DatePicker = ({ value, onChange, ...rest }: DatePickerProps) => {
   const [show, setShow] = useState(false);
 
-  const setTodayDate = () => {
-    if (onChange) {
-      onChange({
-        nativeEvent: {
-          timestamp: Date.now(),
-        },
-      } as DateTimePickerEvent);
-    }
-  };
-
-  const forwardOnChangeAndClose = (event: DateTimePickerEvent) => {
+  const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    setShow(false);
     if (onChange) {
       onChange(event);
     }
-    setShow(false);
   };
 
   return (
     <View>
       <Pressable onPress={() => setShow(true)}>
-        <ThemedText>
-          {value ? new Date(value).toDateString() : "Select Date"}
+        <ThemedText style={{ color: value ? undefined : Colors.gray }}>
+          {value ? new Date(value).toDateString() : "Pick a date"}
         </ThemedText>
       </Pressable>
-
-      <Modal
-        visible={show}
-        animationType="slide"
-        onRequestClose={() => setShow(false)}
-      >
-        <View>
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={value ? new Date(value) : new Date()}
-            onChange={forwardOnChangeAndClose}
-            display="inline"
-            maximumDate={new Date()}
-            {...rest}
-          />
-        </View>
-      </Modal>
     </View>
   );
 };

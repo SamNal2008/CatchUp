@@ -63,7 +63,7 @@ export const FriendLine = ({ contact }: { contact: ContactModel }) => {
     if (friends.length > 0) {
       askForNotificationPermission();
     }
-  }, [askForNotificationPermission, friends.length]);
+  }, [friends.length, askForNotificationPermission]);
 
   useEffect(() => {
     if (!contact.id) {

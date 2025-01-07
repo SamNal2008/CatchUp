@@ -29,13 +29,6 @@ export const CheckInToast = () => {
 
   const isVisible = contactToCheckin !== null;
 
-  useEffect(() => {
-    console.log(isVisible);
-    if (isVisible) {
-      return;
-    }
-  }, [fadeAnim, isVisible]);
-
   const addNote = () => {
     console.log("Adding note");
     setUserWantsToAddNote(true);

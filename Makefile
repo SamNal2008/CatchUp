@@ -11,6 +11,7 @@ test-watch:
 
 test-coverage:
 	npx jest --coverage --coverageReporters="json-summary" --coverageReporters="text"
+	./scripts/check-coverage.sh
 
 # All CI tasks
 
