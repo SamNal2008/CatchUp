@@ -2,36 +2,33 @@ import { DatePicker } from "@/components/atoms/DatePicker";
 import { InitialImage } from "@/components/molecules/InitialImage";
 import { Colors } from "@/constants/design/Colors";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
+
+import { SelectDropdown } from "@/components/atoms/SelectDropdown";
+import { ThemedText } from "@/components/atoms/ThemedText";
 import {
   ReminderFrequency,
   reminderFrequencyOptionsWithTranslation,
 } from "@/repositories/contacts/ReminderFrequency";
 import { logService } from "@/services/log.service";
 import { useNewFriendStore } from "@/store/NewFriend.store";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { presentFormAsync } from "expo-contacts";
 import * as Linking from "expo-linking";
 import * as SMS from "expo-sms";
 import { SymbolView } from "expo-symbols";
-import { Dispatch, SetStateAction, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
-import { ThemedText } from "../atoms/ThemedText";
 
 export const NewFriendSettings = () => {
   const theme = useColorSchemeOrDefault();
   const {
+    contact,
     selectedFrequency,
     setSelectedFrequency,
-    contact,
     setContactBirthday,
     contactBirthday,
     setContactLastCheckIn,
     contactLastCheckIn,
   } = useNewFriendStore();
-
-  const [open, setOpen] = useState(false);
 
   if (!contact) {
     return null;
@@ -132,7 +129,11 @@ export const NewFriendSettings = () => {
       <View style={styles.complementaryInfos}>
         <View style={styles.complementaryInfo}>
           <View style={styles.complementaryInfoTitleContainer}>
-            <Ionicons size={20} color={Colors[theme].icon} name="gift" />
+            <SymbolView
+              size={20}
+              tintColor={Colors[theme].icon}
+              name="gift.fill"
+            />
             <Text style={styles.complementaryInfoTitle}>Birthday :</Text>
           </View>
           <DatePicker
@@ -143,7 +144,11 @@ export const NewFriendSettings = () => {
         </View>
         <View style={styles.complementaryInfo}>
           <View style={styles.complementaryInfoTitleContainer}>
-            <AntDesign size={20} color={Colors[theme].icon} name="calendar" />
+            <SymbolView
+              size={20}
+              tintColor={Colors[theme].icon}
+              name="calendar"
+            />
             <Text style={styles.complementaryInfoTitle}>Last check in :</Text>
           </View>
           <DatePicker
@@ -154,33 +159,19 @@ export const NewFriendSettings = () => {
         </View>
         <View style={styles.complementaryInfo}>
           <View style={styles.complementaryInfoTitleContainer}>
-            <Ionicons
+            <SymbolView
               size={20}
-              color={Colors[theme].icon}
-              name="refresh-outline"
+              tintColor={Colors[theme].icon}
+              name="arrow.circlepath"
             />
             <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
           </View>
-          <DropDownPicker<ReminderFrequency>
-            style={{
-              alignSelf: "flex-end",
-              flex: 1,
-              backgroundColor: Colors[theme].background,
-            }}
-            containerStyle={{ height: 40, flex: 1 }}
-            textStyle={{ color: Colors[theme].text }}
-            dropDownContainerStyle={{
-              backgroundColor: Colors[theme].background,
-            }}
-            open={open}
+          <SelectDropdown<ReminderFrequency>
+            onChange={setSelectedFrequency}
+            options={reminderFrequencyOptionsWithTranslation}
             value={selectedFrequency}
-            items={reminderFrequencyOptionsWithTranslation}
-            setOpen={setOpen}
-            setValue={
-              setSelectedFrequency as Dispatch<
-                SetStateAction<ReminderFrequency>
-              >
-            }
+            key={"key"}
+            placeholder="Select an option"
           />
         </View>
       </View>
