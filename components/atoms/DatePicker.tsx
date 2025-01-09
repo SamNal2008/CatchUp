@@ -1,4 +1,5 @@
 import { ThemedText } from "@/components/atoms/ThemedText";
+import { DateUtils } from "@/constants/DateUtils";
 import { Colors } from "@/constants/design";
 import {
   ColorSchemeName,
@@ -49,7 +50,7 @@ export const DatePicker = ({
       <Pressable onPress={() => setShow(true)}>
         {value ? (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-            <ThemedText>{new Date(value).toDateString()}</ThemedText>
+            <ThemedText>{DateUtils.displayDateAsDDMMYYYY(value)}</ThemedText>
             {shouldShowIcon ? (
               <SymbolView
                 size={16}

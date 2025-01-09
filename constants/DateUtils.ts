@@ -61,6 +61,23 @@ const getBirthDateFromBirthday = (
   return getDateFromContactDate(contact.birthday);
 };
 
+const fillWithZero = (number: number): string => {
+  if (number < 10) {
+    return "0" + number;
+  }
+  return number.toString();
+};
+
+const displayDateAsDDMMYYYY = (date: Date): string => {
+  return (
+    fillWithZero(date.getDate()) +
+    "/" +
+    fillWithZero(date.getMonth() + 1) +
+    "/" +
+    date.getFullYear()
+  );
+};
+
 const getMonthName = (monthWithYear: string) => {
   const month = monthWithYear.split(" ")[0];
   switch (month) {
@@ -101,4 +118,5 @@ export const DateUtils = {
   getDateFromContactDate,
   getBirthDateFromBirthday,
   getMonthName,
+  displayDateAsDDMMYYYY,
 };
