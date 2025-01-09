@@ -8,7 +8,6 @@ import { Colors, Size, Spacing } from "@/constants/design";
 import { useCheckIns } from "@/contexts/CheckIns.context";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { CheckInModel } from "@/repositories/check-ins/CheckInEntity";
-import { logService } from "@/services/log.service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -128,7 +127,6 @@ export default function HomeScreen() {
 
   const redirectToWelcomeModalIfFirstConnection = async () => {
     const firstLaunch = await isFirstLaunch();
-    logService.log("First launch :" + firstLaunch);
     if (firstLaunch) {
       router.navigate("/welcome-modal");
       return;

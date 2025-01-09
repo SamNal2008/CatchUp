@@ -1,11 +1,11 @@
-import { ThemedText } from "@/components/atoms/ThemedText";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Colors, Palette } from "@/constants/design/Colors";
 import { PrimaryButton } from "@/components";
-import { Spacing } from "@/constants/design";
+import { ThemedText } from "@/components/atoms/ThemedText";
 import { HelloWave } from "@/components/HelloWave";
-import { SFSymbol, SymbolView } from "expo-symbols";
+import { Spacing } from "@/constants/design";
+import { Colors, Palette } from "@/constants/design/Colors";
 import { router } from "expo-router";
+import { SFSymbol, SymbolView } from "expo-symbols";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 const CatchUpIntro = () => {
   return (
@@ -68,7 +68,7 @@ const CatchUpPurposes = () => {
 
 export default function WelcomeModal() {
   const navigateToHomePage = () => {
-    router.navigate("./(tabs)");
+    router.dismiss();
   };
 
   return (
