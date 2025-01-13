@@ -17,6 +17,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
+import { PostHogProvider } from "posthog-react-native";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
@@ -44,38 +45,45 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <StatusBar style="auto" />
-        <BottomSheetModalProvider>
-          <SQLiteProvider
-            databaseName={DATABASE_NAME}
-            onInit={migrateDbIfNeeded}
-          >
-            <RootSiblingParent>
-              <CheckInsProvider>
-                <ContactProvider>
-                  <NewFriendContextProvider>
-                    <Stack>
-                      <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                      />
-                      <Stack.Screen
-                        name="welcome-modal"
-                        options={{
-                          headerShown: false,
-                          presentation: "modal",
-                        }}
-                      />
-                      <Stack.Screen name="+not-found" />
-                    </Stack>
-                    <NewNoteModal />
-                    <AdminModal />
-                  </NewFriendContextProvider>
-                </ContactProvider>
-              </CheckInsProvider>
-            </RootSiblingParent>
-          </SQLiteProvider>
-        </BottomSheetModalProvider>
+        <PostHogProvider
+          apiKey="phc_5okDJNuPJcyP7JNIaoUTx2K7gDadz1cgPZUXwrFh8hr"
+          options={{
+            host: "https://us.i.posthog.com",
+          }}
+        >
+          <StatusBar style="auto" />
+          <BottomSheetModalProvider>
+            <SQLiteProvider
+              databaseName={DATABASE_NAME}
+              onInit={migrateDbIfNeeded}
+            >
+              <RootSiblingParent>
+                <CheckInsProvider>
+                  <ContactProvider>
+                    <NewFriendContextProvider>
+                      <Stack>
+                        <Stack.Screen
+                          name="(tabs)"
+                          options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                          name="welcome-modal"
+                          options={{
+                            headerShown: false,
+                            presentation: "modal",
+                          }}
+                        />
+                        <Stack.Screen name="+not-found" />
+                      </Stack>
+                      <NewNoteModal />
+                      <AdminModal />
+                    </NewFriendContextProvider>
+                  </ContactProvider>
+                </CheckInsProvider>
+              </RootSiblingParent>
+            </SQLiteProvider>
+          </BottomSheetModalProvider>
+        </PostHogProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

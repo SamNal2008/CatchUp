@@ -3,7 +3,7 @@ PODS:
   - DoubleConversion (1.1.6)
   - EASClient (0.13.1):
     - ExpoModulesCore
-  - EXApplication (6.0.1):
+  - EXApplication (6.0.2):
     - ExpoModulesCore
   - EXConstants (17.0.3):
     - ExpoModulesCore
@@ -23,7 +23,9 @@ PODS:
     - ExpoModulesCore
   - ExpoContacts (14.0.2):
     - ExpoModulesCore
-  - ExpoFileSystem (18.0.6):
+  - ExpoDevice (7.0.2):
+    - ExpoModulesCore
+  - ExpoFileSystem (18.0.7):
     - ExpoModulesCore
   - ExpoFont (13.0.2):
     - ExpoModulesCore
@@ -41,7 +43,7 @@ PODS:
     - ExpoModulesCore
   - ExpoLinking (7.0.3):
     - ExpoModulesCore
-  - ExpoLocalization (16.0.0):
+  - ExpoLocalization (16.0.1):
     - ExpoModulesCore
   - ExpoLocation (18.0.4):
     - ExpoModulesCore
@@ -1816,6 +1818,7 @@ DEPENDENCIES:
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoBackgroundFetch (from `../node_modules/expo-background-fetch/ios`)
   - ExpoContacts (from `../node_modules/expo-contacts/ios`)
+  - ExpoDevice (from `../node_modules/expo-device/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
@@ -1948,6 +1951,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-background-fetch/ios"
   ExpoContacts:
     :path: "../node_modules/expo-contacts/ios"
+  ExpoDevice:
+    :path: "../node_modules/expo-device/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
@@ -2138,7 +2143,7 @@ SPEC CHECKSUMS:
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
   EASClient: d15d70e334b019ae5649609011cda761defe4b1a
-  EXApplication: 88ebf1a95f85faa5d2df160016d61f2d060e9438
+  EXApplication: 4c72f6017a14a65e338c5e74fca418f35141e819
   EXConstants: 277129d9a42ba2cf1fad375e7eaa9939005c60be
   EXImageLoader: e5da974e25b13585c196b658a440720c075482d5
   EXJSONUtils: 01fc7492b66c234e395dcffdd5f53439c5c29c93
@@ -2148,14 +2153,15 @@ SPEC CHECKSUMS:
   ExpoAsset: 6f7a8887cbb9fb39fdb0808e7f6f74ba0e1ae9b6
   ExpoBackgroundFetch: a25a06f2c45c943d3efc64db9d737a63a527e7c6
   ExpoContacts: d7fd420dfd4f934435e808213948cadfa9fdc42c
-  ExpoFileSystem: a38e1bb58d77f41717293a7b73ebd4014d8cb8dd
+  ExpoDevice: 1662ecdf42a8b5b2cf60ef7cecaf5a297639dd63
+  ExpoFileSystem: 818e82dbb71175414d1ca310e926c48ff0d07348
   ExpoFont: b089994dac1fe603deda1cec151e32c81f46c2f1
   ExpoHead: 09fa14b978c938d40bf6b516460da411ae54a7c2
   ExpoImage: 7f0f4381c75054b4c4a5a0e2cf474b67e9fb2dc0
   ExpoImagePicker: 4eff722eec3f969b3978a8a3b64efbe52f800905
   ExpoKeepAwake: 22173f45d767c7d37403fdf48292726901d69ce7
   ExpoLinking: 40e30b571ffb77b280a38bed137d89b21f46f2a0
-  ExpoLocalization: d81f70d53db94b31e4a0b1e11007424ea1011a1c
+  ExpoLocalization: 7776ea3bdb112125390745bbaf919b734b2ad1c7
   ExpoLocation: 95890860ed749d7561c0d67588731038180f69e7
   ExpoModulesCore: c9cb309323aee3c048099bb40ad0226e3fcf0c56
   ExpoSMS: 693d98df9d4433c68e7454e8cac30c6aa4bb090f
