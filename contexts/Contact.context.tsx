@@ -2,15 +2,10 @@ import { useNotifications } from "@/hooks/useNotificatons";
 import { ContactId, ContactModel } from "@/repositories/contacts/ContactEntity";
 import { getContactsRepository } from "@/repositories/contacts/Contacts.repository";
 import { logService } from "@/services/log.service";
+import { useContactsStore } from "@/store/Contacts.store";
 import { useNewFriendStore } from "@/store/NewFriend.store";
 import { useSQLiteContext } from "expo-sqlite";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 
 interface ContactContextProps {
   friends: ContactModel[];
@@ -34,7 +29,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
     deleteFriendNotification,
   } = useNotifications();
   const { setContact } = useNewFriendStore();
-  const [friends, setFriends] = useState<ContactModel[]>([]);
+  const { contacts, setContacts } = useContactsStore();
   const db = useSQLiteContext();
   const contactsRepository = getContactsRepository(db);
 
@@ -44,7 +39,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchFriends = async () => {
     const friends = await contactsRepository.getAll();
-    setFriends(friends);
+    setContacts(friends);
   };
 
   useEffect(() => {
@@ -77,7 +72,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ContactContext.Provider
-      value={{ friends, fetchFriends, addNewFriend, deleteFriend }}
+      value={{ friends: contacts, fetchFriends, addNewFriend, deleteFriend }}
     >
       {children}
     </ContactContext.Provider>

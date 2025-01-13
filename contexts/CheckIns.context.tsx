@@ -1,26 +1,20 @@
 import { useNotifications } from "@/hooks/useNotificatons";
-import { ContactId, getContactsRepository } from "@/repositories";
+import {
+  ContactId,
+  ContactsRepository,
+  getContactsRepository,
+} from "@/repositories";
 import { CheckInModel } from "@/repositories/check-ins/CheckInEntity";
 import {
   CheckInsRepository,
   getCheckInsRepository,
 } from "@/repositories/check-ins/CheckIns.repository";
 import { logService } from "@/services/log.service";
-import {
-  useNewCheckinInfo,
-  useSetContactToCheckin,
-  useSetNoteContent,
-  useSetNoteDate,
-} from "@/store/CheckinNote.store";
+import { useNewCheckinStore } from "@/store/CheckinNote.store";
+import { useCheckinsStore } from "@/store/Checkins.store";
+import { useContactsStore } from "@/store/Contacts.store";
 import { useSQLiteContext } from "expo-sqlite";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 
 type CheckInsContextProps = {
   deleteCheckinForFriend: (contactId: ContactId) => void;
@@ -41,46 +35,45 @@ export const useCheckIns = () => {
 
 export const CheckInsProvider = ({ children }: { children: ReactNode }) => {
   const db = useSQLiteContext();
-  const setContactToCheckin = useSetContactToCheckin();
-  const setNoteContent = useSetNoteContent();
-  const setCheckinDate = useSetNoteDate();
-  const { checkinDate, contactToCheckin, noteContent } = useNewCheckinInfo();
+  const { checkInDate, contactToCheckin, noteContent, resetNewFriendCheckIn } =
+    useNewCheckinStore();
   const { postPoneReminder } = useNotifications();
-
-  const [checkIns, setCheckIns] = useState<CheckInModel[]>([]);
-
+  const { contacts } = useContactsStore();
   const checkInsRepository: CheckInsRepository = getCheckInsRepository(db);
-  const contactsRepository = getContactsRepository(db);
+  const contactsRepository: ContactsRepository = getContactsRepository(db);
+  const { checkIns, setCheckIns, clearAllCheckIns } = useCheckinsStore();
 
   const getAllCheckins = async (): Promise<CheckInModel[]> => {
-    const checkInEntities = checkInsRepository
-      .getAllCheckIns()
-      .filter((checkInEntity) => checkInEntity.contact_id !== null);
-    const checkInModels: CheckInModel[] = [];
+    return checkIns;
+  };
+
+  const refreshCheckIns = async () => {
+    const checkInEntities = checkInsRepository.getAllCheckIns();
+    const refreshedCheckIns: CheckInModel[] = [];
     for (const checkInEntity of checkInEntities) {
       const contact = await contactsRepository.getById(
         checkInEntity.contact_id,
       );
-      checkInModels.push({
-        contact: contact!,
-        noteContent: checkInEntity.note_content,
-        checkInDate: new Date(checkInEntity.check_in_date),
-      });
+      if (contact) {
+        const checkIn: CheckInModel = {
+          checkInDate: new Date(checkInEntity.check_in_date),
+          contact,
+          noteContent: checkInEntity.note_content,
+        };
+        refreshedCheckIns.push(checkIn);
+      } else {
+        logService.warn("Contact not found for check-in, deleting check-in");
+        checkInsRepository.deleteAllCheckInWithContactId(
+          checkInEntity.contact_id,
+        );
+      }
     }
-    return checkInModels;
+    setCheckIns(refreshedCheckIns);
   };
 
-  const refreshCheckIns = useCallback(async () => {
-    try {
-      const checkIns = await getAllCheckins();
-      setCheckIns(checkIns);
-    } catch (error) {
-      logService.error(error);
-    }
-  }, []);
-
-  const deleteCheckinForFriend = (contactId: ContactId) => {
+  const deleteCheckinForFriend = async (contactId: ContactId) => {
     checkInsRepository.deleteAllCheckInWithContactId(contactId);
+    refreshCheckIns();
   };
 
   const checkInOnContact = () => {
@@ -91,37 +84,33 @@ export const CheckInsProvider = ({ children }: { children: ReactNode }) => {
     try {
       checkInsRepository.checkInOnContact({
         contact_id: contactToCheckin.id,
-        check_in_date: checkinDate as unknown as string,
+        check_in_date: checkInDate,
         note_content: noteContent,
       });
-      postPoneReminder(contactToCheckin, checkinDate);
-      setContactToCheckin(null);
-      setCheckinDate(new Date());
-      setNoteContent("");
-      refreshCheckIns().catch(logService.error);
+      refreshCheckIns();
+      postPoneReminder(contactToCheckin, checkInDate);
+      resetNewFriendCheckIn();
     } catch (e) {
       logService.error("Error while saving checking on friend", e);
     }
   };
 
-  const clearAllCheckIns = () => {
-    checkInsRepository.deleteAllCheckIns();
-    refreshCheckIns().then().catch(logService.error);
-  };
-
   const getLatestCheckInForContact = (contactId: ContactId): Date | null => {
-    const res =
-      checkInsRepository.getLatestCheckInForContact(contactId)?.check_in_date ??
-      null;
-    if (res !== null) {
-      return new Date(res);
-    }
-    return res;
+    const res = checkIns
+      .sort((a, b) => b.checkInDate.getTime() - a.checkInDate.getTime())
+      .find((checkIn) => checkIn.contact.id === contactId);
+    return res?.checkInDate ?? null;
   };
 
   useEffect(() => {
-    refreshCheckIns().catch(logService.error);
-  }, [refreshCheckIns]);
+    refreshCheckIns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    refreshCheckIns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contacts]);
 
   return (
     <CheckInsContext.Provider

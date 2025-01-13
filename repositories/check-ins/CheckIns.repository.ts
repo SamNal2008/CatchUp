@@ -1,7 +1,7 @@
-import * as SQLite from "expo-sqlite";
-import { CheckInEntity, ContactId, ReminderFrequency } from "@/repositories";
 import { DateUtils } from "@/constants/DateUtils";
+import { CheckInEntity, ContactId, ReminderFrequency } from "@/repositories";
 import { logService } from "@/services/log.service";
+import * as SQLite from "expo-sqlite";
 
 export const DATABASE_NAME = "catch_up.db";
 

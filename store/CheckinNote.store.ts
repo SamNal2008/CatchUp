@@ -4,19 +4,20 @@ import { create, useStore } from "zustand/index";
 
 type NewCheckinWithNoteStore = {
   noteContent: string;
-  checkinDate: Date;
+  checkInDate: Date;
   setNoteContent: (content: string) => void;
-  setCheckinDate: (date: Date) => void;
+  setCheckInDate: (date: Date) => void;
   isModalVisible: boolean;
   openModal: () => void;
   closeModal: () => void;
   contactToCheckin: ContactModel | null;
   setContactToCheckin: (contact: ContactModel | null) => void;
+  resetNewFriendCheckIn: () => void;
 };
 
 const newCheckinStore = create<NewCheckinWithNoteStore>((set) => ({
   noteContent: "",
-  checkinDate: new Date(),
+  checkInDate: new Date(),
   isModalVisible: false,
   contactToCheckin: null,
   setContactToCheckin: (contactToCheckin: ContactModel | null) =>
@@ -28,13 +29,22 @@ const newCheckinStore = create<NewCheckinWithNoteStore>((set) => ({
     }),
   closeModal: () => set(() => ({ isModalVisible: false })),
   setNoteContent: (noteContent: string) => set(() => ({ noteContent })),
-  setCheckinDate: (checkinDate: Date) => set(() => ({ checkinDate })),
+  setCheckInDate: (checkInDate: Date) => set(() => ({ checkInDate })),
+  resetNewFriendCheckIn: () =>
+    set((prev) => ({
+      ...prev,
+      noteContent: "",
+      checkInDate: new Date(),
+      contactToCheckin: null,
+    })),
 }));
+
+export const useNewCheckinStore = () => useStore(newCheckinStore);
 
 export const useSetNoteContent = () =>
   useStore(newCheckinStore, (store) => store.setNoteContent);
 export const useSetNoteDate = () =>
-  useStore(newCheckinStore, (store) => store.setCheckinDate);
+  useStore(newCheckinStore, (store) => store.setCheckInDate);
 export const useSetContactToCheckin = () =>
   useStore(newCheckinStore, (store) => store.setContactToCheckin);
 
@@ -57,7 +67,7 @@ export const useNewNoteCheckInModalControl = () => {
 const useNoteContent = () =>
   useStore(newCheckinStore, (store) => store.noteContent);
 const useCheckinDate = () =>
-  useStore(newCheckinStore, (store) => store.checkinDate);
+  useStore(newCheckinStore, (store) => store.checkInDate);
 const useContactToCheckin = () =>
   useStore(newCheckinStore, (store) => store.contactToCheckin);
 

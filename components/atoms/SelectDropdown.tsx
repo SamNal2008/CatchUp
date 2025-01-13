@@ -4,7 +4,6 @@ import {
   ColorSchemeName,
   useColorSchemeOrDefault,
 } from "@/hooks/useColorScheme";
-import { Ionicons } from "@expo/vector-icons";
 import { SymbolView } from "expo-symbols";
 import { useRef, useState } from "react";
 import {
@@ -140,10 +139,10 @@ export const SelectDropdown = <T extends unknown>({
                 >
                   <ThemedText>{option.label}</ThemedText>
                   {value === option.value && (
-                    <Ionicons
+                    <SymbolView
                       name="checkmark"
                       size={20}
-                      color={Colors[theme].text}
+                      tintColor={Colors[theme].text}
                     />
                   )}
                 </TouchableOpacity>

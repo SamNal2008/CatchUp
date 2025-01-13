@@ -4,7 +4,7 @@ export type CheckInId = string;
 
 export type CheckInEntity = {
   contact_id: ContactId;
-  check_in_date: string;
+  check_in_date: Date;
   note_content?: string;
 };
 
