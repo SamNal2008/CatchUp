@@ -82,7 +82,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.10",
     "rn-tooltip": "^3.0.3",
-    "zustand": "^5.0.1"
+    "zustand": "^5.0.1",
+    "@sentry/react-native": "~6.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
