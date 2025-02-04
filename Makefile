@@ -23,6 +23,9 @@ check-coverage:
 
 # All CD Tasks
 
+upload-source-maps:
+	npx sentry-expo-upload-sourcemaps dist
+
 build:
 	npx eas build --platform ios --profile preview
 

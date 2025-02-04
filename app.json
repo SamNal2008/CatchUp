@@ -15,7 +15,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "fr.copains.CatchUp",
       "infoPlist": {
-        "UIBackgroundModes": ["location", "fetch", "remote-notification"]
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "remote-notification"
+        ]
       },
       "config": {
         "usesNonExemptEncryption": false
@@ -63,11 +67,7 @@
       [
         "@sentry/react-native/expo",
         {
-          "organization": "sentry org slug, or use the `SENTRY_ORG` environment variable",
-          "project": "sentry project name, or use the `SENTRY_PROJECT` environment variable",
-          // If you are using a self-hosted instance, update the value of the url property
-          // to point towards your self-hosted instance. For example, https://self-hosted.example.com/.
-          "url": "https://sentry.io/"
+          "url": "https://39966352505ac6a72fdf5cc0de6aa3bd@o4508552315994112.ingest.de.sentry.io/4508552392867920"
         }
       ]
     ],
