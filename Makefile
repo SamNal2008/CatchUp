@@ -27,11 +27,11 @@ upload-source-maps:
 	npx sentry-expo-upload-sourcemaps dist
 
 build:
-	npx eas build --platform ios --profile preview
+	eas build --platform ios --profile preview
 
 update:
-	npx eas update --auto --non-interactive
+	eas update --auto --non-interactive
 
 deploy-ios:
 	npx expo publish --non-interactive
-	npx eas submit -p ios -e preview --non-interactive
+	eas submit -p ios -e preview --non-interactive
