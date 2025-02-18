@@ -18,6 +18,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
+import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-react-native";
 import React, { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -34,25 +35,23 @@ const sentryDns =
 console.log("===== " + sentryDns);
 console.log("##### " + process.env.EXPO_SENTRY_DNS);
 
-// const navigationIntegration = Sentry.reactNavigationIntegration({
-//   enableTimeToInitialDisplay: !isRunningInExpoGo(),
-// });
+const navigationIntegration = Sentry.reactNavigationIntegration();
 
-// Sentry.init({
-//   dsn: sentryDns,
-//   debug: true, // You can set this to false in production
-//   tracesSampleRate: 1.0, // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing. Adjusting this value in production.
-//   integrations: [
-//     // Pass integration
-//     navigationIntegration,
-//     posthog.sentryIntegration({
-//       organization: "Catch-up",
-//       projectId: 117753,
-//       severityAllowList: ["error", "info"], // optional: here is set to handle captureMessage (info) and captureException (error)
-//     }),
-//   ],
-//   enableNativeFramesTracking: !isRunningInExpoGo(),
-// });
+Sentry.init({
+  dsn: sentryDns,
+  debug: true, // You can set this to false in production
+  tracesSampleRate: 1.0, // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing. Adjusting this value in production.
+  integrations: [
+    // Pass integration
+    navigationIntegration,
+    posthog.sentryIntegration({
+      organization: "Catch-up",
+      projectId: 117753,
+      severityAllowList: ["error", "info"], // optional: here is set to handle captureMessage (info) and captureException (error)
+    }),
+  ],
+  // enableNativeFramesTracking: !isRunningInExpoGo(),
+});
 
 function RootLayout() {
   const colorScheme = useColorSchemeOrDefault();
@@ -64,7 +63,6 @@ function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
     }
-    Sentry.nativeCrash();
   }, [loaded]);
 
   if (!loaded) {
@@ -83,6 +81,7 @@ function RootLayout() {
             sessionReplayConfig: {
               captureLog: true,
               captureNetworkTelemetry: true,
+              maskAllTextInputs: false,
             },
           }}
         >
@@ -181,4 +180,4 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
 
-export default Sentry.wrap(RootLayout);
+export default RootLayout;

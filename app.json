@@ -67,7 +67,9 @@
       [
         "@sentry/react-native/expo",
         {
-          "url": "https://39966352505ac6a72fdf5cc0de6aa3bd@o4508552315994112.ingest.de.sentry.io/4508552392867920"
+          "url": "https://39966352505ac6a72fdf5cc0de6aa3bd@o4508552315994112.ingest.de.sentry.io/4508552392867920",
+          "project": "catch-up",
+          "organization": "catchup-u6"
         }
       ]
     ],

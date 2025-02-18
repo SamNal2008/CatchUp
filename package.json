@@ -69,7 +69,7 @@
     "expo-task-manager": "~12.0.5",
     "expo-updates": "~0.26.16",
     "expo-web-browser": "~14.0.2",
-    "posthog-js": "^1.215.3",
+    "posthog-js": "^1.219.3",
     "posthog-react-native": "^3.6.4",
     "posthog-react-native-session-replay": "^0.1.9",
     "react": "18.3.1",

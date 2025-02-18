@@ -183,12 +183,6 @@ export default function HomeScreen() {
           )}
         />
       )}
-      <Button
-        onPress={() => {
-          throw new Error("Click");
-        }}
-        title="Click"
-      />
     </ThemedView>
   );
 }
