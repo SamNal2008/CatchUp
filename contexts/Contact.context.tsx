@@ -55,6 +55,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
 
   const addNewFriend = async (contact: ContactModel) => {
     try {
+      console.log(contact);
       await contactsRepository.addNewFriend(contact);
       registerFriendNotificationReminder(contact);
       registerFriendNotificationBirthdayReminder(contact);
@@ -65,7 +66,7 @@ export const ContactProvider = ({ children }: { children: ReactNode }) => {
       alert(
         "Unable to save contact : " +
           contact.firstName +
-          ", are you sure you did not already add this friend ?",
+        ", are you sure you did not already add this friend ?",
       );
     }
   };

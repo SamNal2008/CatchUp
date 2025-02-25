@@ -111,42 +111,43 @@ const getNextNotificationTrigger = (
     repeats: true,
     type: SchedulableTriggerInputTypes.CALENDAR,
   };
+  console.log(baseTriggerInput);
   switch (frequency) {
     case "daily":
       return baseTriggerInput;
     case "weekly":
       return {
-        weekday: checkInDate.getDay() + 1,
         ...baseTriggerInput,
+        weekday: checkInDate.getDay() === 0 ? 7 : checkInDate.getDay(),
       };
     case "monthly":
       return {
-        weekOfMonth: getWeekOfMonthOfToday(checkInDate),
         ...baseTriggerInput,
+        weekOfMonth: getWeekOfMonthOfToday(checkInDate),
       };
     case "yearly":
       return {
+        ...baseTriggerInput,
         month: (checkInDate.getMonth() + 1) % 12,
         day: checkInDate.getDate(),
-        ...baseTriggerInput,
       };
     case "bimonthly":
       return {
+        ...baseTriggerInput,
         month: (checkInDate.getMonth() + 2) % 12,
         day: checkInDate.getDate(),
-        ...baseTriggerInput,
       };
     case "quarterly":
       return {
+        ...baseTriggerInput,
         month: (checkInDate.getMonth() + 3) % 12,
         day: checkInDate.getDate(),
-        ...baseTriggerInput,
       };
     case "biannually":
       return {
+        ...baseTriggerInput,
         month: (checkInDate.getMonth() + 6) % 12,
         day: checkInDate.getDate(),
-        ...baseTriggerInput,
       };
   }
 };
