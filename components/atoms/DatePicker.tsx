@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/atoms/ThemedText";
 import { DateUtils } from "@/constants/DateUtils";
-import { Colors } from "@/constants/design";
+import { Colors, Spacing } from "@/constants/design";
 import {
   ColorSchemeName,
   useColorSchemeOrDefault,
@@ -33,12 +33,30 @@ export const DatePicker = ({
   ...rest
 }: DatePickerProps) => {
   const [show, setShow] = useState(false);
+  const [tempDate, setTempDate] = useState<Date | null>(value);
   const shouldShowIcon = showIcon !== undefined && showIcon !== false;
 
-  const handleChange = (event: DateTimePickerEvent) => {
-    if (onChange) {
+  const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    setTempDate(selectedDate || null);
+  };
+
+  const handleClose = () => {
+    if (onChange && tempDate) {
+      const event: DateTimePickerEvent = {
+        type: "set",
+        nativeEvent: {
+          timestamp: tempDate.getTime(),
+          utcOffset: 0,
+        },
+      };
       onChange(event);
     }
+    setShow(false);
+  };
+
+  const handleOpen = () => {
+    setTempDate(value);
+    setShow(true);
   };
 
   const theme = useColorSchemeOrDefault();
@@ -47,7 +65,7 @@ export const DatePicker = ({
 
   return (
     <View>
-      <Pressable onPress={() => setShow(true)}>
+      <Pressable onPress={handleOpen}>
         {value ? (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
             <ThemedText>{DateUtils.displayDateAsDDMMYYYY(value)}</ThemedText>
@@ -67,27 +85,28 @@ export const DatePicker = ({
       <Modal
         visible={show}
         transparent
-        animationType="fade"
-        onRequestClose={() => setShow(false)}
+        animationType="none"
+        onRequestClose={handleClose}
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setShow(false)}>
-          <View style={styles.modalContent}>
-            <View style={styles.header}>
-              <Pressable onPress={() => setShow(false)}>
-                <ThemedText>Done</ThemedText>
-              </Pressable>
-            </View>
+        <Pressable style={styles.modalContainer} onPress={handleClose}>
+          <Pressable
+            style={styles.modalContent}
+            onPress={(e) => e.stopPropagation()}
+          >
             <DateTimePicker
               testID="dateTimePicker"
-              value={value || new Date()}
+              value={tempDate || new Date()}
               mode="date"
               onChange={handleChange}
               maximumDate={new Date()}
               display="inline"
-              style={{ width: "100%", height: "100%" }}
+              style={styles.datePicker}
+              themeVariant={theme === "dark" ? "dark" : "light"}
+              accentColor={Colors[theme].tint}
+              textColor={Colors[theme].text}
               {...rest}
             />
-          </View>
+          </Pressable>
         </Pressable>
       </Modal>
     </View>
@@ -96,24 +115,22 @@ export const DatePicker = ({
 
 const makeStyles = (theme: ColorSchemeName) =>
   StyleSheet.create({
-    modalOverlay: {
+    modalContainer: {
       flex: 1,
       backgroundColor: "rgba(0, 0, 0, 0.5)",
-      justifyContent: "flex-end",
+      justifyContent: "center",
+      alignItems: "center",
     },
     modalContent: {
-      backgroundColor: Colors[theme].background,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 16,
+      width: "90%",
+      backgroundColor: Colors[theme].plainBackground,
+      borderRadius: 16,
+      overflow: "hidden",
+      paddingBottom: Spacing.medium,
+      paddingHorizontal: Spacing.medium,
     },
-    header: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
+    datePicker: {
       width: "100%",
-      alignItems: "center",
-      marginBottom: 16,
+      height: 350,
     },
   });
