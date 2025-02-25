@@ -1,18 +1,19 @@
 import { ThemedText } from "@/components/atoms/ThemedText";
 import { ThemedView } from "@/components/atoms/ThemedView";
 import { FriendLine } from "@/components/molecules/FriendLine";
+import { PlaceholderScreen } from "@/components/molecules/PlaceholderScreen";
+import { CheckInToast } from "@/components/organisms/CheckInToast";
+import { Spacing } from "@/constants/design";
 import { useContacts } from "@/contexts/Contact.context";
+import { useNotifications } from "@/hooks/useNotificatons";
 import {
   ContactModel,
   ReminderFrequency,
   ReminderFrequencyUtils,
 } from "@/repositories";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { Spacing } from "@/constants/design";
-import { CheckInToast } from "@/components/organisms/CheckInToast";
-import { PlaceholderScreen } from "@/components/molecules/PlaceholderScreen";
 
 const styles = StyleSheet.create({
   section: {
@@ -45,6 +46,13 @@ const Section = ({ contacts, title }: SectionProps) => {
 
 export default function Friends() {
   const { friends } = useContacts();
+  const { askForNotificationPermission } = useNotifications();
+
+  useEffect(() => {
+    if (friends.length > 0) {
+      askForNotificationPermission();
+    }
+  }, [friends.length]);
 
   const friendsByFrequency = friends.reduce(
     (acc, contact) => {

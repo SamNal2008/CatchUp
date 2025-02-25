@@ -1,8 +1,9 @@
 import { ContactId, ContactModel } from "@/repositories";
 import { getNotificationRepository } from "@/repositories/notifications/Notification.repository";
+import { logService } from "@/services/log.service";
 import { getNotificationsService } from "@/services/notifications/Notification.service";
 import { useSQLiteContext } from "expo-sqlite";
-import { logService } from "@/services/log.service";
+import { useCallback } from "react";
 
 type UseNotifications = {
   askForNotificationPermission: () => void;
@@ -24,10 +25,10 @@ export const useNotifications = (): UseNotifications => {
     notificationsService.clearAllNotifications();
   };
 
-  const askForNotificationPermission = () => {
+  const askForNotificationPermission = useCallback(() => {
     notificationsService.initializeNotificationsSettings();
     notificationsService.requestPermission();
-  };
+  }, [notificationsService]);
 
   const registerFriendNotificationReminder = async (contact: ContactModel) => {
     try {

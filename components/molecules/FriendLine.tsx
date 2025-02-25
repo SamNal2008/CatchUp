@@ -2,7 +2,6 @@ import { PrimaryButton } from "@/components";
 import { Palette } from "@/constants/design";
 import { useCheckIns } from "@/contexts/CheckIns.context";
 import { useContacts } from "@/contexts/Contact.context";
-import { useNotifications } from "@/hooks/useNotificatons";
 import { ContactModel } from "@/repositories";
 import { useSetContactToCheckin } from "@/store/CheckinNote.store";
 import { SymbolView } from "expo-symbols";
@@ -51,19 +50,12 @@ const deleteStyles = StyleSheet.create({
 });
 
 export const FriendLine = ({ contact }: { contact: ContactModel }) => {
-  const { deleteFriend, friends } = useContacts();
+  const { deleteFriend } = useContacts();
   const { getLatestCheckInForContact } = useCheckIns();
-  const { askForNotificationPermission } = useNotifications();
 
   const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
   const [reload, setReload] = useState<boolean>(false);
   const setContactToCheckin = useSetContactToCheckin();
-
-  useEffect(() => {
-    if (friends.length > 0) {
-      askForNotificationPermission();
-    }
-  }, [friends.length, askForNotificationPermission]);
 
   useEffect(() => {
     if (!contact.id) {
@@ -94,8 +86,8 @@ export const FriendLine = ({ contact }: { contact: ContactModel }) => {
 
   const toDaysAgo = hasAlreadyCheckedIn
     ? Math.round(
-        (new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24),
-      )
+      (new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24),
+    )
     : null;
   const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
 
