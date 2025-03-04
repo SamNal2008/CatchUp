@@ -1,11 +1,4 @@
-import {
-  BorderRadius,
-  FontWeight,
-  LetterSpacing,
-  LineHeight,
-  Spacing,
-  Typography,
-} from "@/constants/design";
+import { BorderRadius, Spacing, Typography2 } from "@/constants/design";
 import { Colors } from "@/constants/design/Colors";
 import {
   ColorSchemeName,
@@ -42,10 +35,7 @@ const makeStyles = (theme: ColorSchemeName) =>
       backgroundColor: Colors[theme].buttonBackgroundDisabled,
     },
     buttonText: {
-      fontSize: Typography.medium,
-      lineHeight: LineHeight.medium,
-      fontWeight: FontWeight.sevenHundred,
-      letterSpacing: LetterSpacing.small,
+      ...Typography2.caption,
       color: Colors[theme].buttonText,
     },
   });

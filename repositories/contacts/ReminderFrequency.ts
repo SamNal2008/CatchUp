@@ -44,19 +44,19 @@ const translateFrequencyToEnglishOptions = (
 ): string => {
   switch (frequency) {
     case "daily":
-      return "Every day";
+      return "Daily";
     case "weekly":
-      return "Every week";
+      return "Weekly";
     case "bimonthly":
-      return "Every 2 weeks";
+      return "Bi-monthly";
     case "monthly":
-      return "Every month";
+      return "Monthly";
     case "quarterly":
-      return "Every 3 months";
+      return "Quarterly";
     case "biannually":
-      return "Every 6 months";
+      return "Bi-annually";
     case "yearly":
-      return "Every year";
+      return "Yearly";
     default:
       return "Never";
   }

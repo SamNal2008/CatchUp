@@ -83,7 +83,14 @@ export const CheckInToast = () => {
                 {contactToCheckin.firstName} {contactToCheckin.lastName}
               </ThemedText>
             </View>
-            <View style={{ flexDirection: "row", gap: 5, flex: 1 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 16,
+                flex: 1,
+                justifyContent: "flex-end",
+              }}
+            >
               <SecondaryButton title={"Undo"} onPress={undoContactCheckin} />
               <PrimaryButton title={"+ Note"} onPress={addNote} />
             </View>
@@ -99,19 +106,21 @@ const makeStyles = (theme: ColorSchemeName) =>
     toast: {
       backgroundColor: Colors[theme].toastBackground,
       borderRadius: 8,
-      width: 360,
-      height: 70,
+      width: "100%",
       alignItems: "stretch",
-      justifyContent: "center",
+      justifyContent: "space-between",
       position: "absolute",
       bottom: "5%",
-      padding: 10,
+      flex: 1,
+      paddingHorizontal: 8,
+      paddingVertical: 16,
     },
     container: {
       flex: 1,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      alignSelf: "flex-end",
       width: "100%",
     },
   });

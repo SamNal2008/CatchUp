@@ -68,12 +68,14 @@ export const DatePicker = ({
       <Pressable onPress={handleOpen}>
         {value ? (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-            <ThemedText>{DateUtils.displayDateAsDDMMYYYY(value)}</ThemedText>
+            <ThemedText type="text">
+              {DateUtils.displayDateAsDDMMYYYY(value)}
+            </ThemedText>
             {shouldShowIcon ? (
               <SymbolView
                 size={16}
                 tintColor={Colors[theme].icon}
-                name="chevron.down"
+                name="chevron.compact.down"
               />
             ) : null}
           </View>

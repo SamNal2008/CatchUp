@@ -16,7 +16,7 @@ import { presentFormAsync } from "expo-contacts";
 import * as Linking from "expo-linking";
 import * as SMS from "expo-sms";
 import { SymbolView } from "expo-symbols";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 
 export const NewFriendSettings = () => {
   const theme = useColorSchemeOrDefault();
@@ -95,9 +95,9 @@ export const NewFriendSettings = () => {
             />
           )}
         </View>
-        <Text style={styles.name}>
+        <ThemedText type="title3">
           {contact.firstName} {contact.lastName}
-        </Text>
+        </ThemedText>
       </View>
       <View style={styles.actions}>
         {/* Button with icon */}
@@ -134,7 +134,7 @@ export const NewFriendSettings = () => {
               tintColor={Colors[theme].icon}
               name="gift.fill"
             />
-            <Text style={styles.complementaryInfoTitle}>Birthday :</Text>
+            <ThemedText type="text">Birthday :</ThemedText>
           </View>
           <DatePicker
             value={contactBirthday}
@@ -149,7 +149,7 @@ export const NewFriendSettings = () => {
               tintColor={Colors[theme].icon}
               name="calendar"
             />
-            <Text style={styles.complementaryInfoTitle}>Last check in :</Text>
+            <ThemedText type="text">Last check in :</ThemedText>
           </View>
           <DatePicker
             value={contactLastCheckIn}
@@ -164,7 +164,7 @@ export const NewFriendSettings = () => {
               tintColor={Colors[theme].icon}
               name="arrow.circlepath"
             />
-            <Text style={styles.complementaryInfoTitle}>Frequency :</Text>
+            <ThemedText type="text">Frequency :</ThemedText>
           </View>
           <SelectDropdown<ReminderFrequency>
             onChange={setSelectedFrequency}
@@ -191,7 +191,8 @@ const makeStyles = (color: "light" | "dark") =>
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      gap: 20,
+      gap: 4,
+      paddingBottom: 16,
     },
     name: {
       fontSize: 20,

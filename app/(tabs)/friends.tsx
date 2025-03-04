@@ -79,7 +79,7 @@ export default function Friends() {
       {friends.length === 0 ? (
         <PlaceholderScreen />
       ) : (
-        <View style={{ flex: 1, gap: 30, width: "100%" }}>
+        <View style={{ flex: 1, gap: 20, width: "100%" }}>
           <FlatList
             data={Object.keys(friendsByFrequency)}
             renderItem={({ item }) => (

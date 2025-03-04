@@ -1,12 +1,12 @@
 import { ThemedText } from "@/components/atoms/ThemedText";
-import { FontAwesome6 } from "@expo/vector-icons";
-import { StyleSheet, View } from "react-native";
-import * as Contacts from "expo-contacts";
 import { Colors } from "@/constants/design/Colors";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
-import { usePathname } from "expo-router";
 import { useToggleAdminMode } from "@/store/Admin.store";
 import { useNewFriendStore } from "@/store/NewFriend.store";
+import { FontAwesome6 } from "@expo/vector-icons";
+import * as Contacts from "expo-contacts";
+import { usePathname } from "expo-router";
+import { StyleSheet, View } from "react-native";
 
 const usePageTitle = () => {
   const pathname = usePathname();
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     width: "100%",
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     height: 50,
   },
   contentContainer: {

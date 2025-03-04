@@ -1,26 +1,28 @@
-import { Text, type TextProps, StyleSheet } from "react-native";
+import { StyleSheet, Text, type TextProps } from "react-native";
 
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/design";
 import {
   ColorSchemeName,
   useColorSchemeOrDefault,
 } from "@/hooks/useColorScheme";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
   type?:
-    | "default"
-    | "title"
-    | "defaultSemiBold"
-    | "subtitle"
-    | "link"
-    | "subText"
-    | "icon"
-    | "sectionTitle"
-    | "subSectionTitle"
-    | "settings";
+  | "default"
+  | "title"
+  | "defaultSemiBold"
+  | "subtitle"
+  | "link"
+  | "footNote"
+  | "icon"
+  | "sectionTitle"
+  | "subSectionTitle"
+  | "text"
+  | "title3"
+  | "settings";
 };
 
 export function ThemedText({
@@ -43,11 +45,13 @@ export function ThemedText({
         type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
         type === "subtitle" ? styles.subtitle : undefined,
         type === "link" ? styles.link : undefined,
-        type === "subText" ? styles.subText : undefined,
+        type === "footNote" ? styles.footNote : undefined,
         type === "icon" ? styles.icon : undefined,
         type === "sectionTitle" ? styles.sectionTitle : undefined,
         type === "subSectionTitle" ? styles.subSectionTitle : undefined,
         type === "settings" ? styles.settings : undefined,
+        type === "text" ? styles.text : undefined,
+        type === "title3" ? styles.title3 : undefined,
         style,
       ]}
       {...rest}
@@ -91,9 +95,11 @@ const makeStyles = (theme: ColorSchemeName) =>
       fontSize: 16,
       color: "#0a7ea4",
     },
-    subText: {
+    footNote: {
+      fontFamily: "Inter",
+      fontWeight: "400",
       fontSize: 12,
-      lineHeight: 20,
+      lineHeight: 16,
     },
     icon: {
       fontSize: 72,
@@ -109,5 +115,17 @@ const makeStyles = (theme: ColorSchemeName) =>
     settings: {
       fontSize: 17,
       color: Colors[theme].text,
+    },
+    text: {
+      fontFamily: "Inter",
+      fontWeight: "400",
+      fontSize: 16,
+      lineHeight: 24,
+    },
+    title3: {
+      fontFamily: "Inter",
+      fontWeight: "600",
+      fontSize: 20,
+      lineHeight: 24,
     },
   });

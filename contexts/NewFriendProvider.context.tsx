@@ -64,6 +64,7 @@ export const NewFriendContextProvider = ({
       <MyBottomSheet
         ref={modalRef}
         contentToDisplay={<NewFriendSettings />}
+        snapPoints={["50%", "65%"]}
         header={
           <>
             <Button

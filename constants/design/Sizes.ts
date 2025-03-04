@@ -25,7 +25,7 @@ export const Spacing = {
 
 export const Typography = {
   small: 12,
-  medium: 16,
+  medium: 14,
   large: 24,
   extraLarge: 32,
 } as const;
@@ -43,6 +43,7 @@ export const FontWeight = {
   semibold: "semibold",
   bold: "bold",
   heavy: "heavy",
+  medium: "400",
   sevenHundred: "700",
 } as const;
 
@@ -50,4 +51,31 @@ export const LetterSpacing = {
   small: 0.25,
   medium: 0.5,
   large: 1,
+} as const;
+
+export const Typography2 = {
+  caption: {
+    police: "Inter",
+    fontWeight: "500",
+    fontSize: 14,
+    lineHeight: 21,
+  },
+  title2: {
+    police: "Inter",
+    fontWeight: "600",
+    fontSize: 20,
+    lineHeight: 24,
+  },
+  title1: {
+    police: "Inter",
+    fontWeight: "600",
+    fontSize: 28,
+    lineHeight: 32,
+  },
+  title: {
+    police: "Inter",
+    fontWeight: "700",
+    fontSize: 40,
+    lineHeight: 32,
+  },
 } as const;

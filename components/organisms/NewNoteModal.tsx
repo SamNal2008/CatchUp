@@ -138,6 +138,7 @@ export const NewNoteModal = () => {
 
   return (
     <MyBottomSheet
+      snapPoints={["70%", "80%"]}
       contentToDisplay={<NewNoteTextInput />}
       header={<NewNoteHeader saveNewCheckinWithNote={saveNewCheckinWithNote} />}
       ref={modalRef}

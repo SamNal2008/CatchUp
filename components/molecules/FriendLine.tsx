@@ -111,17 +111,17 @@ export const FriendLine = ({ contact }: { contact: ContactModel }) => {
             />
           )}
           <View>
-            <ThemedText style={styles.friendName}>
+            <ThemedText type="text" style={{ fontWeight: "600" }}>
               {contact.firstName}
             </ThemedText>
             {hasAlreadyCheckedIn ? (
-              <ThemedText type="subText">
+              <ThemedText type="footNote">
                 {hasCheckedInToday
                   ? "Checked in today"
                   : `Checked in ${toDaysAgo} days ago`}
               </ThemedText>
             ) : (
-              <ThemedText type="subText">Never checked in yet !</ThemedText>
+              <ThemedText type="footNote">Never checked in yet !</ThemedText>
             )}
           </View>
         </View>
@@ -140,10 +140,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
-  friendName: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   friendImage: {
     width: 50,
     height: 50,
@@ -153,7 +149,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 10,
+    paddingVertical: 10,
     position: "relative",
   },
 });

@@ -18,6 +18,7 @@ import { StyleSheet, View } from "react-native";
 export type ModalProps = {
   contentToDisplay: ReactNode;
   header: ReactNode;
+  snapPoints?: (string | number)[];
 };
 
 export const useModalRef = (): RefObject<BottomSheetModal> => {
@@ -25,8 +26,15 @@ export const useModalRef = (): RefObject<BottomSheetModal> => {
 };
 
 export const MyBottomSheet = forwardRef<BottomSheetModal, ModalProps>(
-  ({ header, contentToDisplay }: ModalProps, ref) => {
-    const snapPoints = useMemo(() => ["50%", "60%", "80%"], []);
+  (
+    { header, contentToDisplay, snapPoints: customSnapPoints }: ModalProps,
+    ref,
+  ) => {
+    // Use custom snap points if provided, otherwise use default snap points
+    const snapPoints = useMemo(
+      () => customSnapPoints || ["50%", "65%"],
+      [customSnapPoints],
+    );
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
         <BottomSheetBackdrop
@@ -57,7 +65,12 @@ export const MyBottomSheet = forwardRef<BottomSheetModal, ModalProps>(
             borderTopRightRadius: 20,
           },
         ]}
-        handleIndicatorStyle={{ backgroundColor: iconColor }}
+        handleIndicatorStyle={{
+          backgroundColor: iconColor,
+        }}
+        handleStyle={{
+          paddingVertical: 8,
+        }}
         backgroundStyle={{ backgroundColor }}
         index={-1}
       >
@@ -84,8 +97,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: 8,
   },
   contentContainer: {
     flex: 1,
