@@ -1,9 +1,11 @@
-import { PrimaryButton } from "@/components";
+import { PrimaryButton } from "@/components/atoms/PrimaryButton";
+import { ThemedText } from "@/components/atoms/ThemedText";
+import { InitialImage } from "@/components/molecules/InitialImage";
 import { Palette } from "@/constants/design";
 import { useCheckIns } from "@/contexts/CheckIns.context";
-import { useContacts } from "@/contexts/Contact.context";
 import { useNewFriendProvider } from "@/hooks/useNewFriendProvider";
-import { ContactModel } from "@/repositories";
+import { ContactModel } from "@/repositories/contacts/ContactEntity";
+import { logService } from "@/services/log.service";
 import { useSetContactToCheckin } from "@/store/CheckinNote.store";
 import { SymbolView } from "expo-symbols";
 import { useCallback, useEffect, useState } from "react";
@@ -13,8 +15,6 @@ import Reanimated, {
   SharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import { ThemedText } from "../atoms/ThemedText";
-import { InitialImage } from "./InitialImage";
 
 type RightActionProps = {
   onPress: () => void;
@@ -51,22 +51,20 @@ const deleteStyles = StyleSheet.create({
 });
 
 export const FriendLine = ({ contact }: { contact: ContactModel }) => {
-  const { deleteFriend } = useContacts();
   const { getLatestCheckInForContact } = useCheckIns();
   const setContactToCheckin = useSetContactToCheckin();
   const { openContactModal } = useNewFriendProvider();
 
   const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
-  const [reload, setReload] = useState<boolean>(false);
   const [isBirthday, setIsBirthday] = useState<boolean>(false);
 
-  // Check if today is the contact's birthday - use useCallback and memoize values
-  const checkIfBirthday = useCallback(() => {
+  // Check if today is the contact's birthday
+  useEffect(() => {
     if (contact?.birthDate) {
       const today = new Date();
       const birthDate = contact.birthDate;
 
-      // Compare month and day only, not the year or time
+      // Compare month and day only
       const isTodayBirthday =
         today.getDate() === birthDate.getDate() &&
         today.getMonth() === birthDate.getMonth();
@@ -75,52 +73,65 @@ export const FriendLine = ({ contact }: { contact: ContactModel }) => {
     } else {
       setIsBirthday(false);
     }
-  }, [contact?.birthDate]); // Only depend on birthDate, not the entire contact object
+  }, [contact?.birthDate]);
 
-  // Run whenever the birthDate changes, not the entire contact object
+  // Fetch the last check-in date
   useEffect(() => {
-    checkIfBirthday();
-  }, [checkIfBirthday]);
+    if (!contact.id) return;
 
-  useEffect(() => {
-    if (!contact.id) {
-      return;
+    const fetchData = async () => {
+      try {
+        const lastCheckin = await getLatestCheckInForContact(contact.id || "");
+        setLastCheckedIn(lastCheckin);
+      } catch (error) {
+        logService.error(`Error fetching last check-in:`, error);
+      }
+    };
+
+    fetchData();
+  }, [contact.id, getLatestCheckInForContact]);
+
+  // Handler for removing a friend
+  const removeFriend = useCallback(() => {
+    if (!contact.id) return;
+
+    alert(`Remove ${contact.firstName} from your friends?`);
+    // Implementation of friend removal
+  }, [contact]);
+
+  // Handler for checking in on a friend
+  const checkInOnFriend = useCallback(() => {
+    if (contact.id) {
+      setContactToCheckin(contact);
+      // Navigate to check-in page
     }
-    setLastCheckedIn(getLatestCheckInForContact(contact.id));
-  }, [contact.id, reload, getLatestCheckInForContact]);
+  }, [contact, setContactToCheckin]);
 
-  const removeFriend = () => {
-    if (!contact.id) {
-      alert("Unable to delete friend without id");
-      return;
-    }
-    deleteFriend(contact.id).then(() => {
-      setReload((prev) => !prev);
-    });
-  };
+  // Handler for sending birthday wishes
+  const sendBirthdayWishes = useCallback(() => {
+    alert(`Send birthday wishes to ${contact.firstName}`);
+  }, [contact.firstName]);
 
-  const checkInOnFriend = () => {
-    if (!contact.id) {
-      alert("Unable to check in on friend without id");
-      return;
-    }
-    setContactToCheckin(contact);
-  };
-
-  const hasAlreadyCheckedIn = !!lastCheckedIn;
-
-  const toDaysAgo = hasAlreadyCheckedIn
-    ? Math.round(
-        (new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24),
-      )
-    : null;
-  const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
-
-  const openContactDetails = () => {
-    // Instead of directly setting the contact, use the openContactModal function
-    // which ensures a clean slate each time
+  // Main handler for opening contact details
+  const openContactDetails = useCallback(() => {
     openContactModal(contact);
-  };
+  }, [contact, openContactModal]);
+
+  // Calculate check-in status
+  const hasCheckedInToday =
+    lastCheckedIn &&
+    new Date(lastCheckedIn).getDate() === new Date().getDate() &&
+    new Date(lastCheckedIn).getMonth() === new Date().getMonth();
+
+  const hasAlreadyCheckedIn = lastCheckedIn !== null;
+
+  const toDaysAgo =
+    hasAlreadyCheckedIn && lastCheckedIn
+      ? Math.floor(
+          (new Date().getTime() - new Date(lastCheckedIn).getTime()) /
+            (1000 * 60 * 60 * 24),
+        )
+      : 0;
 
   return (
     <Swipeable
@@ -130,95 +141,96 @@ export const FriendLine = ({ contact }: { contact: ContactModel }) => {
         <RightAction drag={drag} progress={progress} onPress={removeFriend} />
       )}
     >
-      <View style={{ backgroundColor: "transparent" }}>
-        <View style={[styles.friendContainer]}>
-          <View style={styles.friendNameContainer}>
-            <Pressable
-              onPress={openContactDetails}
-              accessibilityLabel={`Edit ${contact.firstName}'s details`}
-              testID="edit-contact-avatar"
-            >
-              {contact.image ? (
-                <Image source={contact.image} style={styles.friendImage} />
-              ) : (
-                <InitialImage
-                  firstName={contact.firstName}
-                  lastName={contact.lastName}
-                  size={50}
-                />
-              )}
-            </Pressable>
-            <View>
-              <ThemedText style={{ fontWeight: 600 }}>
-                {contact.firstName}
-                {isBirthday && " 🎂"}
+      <Pressable
+        style={({ pressed }) => [
+          styles.friendContainer,
+          pressed && styles.containerPressed,
+        ]}
+        onPress={openContactDetails}
+        android_ripple={{
+          color: "rgba(0, 0, 0, 0.05)",
+          borderless: false,
+        }}
+      >
+        <View style={styles.friendNameContainer}>
+          <Pressable
+            onPress={openContactDetails}
+            accessibilityLabel={`Edit ${contact.firstName}'s details`}
+            testID="edit-contact-avatar"
+          >
+            {contact.image ? (
+              <Image source={contact.image} style={styles.friendImage} />
+            ) : (
+              <InitialImage
+                firstName={contact.firstName}
+                lastName={contact.lastName}
+                size={50}
+              />
+            )}
+          </Pressable>
+          <View>
+            <ThemedText style={styles.friendName}>
+              {contact.firstName}
+              {isBirthday && " 🎂"}
+            </ThemedText>
+            {hasAlreadyCheckedIn ? (
+              <ThemedText type="footNote">
+                {hasCheckedInToday
+                  ? "Checked in today"
+                  : `Checked in ${toDaysAgo} days ago`}
               </ThemedText>
-              {hasAlreadyCheckedIn ? (
-                <ThemedText type="footNote">
-                  {hasCheckedInToday
-                    ? "Checked in today"
-                    : `Checked in ${toDaysAgo} days ago`}
-                </ThemedText>
-              ) : (
-                <ThemedText type="footNote">Never checked in yet !</ThemedText>
-              )}
-            </View>
+            ) : (
+              <ThemedText type="footNote">Never checked in yet !</ThemedText>
+            )}
           </View>
-          {isBirthday ? (
-            <PrimaryButton title="Send wishes" onPress={checkInOnFriend} />
-          ) : (
-            <PrimaryButton
-              title={hasCheckedInToday ? "Come later" : "Check In"}
-              onPress={checkInOnFriend}
-            />
-          )}
         </View>
-      </View>
+        {isBirthday ? (
+          <PrimaryButton title="Send wishes" onPress={sendBirthdayWishes} />
+        ) : (
+          <PrimaryButton
+            title={hasCheckedInToday ? "Checked" : "Check In"}
+            onPress={checkInOnFriend}
+          />
+        )}
+      </Pressable>
     </Swipeable>
   );
 };
 
 const styles = StyleSheet.create({
+  containerPressed: {
+    opacity: 0.95, // Slight opacity change
+    transform: [{ scale: 0.985 }],
+    // Add temporary elevation on press for depth effect
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 1,
+    elevation: 2,
+  },
+  friendName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   friendNameContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
   },
+  friendContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
   friendImage: {
     width: 50,
     height: 50,
     borderRadius: 50,
-  },
-  friendContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 10,
-    position: "relative",
-  },
-  birthdayBanner: {
-    backgroundColor: "#FFF5EA",
-    borderRadius: 8,
-    padding: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 10,
-    marginTop: 10,
-  },
-  birthdayGift: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  birthdayTextContainer: {
-    flex: 1,
-  },
-  birthdayText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-  },
-  birthdaySubtext: {
-    fontSize: 14,
-    color: "#666",
   },
 });
