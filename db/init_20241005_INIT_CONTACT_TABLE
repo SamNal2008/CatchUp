@@ -1,5 +1,6 @@
 -- Create contact table
 CREATE TABLE contacts (
 	contact_id TEXT PRIMARY KEY,
-	frequency TEXT NOT NULL
+	frequency TEXT NOT NULL,
+	birthday TEXT NULL
 );

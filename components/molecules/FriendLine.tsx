@@ -2,10 +2,11 @@ import { PrimaryButton } from "@/components";
 import { Palette } from "@/constants/design";
 import { useCheckIns } from "@/contexts/CheckIns.context";
 import { useContacts } from "@/contexts/Contact.context";
+import { useNewFriendProvider } from "@/hooks/useNewFriendProvider";
 import { ContactModel } from "@/repositories";
 import { useSetContactToCheckin } from "@/store/CheckinNote.store";
 import { SymbolView } from "expo-symbols";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Reanimated, {
@@ -52,10 +53,34 @@ const deleteStyles = StyleSheet.create({
 export const FriendLine = ({ contact }: { contact: ContactModel }) => {
   const { deleteFriend } = useContacts();
   const { getLatestCheckInForContact } = useCheckIns();
+  const setContactToCheckin = useSetContactToCheckin();
+  const { openContactModal } = useNewFriendProvider();
 
   const [lastCheckedIn, setLastCheckedIn] = useState<Date | null>(null);
   const [reload, setReload] = useState<boolean>(false);
-  const setContactToCheckin = useSetContactToCheckin();
+  const [isBirthday, setIsBirthday] = useState<boolean>(false);
+
+  // Check if today is the contact's birthday - use useCallback and memoize values
+  const checkIfBirthday = useCallback(() => {
+    if (contact?.birthDate) {
+      const today = new Date();
+      const birthDate = contact.birthDate;
+
+      // Compare month and day only, not the year or time
+      const isTodayBirthday =
+        today.getDate() === birthDate.getDate() &&
+        today.getMonth() === birthDate.getMonth();
+
+      setIsBirthday(isTodayBirthday);
+    } else {
+      setIsBirthday(false);
+    }
+  }, [contact?.birthDate]); // Only depend on birthDate, not the entire contact object
+
+  // Run whenever the birthDate changes, not the entire contact object
+  useEffect(() => {
+    checkIfBirthday();
+  }, [checkIfBirthday]);
 
   useEffect(() => {
     if (!contact.id) {
@@ -86,10 +111,16 @@ export const FriendLine = ({ contact }: { contact: ContactModel }) => {
 
   const toDaysAgo = hasAlreadyCheckedIn
     ? Math.round(
-      (new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24),
-    )
+        (new Date().getTime() - lastCheckedIn?.getTime()) / (1000 * 3600 * 24),
+      )
     : null;
   const hasCheckedInToday = hasAlreadyCheckedIn && toDaysAgo! < 1;
+
+  const openContactDetails = () => {
+    // Instead of directly setting the contact, use the openContactModal function
+    // which ensures a clean slate each time
+    openContactModal(contact);
+  };
 
   return (
     <Swipeable
@@ -99,36 +130,49 @@ export const FriendLine = ({ contact }: { contact: ContactModel }) => {
         <RightAction drag={drag} progress={progress} onPress={removeFriend} />
       )}
     >
-      <View style={[styles.friendContainer]}>
-        <View style={styles.friendNameContainer}>
-          {contact.image ? (
-            <Image source={contact.image} style={styles.friendImage} />
+      <View style={{ backgroundColor: "transparent" }}>
+        <View style={[styles.friendContainer]}>
+          <View style={styles.friendNameContainer}>
+            <Pressable
+              onPress={openContactDetails}
+              accessibilityLabel={`Edit ${contact.firstName}'s details`}
+              testID="edit-contact-avatar"
+            >
+              {contact.image ? (
+                <Image source={contact.image} style={styles.friendImage} />
+              ) : (
+                <InitialImage
+                  firstName={contact.firstName}
+                  lastName={contact.lastName}
+                  size={50}
+                />
+              )}
+            </Pressable>
+            <View>
+              <ThemedText style={{ fontWeight: 600 }}>
+                {contact.firstName}
+                {isBirthday && " 🎂"}
+              </ThemedText>
+              {hasAlreadyCheckedIn ? (
+                <ThemedText type="footNote">
+                  {hasCheckedInToday
+                    ? "Checked in today"
+                    : `Checked in ${toDaysAgo} days ago`}
+                </ThemedText>
+              ) : (
+                <ThemedText type="footNote">Never checked in yet !</ThemedText>
+              )}
+            </View>
+          </View>
+          {isBirthday ? (
+            <PrimaryButton title="Send wishes" onPress={checkInOnFriend} />
           ) : (
-            <InitialImage
-              firstName={contact.firstName}
-              lastName={contact.lastName}
-              size={50}
+            <PrimaryButton
+              title={hasCheckedInToday ? "Come later" : "Check In"}
+              onPress={checkInOnFriend}
             />
           )}
-          <View>
-            <ThemedText type="text" style={{ fontWeight: "600" }}>
-              {contact.firstName}
-            </ThemedText>
-            {hasAlreadyCheckedIn ? (
-              <ThemedText type="footNote">
-                {hasCheckedInToday
-                  ? "Checked in today"
-                  : `Checked in ${toDaysAgo} days ago`}
-              </ThemedText>
-            ) : (
-              <ThemedText type="footNote">Never checked in yet !</ThemedText>
-            )}
-          </View>
         </View>
-        <PrimaryButton
-          title={hasCheckedInToday ? "Come later" : "Check In"}
-          onPress={checkInOnFriend}
-        />
       </View>
     </Swipeable>
   );
@@ -151,5 +195,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     position: "relative",
+  },
+  birthdayBanner: {
+    backgroundColor: "#FFF5EA",
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 10,
+    marginTop: 10,
+  },
+  birthdayGift: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  birthdayTextContainer: {
+    flex: 1,
+  },
+  birthdayText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+  },
+  birthdaySubtext: {
+    fontSize: 14,
+    color: "#666",
   },
 });

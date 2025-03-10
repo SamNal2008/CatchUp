@@ -111,7 +111,6 @@ const getNextNotificationTrigger = (
     repeats: true,
     type: SchedulableTriggerInputTypes.CALENDAR,
   };
-  console.log(baseTriggerInput);
   switch (frequency) {
     case "daily":
       return baseTriggerInput;

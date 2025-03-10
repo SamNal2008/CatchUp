@@ -97,7 +97,7 @@ const NewNoteTextInput = () => {
       setIsFocused(false);
       setNoteContent("");
     }
-  }, [isModalVisible]);
+  }, [isModalVisible, setNoteContent]);
   return (
     <View style={{ flex: 1, padding: 10 }}>
       <TextInput

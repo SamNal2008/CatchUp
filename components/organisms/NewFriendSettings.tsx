@@ -1,10 +1,10 @@
 import { DatePicker } from "@/components/atoms/DatePicker";
+import { ThemedText } from "@/components/atoms/ThemedText";
 import { InitialImage } from "@/components/molecules/InitialImage";
 import { Colors } from "@/constants/design/Colors";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 
 import { SelectDropdown } from "@/components/atoms/SelectDropdown";
-import { ThemedText } from "@/components/atoms/ThemedText";
 import {
   ReminderFrequency,
   reminderFrequencyOptionsWithTranslation,
@@ -16,7 +16,8 @@ import { presentFormAsync } from "expo-contacts";
 import * as Linking from "expo-linking";
 import * as SMS from "expo-sms";
 import { SymbolView } from "expo-symbols";
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export const NewFriendSettings = () => {
   const theme = useColorSchemeOrDefault();
@@ -30,6 +31,30 @@ export const NewFriendSettings = () => {
     contactLastCheckIn,
   } = useNewFriendStore();
 
+  // Determine if this is an existing contact
+  const [isBirthday, setIsBirthday] = useState<boolean>(false);
+
+  // Check if today is the contact's birthday
+  const checkIfBirthday = useCallback(() => {
+    if (!contactBirthday) {
+      setIsBirthday(false);
+      return;
+    }
+
+    const today = new Date();
+    const isTodayBirthday =
+      today.getDate() === contactBirthday.getDate() &&
+      today.getMonth() === contactBirthday.getMonth();
+
+    setIsBirthday(isTodayBirthday);
+  }, [contactBirthday]);
+
+  // Run whenever the contact or its birthday changes
+  useEffect(() => {
+    checkIfBirthday();
+  }, [checkIfBirthday, contactBirthday]);
+
+  // If no contact is set, render nothing - the modal will be closed anyway
   if (!contact) {
     return null;
   }
@@ -51,6 +76,8 @@ export const NewFriendSettings = () => {
       alert("No phone number available");
       return;
     }
+
+    // Present the contact form
     await presentFormAsync(contactId);
   };
 
@@ -73,32 +100,62 @@ export const NewFriendSettings = () => {
     }
   };
 
-  const updateContactBirthday = (event: DateTimePickerEvent) => {
-    setContactBirthday(new Date(event.nativeEvent.timestamp));
+  // Update handlers - local state only
+  const updateContactBirthday = async (event: DateTimePickerEvent) => {
+    if (event.type === "set" && event.nativeEvent.timestamp) {
+      setContactBirthday(new Date(event.nativeEvent.timestamp));
+    }
   };
 
-  const updateContactLastCheckIn = (event: DateTimePickerEvent) => {
-    setContactLastCheckIn(new Date(event.nativeEvent.timestamp));
+  const updateContactLastCheckIn = async (event: DateTimePickerEvent) => {
+    if (event.type === "set" && event.nativeEvent.timestamp) {
+      setContactLastCheckIn(new Date(event.nativeEvent.timestamp));
+    }
+  };
+
+  const updateContactFrequency = (newFrequency: ReminderFrequency) => {
+    setSelectedFrequency(newFrequency);
   };
 
   return (
     <View style={styles.container}>
+      {/* Contact Info */}
       <View style={styles.contactInfo}>
-        <View style={{ width: 100, height: 100 }}>
-          {contact.image?.uri ? (
-            <Image style={styles.image} source={{ uri: contact.image?.uri }} />
-          ) : (
-            <InitialImage
-              firstName={contact.firstName}
-              lastName={contact.lastName}
-              size={100}
-            />
-          )}
+        {contact.image?.uri ? (
+          <Image
+            source={{ uri: contact.image?.uri }}
+            style={styles.contactImage}
+          />
+        ) : (
+          <InitialImage
+            firstName={contact.firstName}
+            lastName={contact.lastName}
+            size={80}
+          />
+        )}
+        <View style={styles.contactDetails}>
+          <ThemedText type="title3">
+            {contact.firstName} {contact.lastName}
+            {isBirthday && " 🎂"}
+          </ThemedText>
         </View>
-        <ThemedText type="title3">
-          {contact.firstName} {contact.lastName}
-        </ThemedText>
       </View>
+
+      {/* Birthday Banner */}
+      {isBirthday && (
+        <View style={styles.birthdayBanner}>
+          <Text style={styles.birthdayGift}>🎁</Text>
+          <View style={styles.birthdayTextContainer}>
+            <Text style={styles.birthdayText}>
+              It's {contact.firstName}'s birthday today! 🎉
+            </Text>
+            <Text style={styles.birthdaySubtext}>
+              Don't forget to send birthday wishes!
+            </Text>
+          </View>
+        </View>
+      )}
+
       <View style={styles.actions}>
         {/* Button with icon */}
         <Pressable style={styles.button} onPress={sendSms}>
@@ -167,7 +224,7 @@ export const NewFriendSettings = () => {
             <ThemedText type="text">Frequency :</ThemedText>
           </View>
           <SelectDropdown<ReminderFrequency>
-            onChange={setSelectedFrequency}
+            onChange={updateContactFrequency}
             options={reminderFrequencyOptionsWithTranslation}
             value={selectedFrequency}
             key={"key"}
@@ -183,9 +240,18 @@ const makeStyles = (color: "light" | "dark") =>
   StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: "flex-start",
+      flexDirection: "column",
       alignItems: "center",
       gap: 15,
+    },
+    header: {
+      width: "100%",
+      padding: 20,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: Colors[color].text,
     },
     contactInfo: {
       flexDirection: "column",
@@ -194,20 +260,25 @@ const makeStyles = (color: "light" | "dark") =>
       gap: 4,
       paddingBottom: 16,
     },
-    name: {
+    contactImage: {
+      width: 100,
+      height: 100,
+      borderRadius: 100,
+    },
+    contactDetails: {
+      flexDirection: "column",
+      alignItems: "flex-start",
+    },
+    contactName: {
       fontSize: 20,
       marginBottom: 20,
       color: Colors[color].text,
       fontWeight: "bold",
     },
-    image: {
-      width: 100,
-      height: 100,
-      borderRadius: 100,
-    },
     actions: {
       flexDirection: "row",
-      gap: 30,
+      justifyContent: "space-between",
+      width: "100%",
       paddingHorizontal: 20,
     },
     pickerContainer: {
@@ -230,24 +301,15 @@ const makeStyles = (color: "light" | "dark") =>
       fontSize: 16,
     },
     button: {
-      paddingVertical: 12,
-      paddingHorizontal: 14,
       alignItems: "center",
       justifyContent: "center",
+      padding: 12,
       backgroundColor: Colors[color].background,
-      borderRadius: 16,
-      flexDirection: "column",
-      opacity: 0.7,
-      gap: 5,
-      flexGrow: 1,
-      flexShrink: 0,
-      flexBasis: 0,
+      borderRadius: 8,
+      width: "30%",
     },
     actionIcon: {
-      width: 25,
-      height: 25,
-      margin: 5,
-      color: Colors[color].text,
+      marginBottom: 8,
     },
     complementaryInfo: {
       width: "100%",
@@ -275,5 +337,32 @@ const makeStyles = (color: "light" | "dark") =>
       gap: 10,
       alignItems: "center",
       flex: 1,
+    },
+    birthdayBanner: {
+      backgroundColor: "#FFF5EA",
+      borderRadius: 8,
+      padding: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      marginVertical: 10,
+      alignSelf: "center",
+      width: "90%",
+      gap: 4,
+    },
+    birthdayGift: {
+      fontSize: 24,
+      marginRight: 12,
+    },
+    birthdayTextContainer: {
+      flex: 1,
+    },
+    birthdayText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: "#000",
+    },
+    birthdaySubtext: {
+      fontSize: 14,
+      color: "#666",
     },
   });

@@ -54,7 +54,7 @@ const AdminDataSelection = () => {
     logService.debug("Checkins : " + db.getAllSync("SELECT * FROM check_ins"));
     logService.debug(
       "Notifications service : " +
-      Notifications.getAllScheduledNotificationsAsync().then(logService.log),
+        Notifications.getAllScheduledNotificationsAsync().then(logService.log),
     );
   };
 

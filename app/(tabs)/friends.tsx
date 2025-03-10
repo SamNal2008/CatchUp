@@ -52,7 +52,7 @@ export default function Friends() {
     if (friends.length > 0) {
       askForNotificationPermission();
     }
-  }, [friends.length]);
+  }, [askForNotificationPermission, friends.length]);
 
   const friendsByFrequency = friends.reduce(
     (acc, contact) => {

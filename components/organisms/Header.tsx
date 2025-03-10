@@ -1,8 +1,8 @@
 import { ThemedText } from "@/components/atoms/ThemedText";
 import { Colors } from "@/constants/design/Colors";
 import { useColorSchemeOrDefault } from "@/hooks/useColorScheme";
+import { useNewFriendProvider } from "@/hooks/useNewFriendProvider";
 import { useToggleAdminMode } from "@/store/Admin.store";
-import { useNewFriendStore } from "@/store/NewFriend.store";
 import { FontAwesome6 } from "@expo/vector-icons";
 import * as Contacts from "expo-contacts";
 import { usePathname } from "expo-router";
@@ -26,7 +26,7 @@ export const Header = () => {
   const pageTitle = usePageTitle();
   const theme = useColorSchemeOrDefault();
   const toggleAdminMode = useToggleAdminMode();
-  const { setContact } = useNewFriendStore();
+  const { openContactModal } = useNewFriendProvider();
 
   const openModalToChoseContact = async () => {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -43,7 +43,7 @@ export const Header = () => {
         ...newCatchUp,
         image: res.data.find((contact) => contact.id === newCatchUp?.id)?.image,
       };
-      setContact(newCatchUp);
+      openContactModal(newCatchUp);
     }
   };
 
