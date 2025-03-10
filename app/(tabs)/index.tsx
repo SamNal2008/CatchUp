@@ -11,7 +11,7 @@ import { CheckInModel } from "@/repositories/check-ins/CheckInEntity";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Button, FlatList, Image, StyleSheet, View } from "react-native";
+import { FlatList, Image, StyleSheet, View } from "react-native";
 
 type CheckInSummaryProps = {
   checkIn: CheckInModel;

@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/atoms/ThemedText";
 import { HelloWave } from "@/components/HelloWave";
 import { Spacing } from "@/constants/design";
 import { Colors, Palette } from "@/constants/design/Colors";
+import { DARK, useColorSchemeOrDefault } from "@/hooks/useColorScheme";
 import { router } from "expo-router";
 import { SFSymbol, SymbolView } from "expo-symbols";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -32,13 +33,25 @@ const CatchUpPurpose = ({
   content: string;
   icon: SFSymbol;
 }) => {
+  const theme = useColorSchemeOrDefault();
   return (
     <View style={styles.purposeSummary}>
-      <SymbolView
-        style={styles.purposeSymbolBackground}
-        name={icon}
-        tintColor={Colors.light.buttonBackgroundDisabled}
-      />
+      <View style={styles.iconContainer}>
+        <SymbolView
+          style={[
+            styles.purposeSymbol,
+            theme === DARK
+              ? styles.purposeSymbolDark
+              : styles.purposeSymbolLight,
+          ]}
+          name={icon}
+          tintColor={
+            theme === DARK
+              ? Palette.WHITE
+              : Colors.light.buttonBackgroundDisabled
+          }
+        />
+      </View>
       <View>
         <ThemedText>{title}</ThemedText>
         <ThemedText style={{ fontWeight: "medium", color: Palette.GREY_300 }}>
@@ -114,9 +127,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: Spacing.small,
     alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
     justifyContent: "center",
   },
-  purposeSymbolBackground: {
+  purposeSymbol: {
+    width: 24,
+    height: 24,
+    padding: 8,
+    borderRadius: 8,
+  },
+  purposeSymbolLight: {
     backgroundColor: Palette.GREY_100,
+  },
+  purposeSymbolDark: {
+    backgroundColor: "transparent",
   },
 });

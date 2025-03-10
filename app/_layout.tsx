@@ -124,7 +124,7 @@ function RootLayout() {
 }
 
 async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  const DATABASE_VERSION = 4;
+  const DATABASE_VERSION = 5;
   const dbInfo = await db.getFirstAsync<{ user_version: number }>(
     "PRAGMA user_version",
   );
@@ -173,9 +173,14 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
     currentDbVersion = 4;
   }
 
-  // if (currentDbVersion === 4) {
-  //   add more migration
-  // }
+  if (currentDbVersion === 4) {
+    logService.log("Adding note in checkin table");
+    await db.execAsync(`
+      PRAGMA journal_mode = 'wal';
+      ALTER TABLE contacts ADD COLUMN birthday TEXT NULL;
+      `);
+    currentDbVersion = 5;
+  }
 
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
